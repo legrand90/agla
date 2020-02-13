@@ -566,7 +566,6 @@ class _TransactionState extends State<Transaction> {
                                      //visible = false ;
                                     _sendDataTransaction();
 
-
                                   });
 
                                 },
