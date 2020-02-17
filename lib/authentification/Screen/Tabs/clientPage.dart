@@ -83,7 +83,7 @@ class _ClientPagetState extends State<ClientPage> with SingleTickerProviderState
               Tab(
                 child: Container(
                 child: Text(
-                  'CLIENT',
+                  'AGENT',
                   style: TextStyle(color: Colors.white, fontSize: 18.0),
                 )
                 ) ,
@@ -92,7 +92,7 @@ class _ClientPagetState extends State<ClientPage> with SingleTickerProviderState
               Tab(
                 child: Container(
                     child: Text(
-                      'AGENT',
+                      'CLIENT',
                       style: TextStyle(color: Colors.white, fontSize: 18.0),
                     )
                 ) ,
@@ -104,8 +104,8 @@ class _ClientPagetState extends State<ClientPage> with SingleTickerProviderState
         body: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            ClientTabPage(),
             AgentTabPage(),
+            ClientTabPage(),
           //  PrestationTabPage(),
            // PeriodeTabPage(),
           ],

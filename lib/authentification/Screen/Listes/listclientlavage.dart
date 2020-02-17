@@ -121,7 +121,7 @@ class _ListClientLavageState extends State<ListClientLavage>{
 
             //indexItem = index;
 
-            return Divider();
+            return Divider(color: Colors.black, height: 50.0,);
           },
           itemCount: (listtransac == null || listtransac.data == null || listtransac.data.length == 0 )? 0 : listtransac.data.length,
           itemBuilder: (_,int index)=>ListTile(

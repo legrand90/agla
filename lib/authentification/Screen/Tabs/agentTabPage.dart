@@ -43,6 +43,7 @@ class _AgentTabPageState extends State<AgentTabPage> {
   var date1 ;
   var date2 ;
   var commi;
+  var _mySelection;
 
   int selectedRadio ;
 
@@ -52,11 +53,12 @@ class _AgentTabPageState extends State<AgentTabPage> {
   ListagentTransaction serchValue2 = ListagentTransaction();
   ListagentNumTrans serchValue3 = ListagentNumTrans();
   var data ;
+  List data2 = List() ;
 
   void AgentFromSearch() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
-    var res = await CallApi().getData('getAgentFromSearch/$id/$data');
+    var res = await CallApi().getData('getAgentFromSearch/$id/$_mySelection');
    // final String urlAgent = "http://192.168.43.217:8000/api/getAgentFromSearch/$id/$data";
 
 //    final res = await http.get(Uri.encodeFull(urlAgent), headers: {
@@ -87,23 +89,32 @@ class _AgentTabPageState extends State<AgentTabPage> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
     //var resBody = listclientsearchFromJson(res.body);
-    var res = await CallApi().getData('getAgentFromSearchTrans/$id/${serchValue.data.id}/$datEnreg1/$datEnreg2');
+    var res = await CallApi().getData('getAgentFromSearchTrans/$id/$_mySelection/$datEnreg1/$datEnreg2');
    // final String urlTrans = "http://192.168.43.217:8000/api/getAgentFromSearchTrans/$id/${serchValue.data.id}/$datEnreg1/$datEnreg2";
 //    final res2 = await http.get(Uri.encodeFull(urlTrans), headers: {
 //      "Accept": "application/json",
 //      "Content-type": "application/json",
 //    });
 
-    if (res.statusCode == 200) {
+    print(res.body);
 
-    setState(() {
+
+
+    setState((){
+
       serchValue2 = listagentTransactionFromJson(res.body);
 
-      commi = serchValue2.data[0].totalCommissions;
+      commi = (serchValue2.data[0].totalCommissions != null) ? serchValue2.data[0].totalCommissions : 0;
 
-      visible = true;
+
 
     });
+
+    if (res.statusCode == 200 && commi != 0) {
+
+      setState(() {
+        visible = true;
+      });
 
     //print('resultacomm : ${serchValue2.data[0].totalCommissions}');
 
@@ -114,78 +125,7 @@ class _AgentTabPageState extends State<AgentTabPage> {
 
   }
 
-  void AgentNumeroFromSearch() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
 
-    var res = await CallApi().getData('getAgentNumeroFromSearch/$id/$data');
-   // final String urlAgent = "http://192.168.43.217:8000/api/getAgentNumeroFromSearch/$id/$data";
-
-//    final res = await http.get(Uri.encodeFull(urlAgent), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
-    //var resBody = listclientsearchFromJson(res.body);
-
-    if(res.statusCode == 200) {
-      setState(() {
-        serchValue3 = listagentNumTransFromJson(res.body);
-
-        // visible = true;
-
-      });
-
-      var res2 = await CallApi().getData(
-          'getAgentFromSearch/$id/${serchValue3.data.nom}');
-
-      //final String urlAgent2 = "http://192.168.43.217:8000/api/getAgentFromSearch/$id/${serchValue3.data.nom}";
-//    final res2 = await http.get(Uri.encodeFull(urlAgent2), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
-
-      setState(() {
-        serchValue = listagentfromsearchFromJson(res2.body);
-
-        //visible = true;
-
-      });
-
-    }else{
-      _showMsg("Erreur de recuperation des donnees !!!");
-
-    }
-
-    AgentNumeroFromSearchTransa();
-
-    //print('resultaAgent : ${serchValue3.data.id}');
-
-  }
-
-  void AgentNumeroFromSearchTransa() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-
-    var res2 = await CallApi().getData('getAgentFromSearchTrans/$id/${serchValue3.data.id}/$datEnreg1/$datEnreg2');
-    //var resBody = listclientsearchFromJson(res.body);
-    //final String urlTrans = "http://192.168.43.217:8000/api/getAgentFromSearchTrans/$id/${serchValue3.data.id}/$datEnreg1/$datEnreg2";
-//    final res2 = await http.get(Uri.encodeFull(urlTrans), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
-
-    if(res2.statusCode == 200) {
-
-      setState(() {
-
-        serchValue2 = listagentTransactionFromJson(res2.body);
-
-        visible = true;
-      });
-    }
-    //print('resultaAgentlength : ${serchValue2.data.length}');
-
-  }
 
 
 
@@ -195,7 +135,6 @@ class _AgentTabPageState extends State<AgentTabPage> {
       selectedRadio = valeur;
     });
   }
-
   final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
 
   _showMsg(msg) {
@@ -211,8 +150,33 @@ class _AgentTabPageState extends State<AgentTabPage> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
+  Future<String> getAgent() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+    var res = await CallApi().getData('agent/$id');
+    //final String urlAgent = "http://192.168.43.217:8000/api/agent/$id";
+
+    //final res = await http.get(Uri.encodeFull(urlAgent), headers: {"Accept": "application/json","Content-type" : "application/json",});
+    var resBody = json.decode(res.body)['data'];
+
+
+    setState(() {
+      data2 = resBody;
+      //_mySelection = resBody[0]['id'];
+    });
+
+   // print('id est $_mySelection');
+
+    return "success" ;
+
+  }
+
 
   @override
+  void initState(){
+    super.initState();
+    this.getAgent();
+  }
 
   Widget build(BuildContext context){
     return  Scaffold(
@@ -225,46 +189,7 @@ class _AgentTabPageState extends State<AgentTabPage> {
               SizedBox(
                 height: 30.2,
               ),
-          ButtonBar(
-            alignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Radio(
-                  value: 1,
-                  groupValue: selectedRadio,
-                  //title: Text("Nom"),
-                  activeColor: Colors.black,
-                  onChanged: (val){
-                    setSelectRadio(val);
-                    setState(() {
-                      visible = false ;
-                      _Text.text = "";
-                      dateCtl.text = "";
-                      dateCtl2.text = "";
-                    });
-                    //visible = false ;
-                  },
-                ),
 
-              Text("Nom"),
-
-              Radio(
-                  value: 2,
-                  groupValue: selectedRadio,
-                 // title: Text("Numero"),
-                  activeColor: Colors.black,
-                  onChanged: (val){
-                    setSelectRadio(val);
-                    setState(() {
-                      visible = false ;
-                      _Text.text = "";
-                      dateCtl.text = "";
-                      dateCtl2.text = "";
-                    });
-                  },
-                ),
-
-              Text("Contact"),
-              ]),
 
               SizedBox(
                 height: 20.2,
@@ -336,53 +261,40 @@ class _AgentTabPageState extends State<AgentTabPage> {
               ),
 
               SizedBox(
-                height: 30.2,
+                height: 20.2,
               ),
 
-              Container(
-                child: Center(
-                  child: Text('INFORMATIONS AGENT'),
-                ),
-              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
 
-              Container(
-                child:  Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.5),
-                      width: 1.0,
-                    ),
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                  child: Row(
-                    children: <Widget>[
-
-                      new Expanded(
-                        child: TextFormField(
-                          keyboardType: TextInputType.text,
-                          //autofocus: false,
-                          controller: _Text,
-                          //  validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
-                          // onSaved: (value) => nomPrestation = value,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Saisir votre recherche",
-                            hintStyle: TextStyle(color: Colors.black),
+                  SizedBox(width: 5.0,),
+                  Expanded(
+                      child : DropdownButton(
+                        items: data2.map((value) => DropdownMenuItem(
+                          child: Text(
+                            value['nom'],
+                            style: TextStyle(color: Colors.black),
                           ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.search),
-                        onPressed: (){
+                          value: value['id'].toString(),
+                        )).toList(),
+                        onChanged: (choix){
+                          setState(() {
+                            _mySelection = choix ;
+                          });
                           checkDate();
-                         // _getSearch();
                         },
-                      ),
-                    ],
-                  ),
-                ),
+                        value: _mySelection,
+                        isExpanded: false,
+                        hint: Text('Selectionner l\'agent'),
+                        style: TextStyle(color: Color(0xff11b719)),
+                      ))
+                ],
+
+              ),
+
+              SizedBox(
+                height: 30.2,
               ),
 
               SizedBox(
@@ -537,19 +449,9 @@ class _AgentTabPageState extends State<AgentTabPage> {
   }
 
   void _getSearch() async {
-    if (validateAndSave()) {
-      if (selectedRadio == 1) {
-        data = _Text.text;
         datEnreg1 = mydate1;
         datEnreg2 = mydate2;
         AgentFromSearch();
-      } else if (selectedRadio == 2) {
-        data = _Text.text;
-        datEnreg1 = mydate1;
-        datEnreg2 = mydate2;
-        AgentNumeroFromSearch();
-      }
-    }
   }
 
 

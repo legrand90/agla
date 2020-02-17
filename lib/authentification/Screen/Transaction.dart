@@ -15,6 +15,7 @@ import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'Agent.dart';
 import 'Listes/listclientlavage.dart';
 import 'Listes/listclients.dart';
+import 'Listes/text.dart';
 import 'Tabs/clientPage.dart';
 import 'client.dart';
 import 'historique.dart';
@@ -603,8 +604,8 @@ class _TransactionState extends State<Transaction> {
                                  Navigator.push(
                                     context,
                                     new MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return ListTransaction();
+                                      builder: (BuildContext context){
+                                        return TextList();
                                       },
                                     ),
                                   );
