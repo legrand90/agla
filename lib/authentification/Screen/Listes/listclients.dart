@@ -35,6 +35,7 @@ class _ListClientState extends State<ListClient>{
 
   var admin;
   var idcli;
+  bool load = true;
 
   //String url = "http://192.168.43.217:8000/api/client/";
 
@@ -114,7 +115,7 @@ class _ListClientState extends State<ListClient>{
         appBar: AppBar(
           title: Text('LISTE DES CLIENTS'),
         ),
-        body: ListView.separated(
+        body: load ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;
@@ -130,12 +131,18 @@ class _ListClientState extends State<ListClient>{
                   IconButton(
                       icon: Icon(
                           Icons.edit),
-                      onPressed: (){
-                        Navigator.push(
+                      onPressed: ()async{
+                        setState(() {
+                          load = false;
+                        });
+                       await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => EditClient(idclient: listclients.data [index] .id,),
                             ));
+                       setState(() {
+                         load = true;
+                       });
                       },
                     ),
 
@@ -190,8 +197,11 @@ class _ListClientState extends State<ListClient>{
 
                 ],
               ),
-            onTap: (){
-              Navigator.push(
+            onTap: ()async{
+                setState(() {
+                  load = false;
+                });
+             await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => DetailsClient(
@@ -203,9 +213,12 @@ class _ListClientState extends State<ListClient>{
                       dateEnreg : listclients.data[index].dateEnreg,
                     ),
                   ));
+             setState(() {
+               load = true;
+             });
             },
           ),
-        ),
+        ) : Center(child: CircularProgressIndicator(),),
 
 
 //        ListView.builder(
@@ -231,7 +244,7 @@ class _ListClientState extends State<ListClient>{
 //          ),
 //        ),
 
-        drawer: Drawer(
+        drawer: load ? Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
@@ -251,21 +264,31 @@ class _ListClientState extends State<ListClient>{
               ),
               ListTile(
                 title: Text('Accueil'),
-                onTap: () {
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
-                      builder: (BuildContext context){
+                      builder: (BuildContext context) {
                         return DashbordScreen();
                       },
                     ),
                   );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Nouvelle Entree'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -273,12 +296,18 @@ class _ListClientState extends State<ListClient>{
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Recherche'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -286,12 +315,19 @@ class _ListClientState extends State<ListClient>{
                       },
                     ),
                   );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Historique'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -299,12 +335,18 @@ class _ListClientState extends State<ListClient>{
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Parametre'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -312,17 +354,29 @@ class _ListClientState extends State<ListClient>{
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Deconnexion'),
-                onTap: () {
-                  _logout();
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _logout();
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
+
+
             ],
           ),
-        ),
+        ) : Center(child: CircularProgressIndicator(),),
       ),
     );
   }

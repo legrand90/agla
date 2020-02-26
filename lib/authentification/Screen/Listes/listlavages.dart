@@ -33,6 +33,7 @@ class _ListLavagesState extends State<ListLavages> {
 
   var admin;
   var idlavag;
+  bool load = true;
 
   final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
 
@@ -112,7 +113,7 @@ class _ListLavagesState extends State<ListLavages> {
         appBar: AppBar(
           title: Text('LISTE DES LAVAGES'),
         ),
-        body: ListView.separated(
+        body: load ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;
@@ -128,12 +129,18 @@ class _ListLavagesState extends State<ListLavages> {
                 IconButton(
                   icon: Icon(
                       Icons.edit),
-                  onPressed: (){
-                    Navigator.push(
+                  onPressed: ()async{
+                    setState(() {
+                      load = false;
+                    });
+                   await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => EditLavage(idLav: lavages.data [index] .id,),
                         ));
+                   setState(() {
+                     load = true;
+                   });
                   },
                 ),
 
@@ -188,15 +195,21 @@ class _ListLavagesState extends State<ListLavages> {
               ],
             ),
 
-            onTap: (){
-              Navigator.push(
+            onTap: ()async{
+              setState(() {
+                load = false;
+              });
+             await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => DetailsLavage(idlav: lavages.data[index].id),
                   ));
+             setState(() {
+               load = true;
+             });
             },
           ),
-        ),
+        ) : Center(child: CircularProgressIndicator(),),
 
 
 //        ListView.builder(
@@ -207,11 +220,11 @@ class _ListLavagesState extends State<ListLavages> {
 //          ),
 //        ),
 
-        drawer: Drawer(
+        drawer: load ? Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
-          child: ListView(
+          child: (admin == '0' || admin == '1') ? ListView(
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: <Widget>[
@@ -227,7 +240,10 @@ class _ListLavagesState extends State<ListLavages> {
               ),
               ListTile(
                 title: Text('Accueil'),
-                onTap: () {
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
@@ -236,12 +252,19 @@ class _ListLavagesState extends State<ListLavages> {
                       },
                     ),
                   );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Nouvelle Entree'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -249,12 +272,18 @@ class _ListLavagesState extends State<ListLavages> {
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Recherche'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -262,12 +291,19 @@ class _ListLavagesState extends State<ListLavages> {
                       },
                     ),
                   );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Historique'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -275,12 +311,18 @@ class _ListLavagesState extends State<ListLavages> {
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Parametre'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -288,17 +330,97 @@ class _ListLavagesState extends State<ListLavages> {
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Deconnexion'),
-                onTap: () {
-                  _logout();
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _logout();
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
+
+            ],
+          ) : ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text('$nameUser'),
+                accountEmail: Text(''),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.white,
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xff11b719),
+                ),
+              ),
+              ListTile(
+                title: Text('Accueil'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return DashbordScreen();
+                      },
+                    ),
+                  );
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+
+              ListTile(
+                title: Text('Parametre'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Register();
+                      },
+                    ),
+                  );
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+              ListTile(
+                title: Text('Deconnexion'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _logout();
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+
             ],
           ),
-        ),
+        ) : Center(child: CircularProgressIndicator(),),
 
 
       ),

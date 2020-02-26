@@ -81,6 +81,10 @@ class _EditMatriculeState extends State<EditMatricule> {
 
   bool defaultClient = false ;
 
+  bool loader = true;
+
+  bool load = true;
+
 
 
 
@@ -271,7 +275,7 @@ class _EditMatriculeState extends State<EditMatricule> {
       appBar: AppBar(
           title: Text('MODIFICATION MATRICULE')
       ),
-      body: Form(
+      body: load ? Form(
         key: _formKey,
         // autovalidate: _autoValidate,
         child: Padding(
@@ -469,15 +473,22 @@ class _EditMatriculeState extends State<EditMatricule> {
                         child: Row(
                           children: <Widget>[
                             new Expanded(
-                              child: FlatButton(
+                              child: loader ? FlatButton(
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
                                 color: Color(0xff11b719),
-                                onPressed: (){
+                                onPressed: ()async{
                                   setState(() {
-                                    UpdateMatricule();
+                                    loader = false;
                                   });
+
+                                   await UpdateMatricule();
+
+                                   setState(() {
+                                     loader = true;
+                                   });
+
 
                                 },
                                 child: new Container(
@@ -497,7 +508,7 @@ class _EditMatriculeState extends State<EditMatricule> {
                                     ],
                                   ),
                                 ),
-                              ),
+                              ) : Center(child: CircularProgressIndicator(),),
                             ),
 
                             Container(
@@ -526,9 +537,9 @@ class _EditMatriculeState extends State<EditMatricule> {
             ),
           ),
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
-      drawer: Drawer(
+      drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
         // space to fit everything.
@@ -548,7 +559,10 @@ class _EditMatriculeState extends State<EditMatricule> {
             ),
             ListTile(
               title: Text('Accueil'),
-              onTap: () {
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
@@ -557,12 +571,19 @@ class _EditMatriculeState extends State<EditMatricule> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Nouvelle Entree'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -570,12 +591,18 @@ class _EditMatriculeState extends State<EditMatricule> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Recherche'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -583,12 +610,19 @@ class _EditMatriculeState extends State<EditMatricule> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Historique'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -596,12 +630,18 @@ class _EditMatriculeState extends State<EditMatricule> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Parametre'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -609,17 +649,28 @@ class _EditMatriculeState extends State<EditMatricule> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Deconnexion'),
-              onTap: () {
-                _logout();
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _logout();
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
+
           ],
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
     );
   }

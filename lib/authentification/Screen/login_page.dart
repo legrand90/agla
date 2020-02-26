@@ -106,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
         onWillPop:() =>_onBackPressed(),
         child : Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       body: loading ? LoadingScreen(
           child: Form(
             key: _formKey,
@@ -119,17 +119,17 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      logo,
-                      SizedBox(height: 40.0),
-                      Text("Se connecter",
+                      LogoAgla(),
+                      //SizedBox(height: 5.0),
+                      Text("CONNEXION",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 16.0,
-                              color: Colors.black,
+                              color: Colors.red,
                               fontWeight: FontWeight.bold
                           )
                       ),
-                      SizedBox(height: 50.0),
+                      SizedBox(height: 20.0),
                       Padding(
                         padding: const EdgeInsets.only(left: 40.0),
                       ),
@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.grey.withOpacity(0.5),
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(30.0),
@@ -150,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                               padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                               child: Icon(
                                 Icons.email,
-                                color: Color(0xff11b719),
+                                color: Colors.red,
                               ),
                             ),
                             new Expanded(
@@ -190,7 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                               padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
                               child: Icon(
                                 Icons.lock_open,
-                                color: Color(0xff11b719),
+                                color: Colors.red,
                               ),
                             ),
                             new Expanded(
@@ -222,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                   onPressed: ()async{
                                   setState(() {
                                     loading = false;
@@ -270,7 +270,7 @@ class _LoginPageState extends State<LoginPage> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: (){
                                   _passwordForgot();
                                 },
@@ -385,6 +385,19 @@ FlatButton okButton(BuildContext context){
 
     }
 
+  }
+
+}
+
+class LogoAgla extends StatelessWidget{
+
+@override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/logoAgla.png');
+    Image image = Image(image: assetImage, width: 250.0, height: 250.0,);
+
+    return Container(child: image,);
   }
 
 }

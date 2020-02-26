@@ -32,6 +32,7 @@ class _UsersListState extends State<UsersList> {
 
   var admin ;
   var iduser ;
+  bool load = true;
 
 
   Future<dynamic> getUsers() async{
@@ -112,7 +113,7 @@ class _UsersListState extends State<UsersList> {
         appBar: AppBar(
           title: Text('LISTE DES UTILISATEURS'),
         ),
-        body: ListView.separated(
+        body: load ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;
@@ -128,12 +129,18 @@ class _UsersListState extends State<UsersList> {
                 IconButton(
                   icon: Icon(
                       Icons.edit),
-                  onPressed: (){
-                    Navigator.push(
+                  onPressed: ()async{
+                    setState(() {
+                      load = false;
+                    });
+                   await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => EditUser(idUser: listusers.data [index] .id,),
                         ));
+                    setState(() {
+                      load = true;
+                    });
                   },
                 ),
 
@@ -189,15 +196,21 @@ class _UsersListState extends State<UsersList> {
               ],
             ),
 
-            onTap: (){
-              Navigator.push(
+            onTap: () async{
+              setState(() {
+                load = false;
+              });
+            await  Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => DetailsUsers(idUser: listusers.data[index].id),
                   ));
+            setState(() {
+              load = true;
+            });
             },
           ),
-        ),
+        ) : Center(child: CircularProgressIndicator(),),
 
 
 //        ListView.builder(
@@ -208,11 +221,11 @@ class _UsersListState extends State<UsersList> {
 //          ),
 //        ),
 
-        drawer: Drawer(
+        drawer: load ? Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
-          child: ListView(
+          child: (admin == '0' || admin == '1') ? ListView(
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: <Widget>[
@@ -228,7 +241,10 @@ class _UsersListState extends State<UsersList> {
               ),
               ListTile(
                 title: Text('Accueil'),
-                onTap: () {
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
@@ -237,12 +253,19 @@ class _UsersListState extends State<UsersList> {
                       },
                     ),
                   );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Nouvelle Entree'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -250,12 +273,18 @@ class _UsersListState extends State<UsersList> {
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Recherche'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -263,12 +292,19 @@ class _UsersListState extends State<UsersList> {
                       },
                     ),
                   );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Historique'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -276,12 +312,18 @@ class _UsersListState extends State<UsersList> {
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Parametre'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -289,17 +331,97 @@ class _UsersListState extends State<UsersList> {
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Deconnexion'),
-                onTap: () {
-                  _logout();
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _logout();
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
+
+            ],
+          ) : ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text('$nameUser'),
+                accountEmail: Text(''),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.white,
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xff11b719),
+                ),
+              ),
+              ListTile(
+                title: Text('Accueil'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return DashbordScreen();
+                      },
+                    ),
+                  );
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+
+              ListTile(
+                title: Text('Parametre'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Register();
+                      },
+                    ),
+                  );
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+              ListTile(
+                title: Text('Deconnexion'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _logout();
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+
             ],
           ),
-        ),
+        ) : Center(child: CircularProgressIndicator(),),
 
 
       ),

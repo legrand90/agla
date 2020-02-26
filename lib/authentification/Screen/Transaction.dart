@@ -51,6 +51,8 @@ class _TransactionState extends State<Transaction> {
   var idmatricule ;
 
   bool loading = true;
+  bool loader = true;
+  bool load = true;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _gainAgent = TextEditingController();
@@ -320,7 +322,7 @@ class _TransactionState extends State<Transaction> {
       appBar: AppBar(
           title: Text('TRANSACTIONS')
       ),
-      body: Form(
+      body: load ? Form(
         key: _formKey,
         // autovalidate: _autoValidate,
         child: Padding(
@@ -556,17 +558,20 @@ class _TransactionState extends State<Transaction> {
                         child: Row(
                         children: <Widget>[
                             new Expanded(
-                              child: FlatButton(
+                              child: loader ? FlatButton(
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
                                 color: Color(0xff11b719),
-                                onPressed: (){
+                                onPressed: ()async{
                                   setState(() {
-                                    //widget.counter = widget.counter + 1;
-                                     //visible = false ;
-                                    _sendDataTransaction();
+                                    loader = false;
 
+                                  });
+                                  await _sendDataTransaction();
+
+                                  setState(() {
+                                    loader = true;
                                   });
 
                                 },
@@ -587,7 +592,7 @@ class _TransactionState extends State<Transaction> {
                                     ],
                                   ),
                                 ),
-                              ),
+                              ) : Center(child: CircularProgressIndicator(),),
                             ),
 
                           Container(
@@ -600,15 +605,21 @@ class _TransactionState extends State<Transaction> {
                                   borderRadius: new BorderRadius.circular(30.0)
                               ),
                               color: Color(0xff11b719),
-                              onPressed: (){
-                                 Navigator.push(
+                              onPressed: () async{
+                                setState(() {
+                                  load = false;
+                                });
+                                 await Navigator.push(
                                     context,
                                     new MaterialPageRoute(
                                       builder: (BuildContext context){
-                                        return TextList();
+                                        return ListTransaction();
                                       },
                                     ),
                                   );
+                                 setState(() {
+                                   load = true;
+                                 });
 
                               },
                               child: new Container(
@@ -647,9 +658,9 @@ class _TransactionState extends State<Transaction> {
             ),
           ),
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
-      drawer: Drawer(
+      drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
         // space to fit everything.
@@ -669,7 +680,10 @@ class _TransactionState extends State<Transaction> {
             ),
             ListTile(
               title: Text('Accueil'),
-              onTap: () {
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
@@ -678,12 +692,19 @@ class _TransactionState extends State<Transaction> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Nouvelle Entree'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -691,12 +712,18 @@ class _TransactionState extends State<Transaction> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Recherche'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -704,12 +731,19 @@ class _TransactionState extends State<Transaction> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Historique'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -717,12 +751,18 @@ class _TransactionState extends State<Transaction> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Parametre'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -730,17 +770,29 @@ class _TransactionState extends State<Transaction> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Deconnexion'),
-              onTap: () {
-                _logout();
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _logout();
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
+
+
           ],
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
     );
   }

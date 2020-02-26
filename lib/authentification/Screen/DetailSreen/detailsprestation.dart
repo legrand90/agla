@@ -36,6 +36,8 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
 
   var descrip ;
 
+  bool load = true;
+
   _DetailsPrestationState(this.idpresta);
 
   @override
@@ -56,7 +58,7 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
         appBar: AppBar(
           title: Text('DETAILS DE LA PRESTATIONS'),
         ),
-        body:ListView(
+        body: load ? ListView(
           children: <Widget>[
             SizedBox(
               height: 40.0,
@@ -85,101 +87,141 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
 //            ),
 
           ],
-        ),
+        ) : Center(child: CircularProgressIndicator(),),
 
-        drawer: Drawer(
+        drawer: load ? Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
           child: ListView(
             // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-          UserAccountsDrawerHeader(
-          accountName: Text('$nameUser'),
-          accountEmail: Text(''),
-          currentAccountPicture: CircleAvatar(
-            backgroundColor: Colors.white,
-          ),
-          decoration: BoxDecoration(
-            color: Color(0xff11b719),
-          ),
-        ),
-        ListTile(
-          title: Text('Accueil'),
-          onTap: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return DashbordScreen();
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text('$nameUser'),
+                accountEmail: Text(''),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.white,
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xff11b719),
+                ),
+              ),
+              ListTile(
+                title: Text('Accueil'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return DashbordScreen();
+                      },
+                    ),
+                  );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
-            );
-          },
-        ),
-        ListTile(
-          title: Text('Nouvelle Entree'),
-          onTap: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return Transaction();
+              ListTile(
+                title: Text('Nouvelle Entree'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Transaction();
+                      },
+                    ),
+                  );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
-            );
-          },
-        ),
-        ListTile(
-          title: Text('Recherche'),
-          onTap: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return ClientPage();
+              ListTile(
+                title: Text('Recherche'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return ClientPage();
+                      },
+                    ),
+                  );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
-            );
-          },
-        ),
-        ListTile(
-          title: Text('Historique'),
-          onTap: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return Historique();
+              ListTile(
+                title: Text('Historique'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Historique();
+                      },
+                    ),
+                  );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
-            );
-          },
-        ),
-        ListTile(
-          title: Text('Parametre'),
-          onTap: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return Register();
+              ListTile(
+                title: Text('Parametre'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Register();
+                      },
+                    ),
+                  );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
-            );
-          },
-        ),
-        ListTile(
-          title: Text('Deconnexion'),
-          onTap: () {
-            _logout();
-          },
-        ),
+              ListTile(
+                title: Text('Deconnexion'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _logout();
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
 
 
-      ]),
-    ))
+            ],
+          ),
+        ) : Center(child: CircularProgressIndicator(),),)
     );
   }
 

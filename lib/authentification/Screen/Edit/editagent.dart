@@ -51,6 +51,8 @@ class _EditAgentState extends State<EditAgent> {
 
   bool _autoValidate = false;
   bool _loadingVisible = false;
+  bool loading = true;
+  bool load = true;
 
   // Listagents listagents = Listagents ()  ;
 
@@ -181,7 +183,7 @@ class _EditAgentState extends State<EditAgent> {
       appBar: AppBar(
         title: Text('MODIFICATION AGENT'),
       ),
-      body: Form(
+      body: load ? Form(
         key: _formKey,
         autovalidate: _autoValidate,
         child: Padding(
@@ -370,13 +372,20 @@ class _EditAgentState extends State<EditAgent> {
                         child: Row(
                           children: <Widget>[
                             new Expanded(
-                              child: FlatButton(
+                              child: loading ? FlatButton(
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
                                 color: Color(0xff11b719),
-                                onPressed: (){
-                                  UpdateAgent();
+                                onPressed: ()async{
+                                  setState(() {
+                                    loading = false;
+                                  });
+                                  await UpdateAgent();
+
+                                  setState(() {
+                                    loading = true;
+                                  });
                                 },
                                 child: new Container(
                                   child: new Row(
@@ -395,7 +404,7 @@ class _EditAgentState extends State<EditAgent> {
                                     ],
                                   ),
                                 ),
-                              ),
+                              ) : Center(child: CircularProgressIndicator(),),
                             )
                           ],
                         ),
@@ -413,9 +422,9 @@ class _EditAgentState extends State<EditAgent> {
             ),
           ),
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
-      drawer: Drawer(
+      drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
         // space to fit everything.
@@ -435,7 +444,10 @@ class _EditAgentState extends State<EditAgent> {
             ),
             ListTile(
               title: Text('Accueil'),
-              onTap: () {
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
@@ -444,12 +456,19 @@ class _EditAgentState extends State<EditAgent> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Nouvelle Entree'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -457,12 +476,18 @@ class _EditAgentState extends State<EditAgent> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Recherche'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -470,12 +495,19 @@ class _EditAgentState extends State<EditAgent> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Historique'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -483,12 +515,18 @@ class _EditAgentState extends State<EditAgent> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Parametre'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -496,17 +534,29 @@ class _EditAgentState extends State<EditAgent> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Deconnexion'),
-              onTap: () {
-                _logout();
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _logout();
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
+
+
           ],
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
     );
   }

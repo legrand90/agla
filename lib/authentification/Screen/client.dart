@@ -40,6 +40,8 @@ class _ClientState extends State<Client> {
   String matricule;
   var idClient = 0;
   bool success = false;
+  bool loading = true;
+  bool load = true;
   String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
 
 
@@ -54,7 +56,7 @@ class _ClientState extends State<Client> {
     var id = localStorage.getString('id_lavage');
 
 
-    var res = await CallApi().getData('couleur/$id');
+    var res = await CallApi().getData('couleur');
     //final res = await http.get(Uri.encodeFull(urlCouleur), headers: {"Accept": "application/json","Content-type" : "application/json",});
 
 
@@ -74,7 +76,7 @@ class _ClientState extends State<Client> {
     var id = localStorage.getString('id_lavage');
 
 
-    var res = await CallApi().getData('marque/$id');
+    var res = await CallApi().getData('marque');
     //final res = await http.get(Uri.encodeFull(urlMarque), headers: {"Accept": "application/json","Content-type" : "application/json",});
 
     if(res.statusCode == 200) {
@@ -161,7 +163,7 @@ class _ClientState extends State<Client> {
       appBar: AppBar(
         title: Text('CLIENT'),
       ),
-      body: Form(
+      body: load ? Form(
         key: _formKey,
         //autovalidate: _autoValidate,
         child: Padding(
@@ -421,13 +423,21 @@ class _ClientState extends State<Client> {
                         child: Row(
                           children: <Widget>[
                             new Expanded(
-                              child: FlatButton(
+                              child: loading ? FlatButton(
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
                                 color: Color(0xff11b719),
-                                onPressed: (){
-                                  checkMatriculeAndContact();
+                                onPressed: ()async{
+                                  setState(() {
+                                    loading = false;
+                                  });
+
+                                  await checkMatriculeAndContact();
+
+                                  setState(() {
+                                    loading = true;
+                                  });
 
                                     //_sendDataClient();
                                     //_sendDataMatricule();
@@ -449,7 +459,7 @@ class _ClientState extends State<Client> {
                                     ],
                                   ),
                                 ),
-                              ),
+                              ) : Center(child: CircularProgressIndicator(),),
                             )
                           ],
                         ),
@@ -483,8 +493,11 @@ class _ClientState extends State<Client> {
                                     ),
                                   ),
                                 ),
-                                onPressed: () {
-                                  Navigator.push(
+                                onPressed: () async{
+                                  setState(() {
+                                    load = false;
+                                  });
+                                 await Navigator.push(
                                     context,
                                     new MaterialPageRoute(
                                       builder: (BuildContext context) {
@@ -492,6 +505,10 @@ class _ClientState extends State<Client> {
                                       },
                                     ),
                                   );
+
+                                 setState(() {
+                                   load = true;
+                                 });
                                 },
                               ),
                             )
@@ -506,9 +523,9 @@ class _ClientState extends State<Client> {
             ),
           ),
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
-      drawer: Drawer(
+      drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
         // space to fit everything.
@@ -528,7 +545,10 @@ class _ClientState extends State<Client> {
             ),
             ListTile(
               title: Text('Accueil'),
-              onTap: () {
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
@@ -537,25 +557,38 @@ class _ClientState extends State<Client> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Nouvelle Entree'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
-                    builder: (BuildContext context){
+                    builder: (BuildContext context) {
                       return Transaction();
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Recherche'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -563,12 +596,19 @@ class _ClientState extends State<Client> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Historique'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -576,12 +616,18 @@ class _ClientState extends State<Client> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Parametre'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -589,17 +635,29 @@ class _ClientState extends State<Client> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Deconnexion'),
-              onTap: () {
-                _logout();
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _logout();
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
+
+
           ],
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
     );
   }

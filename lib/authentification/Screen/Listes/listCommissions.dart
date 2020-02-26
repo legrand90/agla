@@ -33,6 +33,8 @@ class _CommissionListState extends State<CommissionList> {
 
   _CommissionListState(this.listagents);
 
+  bool load = true;
+
 
   //String url = "http://192.168.43.217:8000/api/agent";
 
@@ -68,7 +70,7 @@ class _CommissionListState extends State<CommissionList> {
         appBar: AppBar(
           title: Text('LISTE DES AGENTS'),
         ),
-        body: ListView.separated(
+        body: load ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;
@@ -78,17 +80,23 @@ class _CommissionListState extends State<CommissionList> {
           itemCount: (listagents == null || listagents.data == null || listagents.data.length == 0 )? 0 : listagents.data.length,
           itemBuilder: (_,int index)=>ListTile(
             title: Text(listagents.data [index] .nom),
-            onTap: (){
-              Navigator.push(
+            onTap: ()async{
+              setState(() {
+                load = false;
+              });
+             await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => DetailsCommissions(idagent : listagents.data[index].id),
                   ));
+             setState(() {
+               load = true;
+             });
             },
           ),
-        ),
+        ) : Center(child: CircularProgressIndicator(),),
 
-        drawer: Drawer(
+        drawer: load ? Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
@@ -108,7 +116,10 @@ class _CommissionListState extends State<CommissionList> {
               ),
               ListTile(
                 title: Text('Accueil'),
-                onTap: () {
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
@@ -117,12 +128,19 @@ class _CommissionListState extends State<CommissionList> {
                       },
                     ),
                   );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Nouvelle Entree'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -130,12 +148,18 @@ class _CommissionListState extends State<CommissionList> {
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Recherche'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -143,12 +167,19 @@ class _CommissionListState extends State<CommissionList> {
                       },
                     ),
                   );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Historique'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -156,12 +187,18 @@ class _CommissionListState extends State<CommissionList> {
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Parametre'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -169,17 +206,29 @@ class _CommissionListState extends State<CommissionList> {
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Deconnexion'),
-                onTap: () {
-                  _logout();
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _logout();
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
+
+
             ],
           ),
-        ),
+        ) : Center(child: CircularProgressIndicator(),),
 
 
       ),

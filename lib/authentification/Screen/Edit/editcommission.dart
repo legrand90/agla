@@ -60,6 +60,9 @@ class _EditCommissionState extends State<EditCommission> {
 
   bool defaultPrestMontant = false ;
 
+  bool loading = true;
+  bool load = true;
+
 
   Future<String> getAgent() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -232,7 +235,7 @@ class _EditCommissionState extends State<EditCommission> {
         title: Text('COMMSSION'),
       ),
       backgroundColor: Color(0xFFDADADA),
-      body: Form(
+      body: load ? Form(
         key: _formKey,
         // autovalidate: _autoValidate,
         child: Padding(
@@ -370,14 +373,21 @@ class _EditCommissionState extends State<EditCommission> {
                         child: Row(
                           children: <Widget>[
                             new Expanded(
-                              child:  FlatButton(
+                              child:  loading ? FlatButton(
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
                                 color: Color(0xff11b719),
-                                onPressed: (){
+                                onPressed: ()async{
+                                  setState(() {
+                                    loading = false;
+                                  });
 
-                                  UpdateCommission();
+                                  await UpdateCommission();
+
+                                  setState(() {
+                                    loading = true;
+                                  });
                                 } ,
 
 
@@ -398,7 +408,7 @@ class _EditCommissionState extends State<EditCommission> {
                                     ],
                                   ),
                                 ),
-                              ),
+                              ) : Center(child: CircularProgressIndicator(),),
                             )
                           ],
                         ),
@@ -418,8 +428,9 @@ class _EditCommissionState extends State<EditCommission> {
             ),
           ),
         ),
-      ),
-      drawer: Drawer(
+      ) : Center(child: CircularProgressIndicator(),),
+
+      drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
         // space to fit everything.
@@ -439,7 +450,10 @@ class _EditCommissionState extends State<EditCommission> {
             ),
             ListTile(
               title: Text('Accueil'),
-              onTap: () {
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
@@ -448,12 +462,19 @@ class _EditCommissionState extends State<EditCommission> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Nouvelle Entree'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -461,12 +482,18 @@ class _EditCommissionState extends State<EditCommission> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Recherche'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -474,12 +501,19 @@ class _EditCommissionState extends State<EditCommission> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Historique'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -487,12 +521,18 @@ class _EditCommissionState extends State<EditCommission> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Parametre'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -500,17 +540,29 @@ class _EditCommissionState extends State<EditCommission> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Deconnexion'),
-              onTap: () {
-                _logout();
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _logout();
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
+
+
           ],
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
     );
   }

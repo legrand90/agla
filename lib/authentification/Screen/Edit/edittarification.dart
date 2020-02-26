@@ -49,6 +49,10 @@ class _EditTarificationState extends State<EditTarification> {
 
   bool defaultPresta = false ;
 
+  bool loading = true;
+
+  bool load = true;
+
 
 
 
@@ -194,7 +198,7 @@ class _EditTarificationState extends State<EditTarification> {
       appBar: AppBar(
         title: Text('TARIFICATION'),
       ),
-      body: Form(
+      body: load ? Form(
         key: _formKey,
         //autovalidate: _autoValidate,
         child: Padding(
@@ -310,14 +314,21 @@ class _EditTarificationState extends State<EditTarification> {
                         child: Row(
                           children: <Widget>[
                             new Expanded(
-                              child: FlatButton(
+                              child: loading ? FlatButton(
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(
                                         30.0)
                                 ),
                                 color: Color(0xff11b719),
-                                onPressed: () {
-                                  UpdateTarification();
+                                onPressed: () async{
+                                  setState(() {
+                                    loading = false;
+                                  });
+                                  await UpdateTarification();
+
+                                  setState(() {
+                                    loading = true;
+                                  });
                                 },
                                 child: new Container(
                                   child: new Row(
@@ -336,7 +347,7 @@ class _EditTarificationState extends State<EditTarification> {
                                     ],
                                   ),
                                 ),
-                              ),
+                              ) : Center(child: CircularProgressIndicator(),),
                             )
                           ],
                         ),
@@ -354,9 +365,9 @@ class _EditTarificationState extends State<EditTarification> {
             ),
           ),
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
-      drawer: Drawer(
+      drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
         // space to fit everything.
@@ -376,7 +387,10 @@ class _EditTarificationState extends State<EditTarification> {
             ),
             ListTile(
               title: Text('Accueil'),
-              onTap: () {
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
@@ -385,12 +399,19 @@ class _EditTarificationState extends State<EditTarification> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Nouvelle Entree'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -398,12 +419,18 @@ class _EditTarificationState extends State<EditTarification> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Recherche'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -411,12 +438,19 @@ class _EditTarificationState extends State<EditTarification> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Historique'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -424,12 +458,18 @@ class _EditTarificationState extends State<EditTarification> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Parametre'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -437,17 +477,29 @@ class _EditTarificationState extends State<EditTarification> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Deconnexion'),
-              onTap: () {
-                _logout();
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _logout();
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
+
+
           ],
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
     );
   }

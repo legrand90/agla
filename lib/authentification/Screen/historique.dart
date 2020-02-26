@@ -43,6 +43,7 @@ class _HistoriqueState extends State<Historique>{
   var admin;
   var idcli;
   var idtrans;
+  bool load = true;
 
 
   Future<dynamic> getPost() async{
@@ -55,7 +56,7 @@ class _HistoriqueState extends State<Historique>{
     // final response = await http.get('$url');
 
     setState(() {
-      listclients = listclientsFromJson(res.body);
+      //listclients = listclientsFromJson(res.body);
       listtransac = listtransactionsFromJson(res.body);
     });
     return listclients;
@@ -63,7 +64,7 @@ class _HistoriqueState extends State<Historique>{
 
   final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
 
-  _showMsg(msg) {
+   _showMsg(msg) {
     final snackBar = SnackBar(
         content: Text(msg),
         action: SnackBarAction(
@@ -90,21 +91,41 @@ class _HistoriqueState extends State<Historique>{
       // onWillPop: _onBackPressed,
       child:Scaffold(
         key: _scaffoldKey,
-        backgroundColor: Colors.grey[200],
-        appBar: AppBar(
-          title: Text('HISTORIQUE'),
+       // backgroundColor: Colors.grey[200],
+        body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+      return <Widget>[
+        new SliverAppBar(
+          pinned: true,
+          title: new Text('HISTORIQUE'),
         ),
-        body: ListView.separated(
-          separatorBuilder: (BuildContext context, int index){
+      ];
+    },
+          //title: Text('HISTORIQUE'),
+        body: ListView(
+            scrollDirection: Axis.vertical,
 
-            //indexItem = index;
+            children: <Widget>[
 
-            return Divider();
-          },
+              SizedBox(height: 50.0,),
+
+              Container(child: Text('LISTE DES TRANSACTIONS', textAlign: TextAlign.center),),
+
+              SizedBox(height: 50.0,),
+
+              Container(
+
+                height: 800.0,
+
+                  child:
+
+            ListView.builder(
+
           itemCount: (listtransac == null || listtransac.data == null || listtransac.data.length == 0 )? 0 : listtransac.data.length,
-          itemBuilder: (_,int index)=>ListTile(
-              title: ListView(
-                shrinkWrap: true,
+          itemBuilder: (_,int index)=>Container(
+              child:Card(child:ListTile(
+              title: Column(
+                //shrinkWrap: true,
                 children: <Widget>[
                   Row(
                     children: <Widget>[
@@ -120,8 +141,8 @@ class _HistoriqueState extends State<Historique>{
 
                 ],
               )
-          ),
-        ),
+          ), color: Color(0xff11b719),),
+        )))]),
 
 //        ListView.builder(
 //          itemCount: (listclients == null || listclients.data == null || listclients.data.length == 0 )? 0 : listclients.data.length,
@@ -146,99 +167,142 @@ class _HistoriqueState extends State<Historique>{
 //          ),
 //        ),
 
-        drawer: Drawer(
+        ),
+        drawer: load ? Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
           child: ListView(
             // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-          UserAccountsDrawerHeader(
-          accountName: Text('$nameUser'),
-          accountEmail: Text(''),
-          currentAccountPicture: CircleAvatar(
-            backgroundColor: Colors.white,
-          ),
-          decoration: BoxDecoration(
-            color: Color(0xff11b719),
-          ),
-        ),
-        ListTile(
-          title: Text('Accueil'),
-          onTap: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return DashbordScreen();
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text('$nameUser'),
+                accountEmail: Text(''),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.white,
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xff11b719),
+                ),
+              ),
+              ListTile(
+                title: Text('Accueil'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return DashbordScreen();
+                      },
+                    ),
+                  );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
-            );
-          },
-        ),
-        ListTile(
-          title: Text('Nouvelle Entree'),
-          onTap: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return Transaction();
+              ListTile(
+                title: Text('Nouvelle Entree'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Transaction();
+                      },
+                    ),
+                  );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
-            );
-          },
-        ),
-        ListTile(
-          title: Text('Recherche'),
-          onTap: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return ClientPage();
+              ListTile(
+                title: Text('Recherche'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return ClientPage();
+                      },
+                    ),
+                  );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
-            );
-          },
-        ),
-        ListTile(
-          title: Text('Historique'),
-          onTap: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return Historique();
+              ListTile(
+                title: Text('Historique'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Historique();
+                      },
+                    ),
+                  );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
-            );
-          },
-        ),
-        ListTile(
-          title: Text('Parametre'),
-          onTap: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return Register();
+              ListTile(
+                title: Text('Parametre'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Register();
+                      },
+                    ),
+                  );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
-            );
-          },
-        ),
-        ListTile(
-          title: Text('Deconnexion'),
-          onTap: () {
-            _logout();
-          },
-        ),
+              ListTile(
+                title: Text('Deconnexion'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _logout();
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
 
 
-      ]),
-    )));
+            ],
+          ),
+        ) : Center(child: CircularProgressIndicator(),),
+      )
+    );
   }
 
   void _logout() async{

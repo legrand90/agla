@@ -42,6 +42,7 @@ class _ListCouleurState extends State<ListCouleur> {
 
   var indexItem;
   var admin;
+  bool load = true;
 
 
   //String url = "http://192.168.43.217:8000/api/couleur";
@@ -52,7 +53,7 @@ class _ListCouleurState extends State<ListCouleur> {
     var id = localStorage.getString('id_lavage');
 
 
-    var res = await CallApi().getData('couleur/$id');
+    var res = await CallApi().getData('couleur');
    // final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
     // var resBody = json.decode(res.body)['data'];
     // final response = await http.get('$url');
@@ -66,7 +67,7 @@ class _ListCouleurState extends State<ListCouleur> {
   void DeleteCouleur() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
-    var res = await CallApi().postDataDelete('delete_couleur/$idcolor/$id');
+    var res = await CallApi().postDataDelete('delete_couleur/$idcolor');
 //    if (res.statusCode == 200) {
 //      _showMsg('Donnees supprimees avec succes');
 //
@@ -119,7 +120,7 @@ class _ListCouleurState extends State<ListCouleur> {
         appBar: AppBar(
           title: Text('LISTE DES COULEURS'),
         ),
-        body: ListView.separated(
+        body: load ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
               //indexItem = index;
@@ -135,12 +136,18 @@ class _ListCouleurState extends State<ListCouleur> {
                 IconButton(
                   icon: Icon(
                       Icons.edit),
-                onPressed: (){
-              Navigator.push(
+                onPressed: ()async{
+                    setState(() {
+                      load = false;
+                    });
+             await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => EditCouleur(idcouleur: listcolor.data [index] .id,),
                   ));
+             setState(() {
+               load = true;
+             });
             },
                 ),
 
@@ -197,13 +204,13 @@ class _ListCouleurState extends State<ListCouleur> {
             )
 
           ),
-        ),
+        ) : Center(child: CircularProgressIndicator(),),
 
-        drawer: Drawer(
+        drawer: load ? Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
-          child: ListView(
+          child: (admin == '0' || admin == '1') ? ListView(
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: <Widget>[
@@ -219,7 +226,10 @@ class _ListCouleurState extends State<ListCouleur> {
               ),
               ListTile(
                 title: Text('Accueil'),
-                onTap: () {
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
@@ -228,12 +238,19 @@ class _ListCouleurState extends State<ListCouleur> {
                       },
                     ),
                   );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Nouvelle Entree'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -241,12 +258,18 @@ class _ListCouleurState extends State<ListCouleur> {
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Recherche'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -254,12 +277,19 @@ class _ListCouleurState extends State<ListCouleur> {
                       },
                     ),
                   );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Historique'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -267,12 +297,18 @@ class _ListCouleurState extends State<ListCouleur> {
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Parametre'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -280,17 +316,97 @@ class _ListCouleurState extends State<ListCouleur> {
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Deconnexion'),
-                onTap: () {
-                  _logout();
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _logout();
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
+
+            ],
+          ) : ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text('$nameUser'),
+                accountEmail: Text(''),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.white,
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xff11b719),
+                ),
+              ),
+              ListTile(
+                title: Text('Accueil'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return DashbordScreen();
+                      },
+                    ),
+                  );
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+
+              ListTile(
+                title: Text('Parametre'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Register();
+                      },
+                    ),
+                  );
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+              ListTile(
+                title: Text('Deconnexion'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _logout();
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+
             ],
           ),
-        ),
+        ) : Center(child: CircularProgressIndicator(),),
 
 
       ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -27,6 +28,8 @@ class _ListTransactionState extends State<ListTransaction> {
   bool toggle = false;
   var affiche = false;
 
+  Listtransactions listtransa = Listtransactions();
+
   void getTransactions() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
@@ -43,7 +46,7 @@ class _ListTransactionState extends State<ListTransaction> {
       var resBody = json.decode(res.body)['data'];
 
       setState(() {
-        json2 = resBody;
+        listtransa = listtransactionsFromJson(res.body);
         toggle = true;
         affiche = true;
 
@@ -51,7 +54,7 @@ class _ListTransactionState extends State<ListTransaction> {
     }
 
 
-    print('donnees json : $json2');
+    print('donnees json : $listtransa');
 
   }
 
@@ -63,7 +66,7 @@ class _ListTransactionState extends State<ListTransaction> {
   void getRecette() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
-   // String url = "http://192.168.43.217:8000/api/getCommissionsAndRecette/$date/$id";
+    // String url = "http://192.168.43.217:8000/api/getCommissionsAndRecette/$date/$id";
     var res = await CallApi().getData('getCommissionsAndRecette/$date/$id');
     //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
     var resBody = json.decode(res.body);
@@ -78,190 +81,254 @@ class _ListTransactionState extends State<ListTransaction> {
     //print("la recette est  : ${recette['recette']}");
 
   }
-    @override
-    void initState(){
-      super.initState();
-      this.getRecette();
-      this.getUserName();
-      this.getTransactions();
-    }
-    Widget build(BuildContext context){
-      var json = json2;
 
-      //SystemChrome.setPreferredOrientations([
-       // DeviceOrientation.landscapeLeft,
-       // DeviceOrientation.landscapeRight
-      //]);
+  final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
 
-        return Scaffold(
-            backgroundColor: Color(0xFFDADADA),
-            appBar: AppBar(
-              title: Text('LISTES DES TRANSACTIONS'),
-            ),
-            body: affiche ? ListView(
-              children: <Widget>[
-                SizedBox(height: 40.0,),
-                Container(
-                  margin: EdgeInsets.only(left: 20.0,),
-                  child: Text("TOTAL TARIFICATIONS : $totalTarif FCFA"),
+  _showMsg(msg) {
+    final snackBar = SnackBar(
+        content: Text(msg),
+        action: SnackBarAction(
+          label: 'Fermer',
+          onPressed: () {
+
+          },
+        )
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    this.getRecette();
+    this.getUserName();
+    this.getTransactions();
+  }
+  Widget build(BuildContext context){
+    var json = json2;
+
+    //SystemChrome.setPreferredOrientations([
+    // DeviceOrientation.landscapeLeft,
+    // DeviceOrientation.landscapeRight
+    //]);
+
+    return Scaffold(
+        key: _scaffoldKey,
+        //ackgroundColor: Color(0xFFDADADA),
+        body: NestedScrollView(
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                new SliverAppBar(
+                  pinned: true,
+                  title: new Text('LISTES DES TRANSACTIONS'),
                 ),
+              ];
+            },
+            body:ListView(
+              //shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                children: <Widget>[
+                  SizedBox(height: 40.0,),
+                  Container(
+                    margin: EdgeInsets.only(left: 20.0,),
+                    child: Text("TOTAL TARIFICATIONS : $totalTarif FCFA"),
+                  ),
 
-                SizedBox(height: 40.0,),
-                Container(
-                  margin: EdgeInsets.only(left: 15.0,),
-                  child: Text("TOTAL COMMISSIONS : $commissions FCFA"),
-                ),
+                  SizedBox(height: 40.0,),
+                  Container(
+                    margin: EdgeInsets.only(left: 15.0,),
+                    child: Text("TOTAL COMMISSIONS : $commissions FCFA"),
+                  ),
 
-                SizedBox(height: 40.0,),
-                Container(
-                  margin: EdgeInsets.only(left: 15.0,),
-                  child: Text("RECETTE : $recette FCFA"),
-                ),
+                  SizedBox(height: 40.0,),
+                  Container(
+                    margin: EdgeInsets.only(left: 15.0,),
+                    child: Text("RECETTE : $recette FCFA"),
+                  ),
 
-                SizedBox(height: 40.0,),
-                toggle ? JsonTable(json,
-                  tableHeaderBuilder: (String header) {
-                    return
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10.0),
-                        decoration: BoxDecoration(
-                            border: Border.all(width: 1.5),
-                            color: Colors.grey[300]),
-                        child: Text(
-                          header,
-                          textAlign: TextAlign.center,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .display1
-                              .copyWith(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 20.0,
-                              color: Colors.blue),
+                  SizedBox(height: 40.0,),
+
+                  Container(
+                      height: 500.0,
+                      child:
+
+                      ListView.builder(
+                        // shrinkWrap: true,
+                        //  physics: ClampingScrollPhysics(),
+                        itemCount: (listtransa == null || listtransa.data == null || listtransa.data.length == 0 )? 0 : listtransa.data.length,
+                        itemBuilder: (_,int index)=>Container(
+                            child : Card(child :ListTile(
+                              title: Column(
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      Text('DATE : '),
+                                      SizedBox(width: 20.0,),
+                                      Text('${listtransa.data [index].date}'),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Row(
+                                    children: <Widget>[
+                                      Text('AGENT : '),
+                                      SizedBox(width: 20.0,),
+                                      Text('${listtransa.data [index].agent}'),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Row(
+                                    children: <Widget>[
+                                      Text('CLIENT : '),
+                                      SizedBox(width: 20.0,),
+                                      Text('${listtransa.data [index].client}'),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Row(
+                                    children: <Widget>[
+                                      Text('PLAQUE D\'IMMATRICULATION : '),
+                                      SizedBox(width: 20.0,),
+                                      Text('${listtransa.data [index].plaqueImmatriculation}'),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Row(
+                                    children: <Widget>[
+                                      Text('PRESTATION : '),
+                                      SizedBox(width: 20.0,),
+                                      Text('${listtransa.data [index].prestation}'),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Row(
+                                    children: <Widget>[
+                                      Text('TARIFICATION : '),
+                                      SizedBox(width: 20.0,),
+                                      Text('${listtransa.data [index].tarification}'),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Row(
+                                    children: <Widget>[
+                                      Text('COMMISSION : '),
+                                      SizedBox(width: 20.0,),
+                                      Text('${listtransa.data [index].commission}'),
+                                    ],
+                                  ),
+                                  // SizedBox(height: 20.0,),
+                                  // Divider(color: Colors.white, height: 10.0,),
+                                ],
+                              ),
+
+
+
+//                onTap: (){
+////                  Navigator.push(
+////                      context,
+////                      MaterialPageRoute(
+////                        builder: (context) => DetailsPrestation(idpresta: listprestations.data[index].id),
+////                      ));
+//                },
+                            ), color: Color(0xff11b719),)
                         ),
-                      );
-                  },
-                  tableCellBuilder: (value) {
-                    return Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 4.0, vertical: 10.0),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              width: 1.0,
-                              color: Colors.grey.withOpacity(0.5))),
-                      child: Text(
-                        value,
-                        textAlign: TextAlign.center,
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .display1
-                            .copyWith(
-                            fontSize: 18.0, color: Colors.grey[900]),
+                      ))
+
+                ])
+        ) ,
+        drawer: Drawer(
+          // Add a ListView to the drawer. This ensures the user can scroll
+          // through the options in the drawer if there isn't enough vertical
+          // space to fit everything.
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                UserAccountsDrawerHeader(
+                  accountName: Text('$nameUser'),
+                  accountEmail: Text(''),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundColor: Colors.white,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xff11b719),
+                  ),
+                ),
+                ListTile(
+                  title: Text('Accueil'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return DashbordScreen();
+                        },
                       ),
                     );
                   },
-                  allowRowHighlight: true,
-                  rowHighlightColor: Colors.yellow[500].withOpacity(0.7),
-
-                ) : CircularProgressIndicator(),
-              ],
-            ) : Text(" "),
-          drawer: Drawer(
-            // Add a ListView to the drawer. This ensures the user can scroll
-            // through the options in the drawer if there isn't enough vertical
-            // space to fit everything.
-            child: ListView(
-              // Important: Remove any padding from the ListView.
-                padding: EdgeInsets.zero,
-                children: <Widget>[
-            UserAccountsDrawerHeader(
-            accountName: Text('$nameUser'),
-            accountEmail: Text(''),
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.white,
-            ),
-            decoration: BoxDecoration(
-              color: Color(0xff11b719),
-            ),
-          ),
-          ListTile(
-            title: Text('Accueil'),
-            onTap: () {
-              Navigator.push(
-                context,
-                new MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return DashbordScreen();
+                ),
+                ListTile(
+                  title: Text('Nouvelle Entree'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context){
+                          return Transaction();
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
-          ),
-          ListTile(
-            title: Text('Nouvelle Entree'),
-            onTap: () {
-              Navigator.push(
-                context,
-                new MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return Transaction();
+                ListTile(
+                  title: Text('Recherche'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return ClientPage();
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
-          ),
-          ListTile(
-            title: Text('Recherche'),
-            onTap: () {
-              Navigator.push(
-                context,
-                new MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return ClientPage();
+                ListTile(
+                  title: Text('Historique'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return Historique();
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
-          ),
-          ListTile(
-            title: Text('Historique'),
-            onTap: () {
-              Navigator.push(
-                context,
-                new MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return Historique();
+                ListTile(
+                  title: Text('Parametre'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return Register();
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
-          ),
-          ListTile(
-            title: Text('Parametre'),
-            onTap: () {
-              Navigator.push(
-                context,
-                new MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return Register();
+                ListTile(
+                  title: Text('Deconnexion'),
+                  onTap: () {
+                    //_logout();
                   },
                 ),
-              );
-            },
-          ),
-          ListTile(
-            title: Text('Deconnexion'),
-            onTap: () {
-              //_logout();
-            },
-          ),
-        ]),
+              ]),
 
         ));
 
-    }
+  }
 
   void _logout() async{
     var res = await CallApi().getData('logout');
@@ -296,5 +363,5 @@ class _ListTransactionState extends State<ListTransaction> {
     //print('la valeur de admin est : $admin');
 
   }
-  }
+}
 

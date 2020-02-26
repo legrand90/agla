@@ -34,6 +34,7 @@ class _DetailsUsersState extends State<DetailsUsers> {
   var contactUrgence ;
   var quartier ;
   var dateEnreg ;
+  bool load = true;
 
   _DetailsUsersState(this.idUser);
 
@@ -54,7 +55,7 @@ class _DetailsUsersState extends State<DetailsUsers> {
             appBar: AppBar(
               title: Text('DETAILS AGENT'),
             ),
-            body:ListView(
+            body: load ? ListView(
               children: <Widget>[
 
                 SizedBox(
@@ -120,100 +121,210 @@ class _DetailsUsersState extends State<DetailsUsers> {
 
 
               ],
+            ) : Center(child: CircularProgressIndicator(),),
+
+          drawer: load ? Drawer(
+            // Add a ListView to the drawer. This ensures the user can scroll
+            // through the options in the drawer if there isn't enough vertical
+            // space to fit everything.
+            child: (admin2 == '0' || admin2 == '1') ? ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                UserAccountsDrawerHeader(
+                  accountName: Text('$nameUser'),
+                  accountEmail: Text(''),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundColor: Colors.white,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xff11b719),
+                  ),
+                ),
+                ListTile(
+                  title: Text('Accueil'),
+                  onTap: () async{
+                    setState(() {
+                      load = false;
+                    });
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return DashbordScreen();
+                        },
+                      ),
+                    );
+
+                    setState(() {
+                      load = true;
+                    });
+                  },
+                ),
+                ListTile(
+                  title: Text('Nouvelle Entree'),
+                  onTap: () async{
+                    setState(() {
+                      load = false;
+                    });
+                    await Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return Transaction();
+                        },
+                      ),
+                    );
+                    setState(() {
+                      load = true;
+                    });
+                  },
+                ),
+                ListTile(
+                  title: Text('Recherche'),
+                  onTap: () async{
+                    setState(() {
+                      load = false;
+                    });
+                    await Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return ClientPage();
+                        },
+                      ),
+                    );
+
+                    setState(() {
+                      load = true;
+                    });
+                  },
+                ),
+                ListTile(
+                  title: Text('Historique'),
+                  onTap: () async{
+                    setState(() {
+                      load = false;
+                    });
+                    await Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return Historique();
+                        },
+                      ),
+                    );
+                    setState(() {
+                      load = true;
+                    });
+                  },
+                ),
+                ListTile(
+                  title: Text('Parametre'),
+                  onTap: () async{
+                    setState(() {
+                      load = false;
+                    });
+                    await Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return Register();
+                        },
+                      ),
+                    );
+                    setState(() {
+                      load = true;
+                    });
+                  },
+                ),
+                ListTile(
+                  title: Text('Deconnexion'),
+                  onTap: () async{
+                    setState(() {
+                      load = false;
+                    });
+                    await _logout();
+
+                    setState(() {
+                      load = true;
+                    });
+                  },
+                ),
+
+              ],
+            ) : ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                UserAccountsDrawerHeader(
+                  accountName: Text('$nameUser'),
+                  accountEmail: Text(''),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundColor: Colors.white,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xff11b719),
+                  ),
+                ),
+                ListTile(
+                  title: Text('Accueil'),
+                  onTap: () async{
+                    setState(() {
+                      load = false;
+                    });
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return DashbordScreen();
+                        },
+                      ),
+                    );
+
+                    setState(() {
+                      load = true;
+                    });
+                  },
+                ),
+
+                ListTile(
+                  title: Text('Parametre'),
+                  onTap: () async{
+                    setState(() {
+                      load = false;
+                    });
+                    await Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return Register();
+                        },
+                      ),
+                    );
+                    setState(() {
+                      load = true;
+                    });
+                  },
+                ),
+                ListTile(
+                  title: Text('Deconnexion'),
+                  onTap: () async{
+                    setState(() {
+                      load = false;
+                    });
+                    await _logout();
+
+                    setState(() {
+                      load = true;
+                    });
+                  },
+                ),
+
+              ],
             ),
-
-            drawer: Drawer(
-              // Add a ListView to the drawer. This ensures the user can scroll
-              // through the options in the drawer if there isn't enough vertical
-              // space to fit everything.
-              child: ListView(
-                // Important: Remove any padding from the ListView.
-                  padding: EdgeInsets.zero,
-                  children: <Widget>[
-                    UserAccountsDrawerHeader(
-                      accountName: Text('$nameUser'),
-                      accountEmail: Text(''),
-                      currentAccountPicture: CircleAvatar(
-                        backgroundColor: Colors.white,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Color(0xff11b719),
-                      ),
-                    ),
-                    ListTile(
-                      title: Text('Accueil'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return DashbordScreen();
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      title: Text('Nouvelle Entree'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return Transaction();
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      title: Text('Recherche'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return ClientPage();
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      title: Text('Historique'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return Historique();
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      title: Text('Parametre'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return Register();
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      title: Text('Deconnexion'),
-                      onTap: () {
-                        _logout();
-                      },
-                    ),
-
-                  ]),
-            )));
+          ) : Center(child: CircularProgressIndicator(),),),
+    );
   }
 
 var email;
@@ -274,6 +385,8 @@ var email;
   }
 
   var nameUser;
+  var admin2;
+
 
   void getUserName() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -281,6 +394,7 @@ var email;
 
     setState(() {
       nameUser = userName;
+      admin2 = localStorage.getString('Admin');
     });
 
     //print('la valeur de admin est : $admin');

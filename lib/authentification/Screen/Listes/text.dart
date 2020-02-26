@@ -149,9 +149,13 @@ class _TextListState extends State<TextList> {
 
             SizedBox(height: 40.0,),
 
+            Container(
+              height: 500.0,
+            child:
+
             ListView.builder(
-              shrinkWrap: true,
-                physics: ClampingScrollPhysics(),
+             // shrinkWrap: true,
+              //  physics: ClampingScrollPhysics(),
               itemCount: (listtransa == null || listtransa.data == null || listtransa.data.length == 0 )? 0 : listtransa.data.length,
               itemBuilder: (_,int index)=>Container(
                   child : Card(child :ListTile(
@@ -226,9 +230,9 @@ class _TextListState extends State<TextList> {
 ////                        builder: (context) => DetailsPrestation(idpresta: listprestations.data[index].id),
 ////                      ));
 //                },
-              ), color: Colors.blue,)
+              ), color: Color(0xff11b719),)
               ),
-            )
+            ))
 
           ])
         ) ,

@@ -33,6 +33,8 @@ class _ListMatriculesState extends State<ListMatricules>{
 
   _ListMatriculesState(this.listclients);
 
+  bool load = true;
+
   //String url = "http://192.168.43.217:8000/api/client/";
 
   Future<dynamic> getPost() async{
@@ -68,7 +70,7 @@ class _ListMatriculesState extends State<ListMatricules>{
         appBar: AppBar(
           title: Text('LISTES DES CLIENTS'),
         ),
-        body: ListView.separated(
+        body: load ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;
@@ -78,19 +80,25 @@ class _ListMatriculesState extends State<ListMatricules>{
           itemCount: (listclients == null || listclients.data == null || listclients.data.length == 0 )? 0 : listclients.data.length,
           itemBuilder: (_,int index)=>ListTile(
             title: Text(listclients.data [index].nom),
-            onTap: (){
-              Navigator.push(
+            onTap: ()async{
+              setState(() {
+                load = false;
+              });
+             await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => DetailsMatricule(
                       idclient : listclients.data[index].id,
                     ),
                   ));
+              setState(() {
+                load = true;
+              });
             },
           ),
-        ),
+        ) : Center(child: CircularProgressIndicator(),),
 
-        drawer: Drawer(
+        drawer: load ? Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
@@ -110,7 +118,10 @@ class _ListMatriculesState extends State<ListMatricules>{
               ),
               ListTile(
                 title: Text('Accueil'),
-                onTap: () {
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
@@ -119,12 +130,19 @@ class _ListMatriculesState extends State<ListMatricules>{
                       },
                     ),
                   );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Nouvelle Entree'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -132,12 +150,18 @@ class _ListMatriculesState extends State<ListMatricules>{
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Recherche'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -145,12 +169,19 @@ class _ListMatriculesState extends State<ListMatricules>{
                       },
                     ),
                   );
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Historique'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -158,12 +189,18 @@ class _ListMatriculesState extends State<ListMatricules>{
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Parametre'),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -171,17 +208,29 @@ class _ListMatriculesState extends State<ListMatricules>{
                       },
                     ),
                   );
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
               ListTile(
                 title: Text('Deconnexion'),
-                onTap: () {
-                  _logout();
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _logout();
+
+                  setState(() {
+                    load = true;
+                  });
                 },
               ),
+
+
             ],
           ),
-        ),
+        ) : Center(child: CircularProgressIndicator(),),
 
 
       ),

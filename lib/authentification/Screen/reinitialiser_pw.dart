@@ -46,6 +46,8 @@ class _ResetPasswordState extends State<ResetPassword> {
   bool success = false;
 
   bool loading = true;
+  bool loader = true;
+  bool load = true;
   String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
 
 
@@ -128,7 +130,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       appBar: AppBar(
         title: Text('REINITIALISATION'),
       ),
-      body: Form(
+      body: load ? Form(
         key: _formKey,
         //autovalidate: _autoValidate,
         child: Padding(
@@ -249,13 +251,20 @@ class _ResetPasswordState extends State<ResetPassword> {
                         child: Row(
                           children: <Widget>[
                             new Expanded(
-                              child: FlatButton(
+                              child: loader ? FlatButton(
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
                                 color: Color(0xff11b719),
-                                onPressed: (){
-                                  UpdatePassword();
+                                onPressed: ()async{
+                                  setState(() {
+                                    loader = false;
+                                  });
+                                 await UpdatePassword();
+
+                                 setState(() {
+                                   loader = true;
+                                 });
                                   //_sendDataClient();
                                   //_sendDataMatricule();
                                 },
@@ -276,7 +285,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                                     ],
                                   ),
                                 ),
-                              ),
+                              ) : Center(child: CircularProgressIndicator(),),
                             )
                           ],
                         ),
@@ -294,13 +303,13 @@ class _ResetPasswordState extends State<ResetPassword> {
             ),
           ),
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator()),
 
-      drawer: Drawer(
+      drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
         // space to fit everything.
-        child: ListView(
+        child: (admin == '0' || admin == '1') ? ListView(
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -316,7 +325,10 @@ class _ResetPasswordState extends State<ResetPassword> {
             ),
             ListTile(
               title: Text('Accueil'),
-              onTap: () {
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
@@ -325,25 +337,38 @@ class _ResetPasswordState extends State<ResetPassword> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Nouvelle Entree'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
-                    builder: (BuildContext context){
+                    builder: (BuildContext context) {
                       return Transaction();
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Recherche'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -351,12 +376,19 @@ class _ResetPasswordState extends State<ResetPassword> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Historique'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -364,12 +396,18 @@ class _ResetPasswordState extends State<ResetPassword> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Parametre'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -377,17 +415,97 @@ class _ResetPasswordState extends State<ResetPassword> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Deconnexion'),
-              onTap: () {
-                _logout();
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _logout();
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
+
+          ],
+        ) : ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text('$nameUser'),
+              accountEmail: Text(''),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+              ),
+              decoration: BoxDecoration(
+                color: Color(0xff11b719),
+              ),
+            ),
+            ListTile(
+              title: Text('Accueil'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return DashbordScreen();
+                    },
+                  ),
+                );
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+
+            ListTile(
+              title: Text('Parametre'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Register();
+                    },
+                  ),
+                );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('Deconnexion'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _logout();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+
           ],
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
     );
   }
@@ -486,12 +604,14 @@ class _ResetPasswordState extends State<ResetPassword> {
 
   var nameUser;
 
+
   void getUserName() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var userName = localStorage.getString('nom');
 
     setState(() {
       nameUser = userName;
+      admin = localStorage.getString('Admin');
     });
 
     //print('la valeur de admin est : $admin');

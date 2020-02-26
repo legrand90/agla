@@ -10,6 +10,7 @@ import 'package:lavage/authentification/Screen/transac.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Transaction.dart';
 import 'login_page.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:http/http.dart' as http;
 
 class DashbordScreen extends StatefulWidget {
@@ -31,6 +32,8 @@ class _DashbordScreenState extends State<DashbordScreen> {
   _DashbordScreenState(this.Counter, this.name);
 
   int nb = 8 ;
+
+  bool load = true;
   Future<bool> _onBackPressed(){
 
     return showDialog(
@@ -67,12 +70,12 @@ class _DashbordScreenState extends State<DashbordScreen> {
   Widget build(BuildContext context){
       return  WillPopScope(
             onWillPop: () async => false,
-          child:Scaffold(
+          child:  Scaffold(
             backgroundColor: Colors.grey[200],
             appBar: AppBar(
               title: Text('TABLEAU DE BOARD'),
             ),
-            body: new Container(
+            body: load ? new Container(
                 child: new Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -129,7 +132,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
 //                      ],
 //                    )),
 
-                    Container(
+                    (admin == '0' || admin == '1') ? Container(
                       margin: const EdgeInsets.only(top: 20.0),
                       padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                       child: Row(
@@ -176,9 +179,9 @@ class _DashbordScreenState extends State<DashbordScreen> {
                           )
                         ],
                       ),
-                    ),
+                    ) : Text(''),
 
-                    Container(
+                    (admin == '0' || admin == '1') ? Container(
                       margin: const EdgeInsets.only(top: 20.0),
                       padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                       child: Row(
@@ -225,7 +228,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                           )
                         ],
                       ),
-                    ),
+                    ) : Text(''),
 
                     Container(
                       margin: const EdgeInsets.only(top: 20.0),
@@ -278,13 +281,13 @@ class _DashbordScreenState extends State<DashbordScreen> {
 
                   ],
                 ),
-              ),
+              ) : Center(child: CircularProgressIndicator(),),
 
-            drawer: Drawer(
+            drawer: load ? Drawer(
               // Add a ListView to the drawer. This ensures the user can scroll
               // through the options in the drawer if there isn't enough vertical
               // space to fit everything.
-              child: ListView(
+              child: (admin == '0' || admin == '1') ? ListView(
                 // Important: Remove any padding from the ListView.
                 padding: EdgeInsets.zero,
                 children: <Widget>[
@@ -300,8 +303,11 @@ class _DashbordScreenState extends State<DashbordScreen> {
                   ),
                   ListTile(
                     title: Text('Nouvelle Entree'),
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async{
+                      setState(() {
+                        load = false;
+                      });
+                     await Navigator.push(
                         context,
                         new MaterialPageRoute(
                           builder: (BuildContext context) {
@@ -309,12 +315,18 @@ class _DashbordScreenState extends State<DashbordScreen> {
                           },
                         ),
                       );
+                     setState(() {
+                       load = true;
+                     });
                     },
                   ),
                   ListTile(
                     title: Text('Recherche'),
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async{
+                      setState(() {
+                        load = false;
+                      });
+                      await Navigator.push(
                         context,
                         new MaterialPageRoute(
                           builder: (BuildContext context) {
@@ -322,12 +334,19 @@ class _DashbordScreenState extends State<DashbordScreen> {
                           },
                         ),
                       );
+
+                      setState(() {
+                        load = true;
+                      });
                     },
                   ),
                   ListTile(
                     title: Text('Historique'),
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async{
+                      setState(() {
+                        load = false;
+                      });
+                      await Navigator.push(
                         context,
                         new MaterialPageRoute(
                           builder: (BuildContext context) {
@@ -335,12 +354,18 @@ class _DashbordScreenState extends State<DashbordScreen> {
                           },
                         ),
                       );
+                      setState(() {
+                        load = true;
+                      });
                     },
                   ),
                   ListTile(
                     title: Text('Parametre'),
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async{
+                      setState(() {
+                        load = false;
+                      });
+                      await Navigator.push(
                         context,
                         new MaterialPageRoute(
                           builder: (BuildContext context) {
@@ -348,21 +373,79 @@ class _DashbordScreenState extends State<DashbordScreen> {
                           },
                         ),
                       );
+                      setState(() {
+                        load = true;
+                      });
                     },
                   ),
                   ListTile(
                     title: Text('Deconnexion'),
-                    onTap: () {
-                      _logout();
+                    onTap: () async{
+                      setState(() {
+                        load = false;
+                      });
+                      await _logout();
+
+                      setState(() {
+                        load = true;
+                      });
+                    },
+                  ),
+
+                ],
+              ) : ListView(
+                // Important: Remove any padding from the ListView.
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  UserAccountsDrawerHeader(
+                    accountName: Text('$nameUser'),
+                    accountEmail: Text(''),
+                    currentAccountPicture: CircleAvatar(
+                      backgroundColor: Colors.white,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Color(0xff11b719),
+                    ),
+                  ),
+
+                  ListTile(
+                    title: Text('Parametre'),
+                    onTap: () async{
+                      setState(() {
+                        load = false;
+                      });
+                      await Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return Register();
+                          },
+                        ),
+                      );
+                      setState(() {
+                        load = true;
+                      });
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Deconnexion'),
+                    onTap: () async{
+                      setState(() {
+                        load = false;
+                      });
+                      await _logout();
+
+                      setState(() {
+                        load = true;
+                      });
                     },
                   ),
 
                 ],
               ),
-            ),
+            ) : Center(child: CircularProgressIndicator(),),
 
-
-            ),
+            ) ,
           );
     }
 
@@ -388,6 +471,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
     }
 
     var nameUser;
+  var admin;
 
   void getUserName() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -395,6 +479,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
 
     setState(() {
       nameUser = userName;
+      admin = localStorage.getString('Admin');
     });
 
     print(localStorage.getString('token'));

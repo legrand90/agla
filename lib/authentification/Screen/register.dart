@@ -15,6 +15,8 @@ import 'package:lavage/authentification/Screen/matricule.dart';
 import 'package:lavage/authentification/Screen/prestation.dart';
 import 'package:lavage/authentification/Screen/tarification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:js/js.dart';
 
 import 'Listes/listtarification.dart';
 import 'Tabs/clientPage.dart';
@@ -32,6 +34,8 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
 
+  bool load = true;
+
 
   @override
   void initState(){
@@ -45,15 +49,17 @@ class _RegisterState extends State<Register> {
           appBar: AppBar(
             title: Text('SERVICES', textAlign: TextAlign.center,),
           ),
-          body: Center(
+          body: load ? Center(
             child: new Container(
-              margin: EdgeInsets.only(top: 60.0, left: 30.0),
+              margin: EdgeInsets.only(top: 110.0, left: 30.0),
               child: new ListView(
                // mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   //CARD1
-                  Row(
+                  (admin == '0' || admin == '1') ? Row(
                     children: <Widget>[
+                      Html(data: '<></>',),
+
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -65,8 +71,11 @@ class _RegisterState extends State<Register> {
                                 height: 140.0,
                                 child : FlatButton(
                                   color: Color(0xff11b719),
-                                onPressed: (){
-                                  Navigator.push(
+                                onPressed: ()async{
+                                    setState(() {
+                                      load = false;
+                                    });
+                                  await Navigator.push(
                                     context,
                                     new MaterialPageRoute(
                                       builder: (BuildContext context) {
@@ -74,6 +83,9 @@ class _RegisterState extends State<Register> {
                                       },
                                     ),
                                   );
+                                  setState(() {
+                                    load =true;
+                                  });
                                 },
                                 child: Text('Commission'),
                               )),
@@ -105,17 +117,24 @@ class _RegisterState extends State<Register> {
                                   height: 140.0,
                                   child : FlatButton(
                                     color: Color(0xff11b719),
-                                    onPressed: (){
-                                      Navigator.push(
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
                                         context,
                                         new MaterialPageRoute(
                                           builder: (BuildContext context) {
-                                            return Couleur();
+                                            return Matricule();
                                           },
                                         ),
                                       );
+
+                                      setState(() {
+                                        load = true;
+                                      });
                                     },
-                                    child: Text('Couleur'),
+                                    child: Text('Matricule'),
                                   )),
                             ),
                             /*
@@ -136,9 +155,9 @@ class _RegisterState extends State<Register> {
 
 
                     ],
-                  ),
+                  ) : Text(''),
 
-                  Row(
+                  (admin == '0' || admin == '1') ? Row(
                     children: <Widget>[
                       SizedBox(
                         width: 150.0,
@@ -151,8 +170,11 @@ class _RegisterState extends State<Register> {
                                   height: 140.0,
                                   child : FlatButton(
                                     color: Color(0xff11b719),
-                                    onPressed: (){
-                                      Navigator.push(
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
                                         context,
                                         new MaterialPageRoute(
                                           builder: (BuildContext context) {
@@ -160,6 +182,10 @@ class _RegisterState extends State<Register> {
                                           },
                                         ),
                                       );
+
+                                      setState(() {
+                                        load = true;
+                                      });
                                     },
                                     child: Text('Tarification'),
                                   )),
@@ -191,8 +217,11 @@ class _RegisterState extends State<Register> {
                                   height: 140.0,
                                   child : FlatButton(
                                     color: Color(0xff11b719),
-                                    onPressed: (){
-                                      Navigator.push(
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
                                         context,
                                         new MaterialPageRoute(
                                           builder: (BuildContext context) {
@@ -200,6 +229,10 @@ class _RegisterState extends State<Register> {
                                           },
                                         ),
                                       );
+
+                                      setState(() {
+                                        load = true;
+                                      });
                                     },
                                     child: Text('Prestation'),
                                   )),
@@ -222,9 +255,9 @@ class _RegisterState extends State<Register> {
 
 
                     ],
-                  ),
+                  ) : Text(''),
 
-                  Row(
+                  (admin == '0' || admin == '1') ? Row(
                     children: <Widget>[
                       SizedBox(
                         width: 150.0,
@@ -237,8 +270,11 @@ class _RegisterState extends State<Register> {
                                   height: 140.0,
                                   child : FlatButton(
                                     color: Color(0xff11b719),
-                                    onPressed: (){
-                                      Navigator.push(
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
                                         context,
                                         new MaterialPageRoute(
                                           builder: (BuildContext context) {
@@ -246,6 +282,10 @@ class _RegisterState extends State<Register> {
                                           },
                                         ),
                                       );
+
+                                      setState(() {
+                                        load = true;
+                                      });
                                     },
                                     child: Text('Client'),
                                   )),
@@ -277,8 +317,11 @@ class _RegisterState extends State<Register> {
                                   height: 140.0,
                                   child : FlatButton(
                                     color: Color(0xff11b719),
-                                    onPressed: (){
-                                      Navigator.push(
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
                                         context,
                                         new MaterialPageRoute(
                                           builder: (BuildContext context) {
@@ -286,6 +329,10 @@ class _RegisterState extends State<Register> {
                                           },
                                         ),
                                       );
+
+                                      setState(() {
+                                        load = true;
+                                      });
                                     },
                                     child: Text('Agent'),
                                   )),
@@ -306,9 +353,9 @@ class _RegisterState extends State<Register> {
                         ),
                       ),
                     ],
-                  ),
+                  ) : Text(''),
 
-                  Row(
+                  (admin == '2') ? Row(
                     children: <Widget>[
                       SizedBox(
                         width: 150.0,
@@ -321,8 +368,11 @@ class _RegisterState extends State<Register> {
                                   height: 140.0,
                                   child : FlatButton(
                                     color: Color(0xff11b719),
-                                    onPressed: (){
-                                      Navigator.push(
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
                                         context,
                                         new MaterialPageRoute(
                                           builder: (BuildContext context) {
@@ -330,6 +380,10 @@ class _RegisterState extends State<Register> {
                                           },
                                         ),
                                       );
+
+                                      setState(() {
+                                        load = true;
+                                      });
                                     },
                                     child: Text('Marque'),
                                   )),
@@ -361,17 +415,24 @@ class _RegisterState extends State<Register> {
                                   height: 140.0,
                                   child : FlatButton(
                                     color: Color(0xff11b719),
-                                    onPressed: (){
-                                      Navigator.push(
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
                                         context,
                                         new MaterialPageRoute(
                                           builder: (BuildContext context) {
-                                            return Matricule();
+                                            return Couleur();
                                           },
                                         ),
                                       );
+
+                                      setState(() {
+                                        load = true;
+                                      });
                                     },
-                                    child: Text('Matricule'),
+                                    child: Text('Couleur'),
                                   )),
                             ),
                             /*
@@ -392,7 +453,7 @@ class _RegisterState extends State<Register> {
 
 
                     ],
-                  ),
+                  ) : Text(''),
 
                   (admin == '2') ? Row(
                     children: <Widget>[
@@ -407,8 +468,11 @@ class _RegisterState extends State<Register> {
                                   height: 140.0,
                                   child : FlatButton(
                                     color: Color(0xff11b719),
-                                    onPressed: (){
-                                      Navigator.push(
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                     await Navigator.push(
                                         context,
                                         new MaterialPageRoute(
                                           builder: (BuildContext context) {
@@ -416,6 +480,10 @@ class _RegisterState extends State<Register> {
                                           },
                                         ),
                                       );
+
+                                      setState(() {
+                                        load = true;
+                                      });
                                     },
                                     child: Text('Lavages'),
                                   )),
@@ -447,8 +515,11 @@ class _RegisterState extends State<Register> {
                                   height: 140.0,
                                   child : FlatButton(
                                     color: Color(0xff11b719),
-                                    onPressed: (){
-                                      Navigator.push(
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                     await Navigator.push(
                                         context,
                                         new MaterialPageRoute(
                                           builder: (BuildContext context) {
@@ -456,6 +527,10 @@ class _RegisterState extends State<Register> {
                                           },
                                         ),
                                       );
+
+                                      setState(() {
+                                        load = true;
+                                      });
                                     },
                                     child: Text('Utilisateurs'),
                                   )),
@@ -493,8 +568,11 @@ class _RegisterState extends State<Register> {
                                   height: 140.0,
                                   child : FlatButton(
                                     color: Color(0xff11b719),
-                                    onPressed: (){
-                                      Navigator.push(
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
                                         context,
                                         new MaterialPageRoute(
                                           builder: (BuildContext context) {
@@ -502,6 +580,9 @@ class _RegisterState extends State<Register> {
                                           },
                                         ),
                                       );
+                                      setState(() {
+                                        load = true;
+                                      });
                                     },
                                     child: Text('Réinitialiser mot de passe', textAlign: TextAlign.center,),
                                   )),
@@ -528,13 +609,13 @@ class _RegisterState extends State<Register> {
                 ],
               ),
             ),
-          ),
+          ) : Center(child: CircularProgressIndicator(),),
 
-      drawer: Drawer(
+      drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
         // space to fit everything.
-        child: ListView(
+        child: (admin == '0' || admin == '1') ? ListView(
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -550,7 +631,10 @@ class _RegisterState extends State<Register> {
             ),
             ListTile(
               title: Text('Accueil'),
-              onTap: () {
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
@@ -559,12 +643,19 @@ class _RegisterState extends State<Register> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Nouvelle Entree'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -572,12 +663,18 @@ class _RegisterState extends State<Register> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Recherche'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -585,12 +682,19 @@ class _RegisterState extends State<Register> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Historique'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -598,12 +702,18 @@ class _RegisterState extends State<Register> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Parametre'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -611,17 +721,97 @@ class _RegisterState extends State<Register> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Deconnexion'),
-              onTap: () {
-                _logout();
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _logout();
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
+
+          ],
+        ) : ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text('$nameUser'),
+              accountEmail: Text(''),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+              ),
+              decoration: BoxDecoration(
+                color: Color(0xff11b719),
+              ),
+            ),
+            ListTile(
+              title: Text('Accueil'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return DashbordScreen();
+                    },
+                  ),
+                );
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+
+            ListTile(
+              title: Text('Parametre'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Register();
+                    },
+                  ),
+                );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('Deconnexion'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _logout();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+
           ],
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
         );
   }
 

@@ -49,6 +49,8 @@ class _AgentTabPageState extends State<AgentTabPage> {
 
   bool visible = false ;
 
+  bool loading = true;
+
   Listagentfromsearch serchValue = Listagentfromsearch();
   ListagentTransaction serchValue2 = ListagentTransaction();
   ListagentNumTrans serchValue3 = ListagentNumTrans();
@@ -68,55 +70,47 @@ class _AgentTabPageState extends State<AgentTabPage> {
     //var resBody = listclientsearchFromJson(res.body);
 
     if(res.statusCode == 200) {
+
       setState(() {
         serchValue = listagentfromsearchFromJson(res.body);
-
-        //visible = true;
-
+        visible = true;
       });
-    }else{
-      _showMsg("Erreur de recuperation des donnees !!!");
+
 
     }
-    AgenttFromSearchTransa();
 
-    //print('resulta : ${serchValue2.data.length}');
 
   }
 
 
   void AgenttFromSearchTransa() async {
+    var resBody;
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
     //var resBody = listclientsearchFromJson(res.body);
-    var res = await CallApi().getData('getAgentFromSearchTrans/$id/$_mySelection/$datEnreg1/$datEnreg2');
+    var res2 = await CallApi().getData('getAgentFromSearchTrans/$id/$_mySelection/$datEnreg1/$datEnreg2');
    // final String urlTrans = "http://192.168.43.217:8000/api/getAgentFromSearchTrans/$id/${serchValue.data.id}/$datEnreg1/$datEnreg2";
 //    final res2 = await http.get(Uri.encodeFull(urlTrans), headers: {
 //      "Accept": "application/json",
 //      "Content-type": "application/json",
 //    });
 
-    print(res.body);
-
-
-
-    setState((){
-
-      serchValue2 = listagentTransactionFromJson(res.body);
-
-      commi = (serchValue2.data[0].totalCommissions != null) ? serchValue2.data[0].totalCommissions : 0;
-
-
-
+    setState(() {
+      serchValue2 = listagentTransactionFromJson(res2.body);
     });
 
-    if (res.statusCode == 200 && commi != 0) {
+
+    if(serchValue2.data.length != 0){
 
       setState(() {
-        visible = true;
+
+        commi = serchValue2.data[0].totalCommissions ;
+        AgentFromSearch();
+
       });
 
-    //print('resultacomm : ${serchValue2.data[0].totalCommissions}');
+      //print('resultacomm : ${}');
+      //_showMsg("Erreur de  !!!");
 
   }else{
       _showMsg("Erreur de recuperation des donnees !!!");
@@ -171,16 +165,28 @@ class _AgentTabPageState extends State<AgentTabPage> {
 
   }
 
+  void initDate()async{
+    setState(() {
+      dateCtl.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      dateCtl2.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      mydate1 = DateFormat('dd-MM-yyyy').format(DateTime.now());
+      mydate2 = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    });
+  }
+
 
   @override
   void initState(){
     super.initState();
+    this.initDate();
     this.getAgent();
   }
 
   Widget build(BuildContext context){
     return  Scaffold(
+      //height: 300.0,
       key: _scaffoldKey,
+
       backgroundColor: Color(0xFFDADADA),
       body: Form(
           key: _formKey,
@@ -261,9 +267,12 @@ class _AgentTabPageState extends State<AgentTabPage> {
               ),
 
               SizedBox(
-                height: 20.2,
+                height: 30.2,
               ),
 
+              Container(
+                margin: EdgeInsets.only(left: 15.0),
+              child:
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -278,11 +287,12 @@ class _AgentTabPageState extends State<AgentTabPage> {
                           ),
                           value: value['id'].toString(),
                         )).toList(),
-                        onChanged: (choix){
+                        onChanged: (choix)async{
                           setState(() {
-                            _mySelection = choix ;
+                            visible = false;
+                            _mySelection = choix;
                           });
-                          checkDate();
+                          await checkDate();
                         },
                         value: _mySelection,
                         isExpanded: false,
@@ -291,11 +301,7 @@ class _AgentTabPageState extends State<AgentTabPage> {
                       ))
                 ],
 
-              ),
-
-              SizedBox(
-                height: 30.2,
-              ),
+              )),
 
               SizedBox(
                 height: 20.2,
@@ -389,11 +395,15 @@ class _AgentTabPageState extends State<AgentTabPage> {
               ): Text(''),
               SizedBox(height: 20.0,),
               visible?  Divider() : Text(''),
-              visible?
+              visible? Container(
+                height: 300.0,
+                child:
+
               ListView.builder(
                 shrinkWrap: true,
                 itemCount: (serchValue2 == null || serchValue2.data == null || serchValue2.data.length == 0 )? 0 : serchValue2.data.length,
-                itemBuilder: (_,int index)=>ListTile(
+                itemBuilder: (_,int index)=>Container(
+                    child: Card(child: ListTile(
                     title: Column(
                       children: <Widget>[
                         Row(
@@ -428,11 +438,11 @@ class _AgentTabPageState extends State<AgentTabPage> {
                           ],
                         ),
                         SizedBox(height: 20.0,),
-                        Divider(),
+                        //Divider(),
                       ],
                     )
-                ),
-              ) : Text(''),
+                ), color: Color(0xff11b719),)),
+              )) : Text(''),
             ],
           )
       ),
@@ -451,7 +461,7 @@ class _AgentTabPageState extends State<AgentTabPage> {
   void _getSearch() async {
         datEnreg1 = mydate1;
         datEnreg2 = mydate2;
-        AgentFromSearch();
+        AgenttFromSearchTransa();
   }
 
 

@@ -30,6 +30,8 @@ class _PrestationState extends State<Prestation> {
   bool _loadingVisible = false;
   String montant;
   var idPresta = 0;
+  bool loading = true;
+  bool load = true;
 
   Future <void> _changeLoadingVisible() async {
     setState(() {
@@ -107,7 +109,7 @@ class _PrestationState extends State<Prestation> {
       appBar: AppBar(
         title: Text('PRESTATION'),
       ),
-      body: Form(
+      body: load ? Form(
         key: _formKey,
         autovalidate: _autoValidate,
         child: Padding(
@@ -267,13 +269,20 @@ class _PrestationState extends State<Prestation> {
                         child: Row(
                           children: <Widget>[
                             new Expanded(
-                              child: FlatButton(
+                              child: loading ? FlatButton(
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
                                 color: Color(0xff11b719),
-                                onPressed: (){
-                                  checkPrestation();
+                                onPressed: ()async{
+                                  setState(() {
+                                    loading = false;
+                                  });
+                                  await checkPrestation();
+
+                                  setState(() {
+                                    loading = true;
+                                  });
                                 },
                                 child: new Container(
                                   child: new Row(
@@ -292,7 +301,7 @@ class _PrestationState extends State<Prestation> {
                                     ],
                                   ),
                                 ),
-                              ),
+                              ) : Center(child: CircularProgressIndicator(),),
                             )
                           ],
                         ),
@@ -326,8 +335,11 @@ class _PrestationState extends State<Prestation> {
                                     ),
                                   ),
                                 ),
-                                onPressed: () {
-                                  Navigator.push(
+                                onPressed: () async{
+                                  setState(() {
+                                    load = false;
+                                  });
+                                  await Navigator.push(
                                     context,
                                     new MaterialPageRoute(
                                       builder: (BuildContext context) {
@@ -335,6 +347,9 @@ class _PrestationState extends State<Prestation> {
                                       },
                                     ),
                                   );
+                                  setState(() {
+                                    load = true;
+                                  });
                                 },
                               ),
                             )
@@ -350,9 +365,9 @@ class _PrestationState extends State<Prestation> {
 
           ),
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
-      drawer: Drawer(
+      drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
         // space to fit everything.
@@ -372,7 +387,10 @@ class _PrestationState extends State<Prestation> {
             ),
             ListTile(
               title: Text('Accueil'),
-              onTap: () {
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
@@ -381,12 +399,19 @@ class _PrestationState extends State<Prestation> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Nouvelle Entree'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -394,12 +419,18 @@ class _PrestationState extends State<Prestation> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Recherche'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -407,25 +438,38 @@ class _PrestationState extends State<Prestation> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Historique'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
-                    builder: (BuildContext context){
+                    builder: (BuildContext context) {
                       return Historique();
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Parametre'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -433,17 +477,29 @@ class _PrestationState extends State<Prestation> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Deconnexion'),
-              onTap: () {
-                _logout();
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _logout();
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
+
+
           ],
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
     );
   }

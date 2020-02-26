@@ -528,11 +528,14 @@ class _ClientTabPageState extends State<ClientTabPage> {
 
             SizedBox(height: 20.0,),
            visible?  Divider() : Text(''),
-            visible?
+            visible? Container(
+              height: 300,
+              child:
             ListView.builder(
               shrinkWrap: true,
               itemCount: (serchValue2 == null || serchValue2.data == null || serchValue2.data.length == 0 )? 0 : serchValue2.data.length,
-              itemBuilder: (_,int index)=>ListTile(
+              itemBuilder: (_,int index)=>Container(
+                  child:Card(child:ListTile(
                 title: Column(
                   children: <Widget>[
                     Row(
@@ -567,7 +570,7 @@ class _ClientTabPageState extends State<ClientTabPage> {
                       ],
                     ),
                     SizedBox(height: 20.0,),
-                    Divider(),
+                    //Divider(),
                   ],
                 )
 
@@ -578,8 +581,8 @@ class _ClientTabPageState extends State<ClientTabPage> {
 ////                        builder: (context) => DetailsPrestation(idpresta: listprestations.data[index].id),
 ////                      ));
 //                },
-              ),
-            ) : Text(''),
+              ), color: Color(0xff11b719),)),
+            )) : Text(''),
           ],
         )
       ),
