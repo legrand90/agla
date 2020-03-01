@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
@@ -10,6 +11,8 @@ import 'package:lavage/authentification/Screen/DetailSreen/detailsagent.dart';
 import 'package:lavage/authentification/Screen/Edit/editagent.dart';
 import 'package:lavage/authentification/Screen/Edit/edituser.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
+import 'package:lavage/authentification/Screen/TabsSuperAdmin/superAdmin.dart';
+import 'package:lavage/authentification/Screen/create_superAdmin.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Transaction.dart';
@@ -28,7 +31,7 @@ class UsersList extends StatefulWidget {
 
 class _UsersListState extends State<UsersList> {
 
-  Listusers listusers = Listusers ()  ;
+  Listusers listusers = Listusers () ;
 
   var admin ;
   var iduser ;
@@ -111,8 +114,21 @@ class _UsersListState extends State<UsersList> {
         key: _scaffoldKey,
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
-          title: Text('LISTE DES UTILISATEURS'),
+          title: Text('INFORMATIONS UTILISATEURS'),
+          actions: <Widget>[
+            IconButton(icon: Icon(Icons.search),
+                onPressed: () {
+                  Navigator.push(context,
+                      new MaterialPageRoute(
+                          builder: (BuildContext context){
+                            return  SuperAdminPage();
+                          }
+                      ));
+                  //showSearch(context: context, delegate: DataSearch(listWords));
+                })
+          ],
         ),
+
         body: load ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
@@ -122,79 +138,55 @@ class _UsersListState extends State<UsersList> {
           },
           itemCount: (listusers == null || listusers.data == null || listusers.data.length == 0 )? 0 : listusers.data.length,
           itemBuilder: (_,int index)=>ListTile(
-            title: Row(
+            title: Column(
               children: <Widget>[
-                Expanded(child: Text(listusers.data [index] .nom),),
-                //SizedBox(width: 170,),
-                IconButton(
-                  icon: Icon(
-                      Icons.edit),
-                  onPressed: ()async{
-                    setState(() {
-                      load = false;
-                    });
-                   await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditUser(idUser: listusers.data [index] .id,),
-                        ));
-                    setState(() {
-                      load = true;
-                    });
-                  },
+
+                Row(
+                  children: <Widget>[
+                    Expanded(child: Text(listusers.data [index] .nom),),
+                    //SizedBox(width: 170,),
+                    IconButton(
+                      icon: Icon(
+                          Icons.edit),
+                      onPressed: ()async{
+                        setState(() {
+                          load = false;
+                        });
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditUser(idUser: listusers.data [index] .id,),
+                            ));
+                        setState(() {
+                          load = true;
+                        });
+                      },
+                    ),
+
+                    SizedBox(width: 30,),
+
+                  ],
                 ),
 
-                SizedBox(width: 30,),
-                IconButton(
-                  color: Colors.red,
-                  icon: Icon(
-                      Icons.delete),
-                  onPressed: ()async{
-                    Future<bool> _sureToDelete(){
-                      return showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text("Voulez-vous vraiment supprimer " + " \"${listusers.data[index].nom}\"" + "  de la liste des utilisateurs ?"),
-                            actions: <Widget>[
-                              FlatButton(
-                                child: Text("Non"),
-                                onPressed: () => Navigator.pop(context, false),
-                              ),
-                              FlatButton(
-                                child: Text("Oui"),
-                                onPressed: () {
-                                  DeleteUser();
-                                  setState(() {
-                                    listusers.data.removeAt(index);
-                                    //  indexItem;
-                                  });
-                                  Navigator.pop(context, false);
-                                }
-                                ,
-                              )
-                            ],
-                          )
-                      );
-                    }
-
-                    setState(() {
-                      iduser = listusers.data [index] .id;
-                    });
-                    //deleteItem();
-                    if((admin == '1') || (admin == '2')){
-                      _sureToDelete();
-
-                    }else if(admin == '0'){
-                      print('desole');
-                      _showMsg('Vous ne pouvez pas effectuer cette action !!!');
-                    }
-
-                    //Navigator.of(context).pop();
-                  },
+                Row(
+                  children: <Widget>[
+                    Text('${listusers.data[index].idLavage}',),
+                    //SizedBox(width: 80.0,),
+                    //Text('${listusers.data[index].admin}',),
+                  ],
                 ),
 
+                SizedBox(height: 10.0,),
+
+                Row(
+                  children: <Widget>[
+                    //SizedBox(width: 80.0,),
+                    Text('${listusers.data[index].admin}',),
+                  ],
+                )
               ],
             ),
+
 
             onTap: () async{
               setState(() {
@@ -457,6 +449,14 @@ class _UsersListState extends State<UsersList> {
     setState(() {
       nameUser = userName;
     });
+
+    //print('la valeur de admin est : $admin');
+
+  }
+
+  void route() async{
+
+
 
     //print('la valeur de admin est : $admin');
 

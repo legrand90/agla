@@ -83,3 +83,25 @@ class Datum {
     "message": message,
   };
 }
+
+class Datu {
+  int id;
+  String nom;
+
+  Datu({
+    this.id,
+    this.nom,
+
+  });
+
+  factory Datu.fromJson(Map<String, dynamic> json) => Datu(
+    id: json["id"],
+    nom: json["nom"] as String,
+
+  );
+
+//  Map<String, dynamic> toJson() => {
+//    "id": id,
+//    "nom": nom,
+//  };
+}

@@ -149,20 +149,20 @@ class _LoginPageState extends State<LoginPage> {
                             new Padding(
                               padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                               child: Icon(
-                                Icons.email,
+                                Icons.phone,
                                 color: Colors.red,
                               ),
                             ),
                             new Expanded(
                               child: TextFormField(
-                                keyboardType: TextInputType.text,
+                                keyboardType: TextInputType.phone,
                                 autofocus: false,
                                 controller: _identifiant,
                                 validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
                                 onSaved: (value) => identifiant = value,
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: "Saisir Email",
+                                  hintText: "Entrez votre numéro",
                                   hintStyle: TextStyle(color: Colors.black),
                                 ),
                               ),
@@ -203,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onSaved: (value) => password = value,
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: "Saisir mot de passe",
+                                  hintText: "Entrez votre mot de passe",
                                   hintStyle: TextStyle(color: Colors.black),
                                 ),
                               ),
@@ -343,8 +343,8 @@ FlatButton okButton(BuildContext context){
 
     if(validateAndSave()) {
       //try {
-        var data = {
-          'email': _identifiant.text,
+        var data =  {
+          'numero': _identifiant.text,
           'password': _password.text,
         };
 

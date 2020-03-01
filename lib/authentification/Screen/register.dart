@@ -16,11 +16,12 @@ import 'package:lavage/authentification/Screen/prestation.dart';
 import 'package:lavage/authentification/Screen/tarification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:js/js.dart';
+
 
 import 'Listes/listtarification.dart';
 import 'Tabs/clientPage.dart';
 import 'Transaction.dart';
+import 'create_superAdmin.dart';
 import 'dashbord.dart';
 import 'historique.dart';
 import 'login_page.dart';
@@ -58,8 +59,6 @@ class _RegisterState extends State<Register> {
                   //CARD1
                   (admin == '0' || admin == '1') ? Row(
                     children: <Widget>[
-                      Html(data: '<></>',),
-
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -602,6 +601,52 @@ class _RegisterState extends State<Register> {
                           ),
                         ),
                       ),
+
+                      SizedBox(
+                        width: 150.0,
+                        height: 140.0,
+                        child: new Card(
+                          child: Container(
+                            child: Center(
+                              child: Container(
+                                  width: 150.0,
+                                  height: 140.0,
+                                  child : FlatButton(
+                                    color: Color(0xff11b719),
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                          builder: (BuildContext context) {
+                                            return SuperAdmin();
+                                          },
+                                        ),
+                                      );
+                                      setState(() {
+                                        load = true;
+                                      });
+                                    },
+                                    child: Text('Creér Super Admin', textAlign: TextAlign.center,),
+                                  )),
+                            ),
+                            /*
+                        new Stack(
+                          children: <Widget>[
+                            new Image.asset(
+                              'assets/mobile1.png',
+                              width: 200.0,
+                              height: 120.0,
+                            ),
+                          ],
+                        ),
+                        */
+                            //   onTap{("")}
+                          ),
+                        ),
+                      )
 
 
                     ],

@@ -4,8 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Models/Agent.dart';
-import 'package:lavage/authentification/Models/Prestations.dart';
+import 'package:lavage/authentification/Models/Commission.dart';
+import 'package:lavage/authentification/Models/Tarifications.dart';
+import 'package:lavage/authentification/Screen/DetailSreen/detailsCommission.dart';
+import 'package:lavage/authentification/Screen/DetailSreen/detailsagent.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
+import 'package:lavage/authentification/Screen/Tabs/comptabiliteTabPage.dart';
+import 'package:lavage/authentification/Screen/Tabs/prestationTabPage.dart';
+import 'package:lavage/authentification/Screen/TabsSuperAdmin/lavageTabPage.dart';
+import 'package:lavage/authentification/Screen/TabsSuperAdmin/typeUserTabPage.dart';
+import 'package:lavage/authentification/Screen/TabsSuperAdmin/userTabPage.dart';
+import 'package:lavage/authentification/Screen/prestation.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Transaction.dart';
@@ -15,137 +24,138 @@ import '../login_page.dart';
 import 'package:http/http.dart' as http;
 
 
-class DetailsUsers extends StatefulWidget {
 
-  int idUser ;
+class SuperAdminPage extends StatefulWidget {
 
-  DetailsUsers({Key key, @required this.idUser}) : super(key: key);
+  final Widget child ;
+
+  SuperAdminPage({Key key, @required this.child}) : super(key: key);
 
   @override
-  _DetailsUsersState createState() => _DetailsUsersState(idUser);
+  _SuperAdminPageState createState() => _SuperAdminPageState();
 }
 
-class _DetailsUsersState extends State<DetailsUsers> {
+Color PrimaryColor = Color(0xff109618) ;
 
-  int idUser ;
+Color boxDeco = Color(0xff109618) ;
 
-  var nom ;
-  var contact ;
-  var contactUrgence ;
-  var quartier ;
-  var dateEnreg ;
+class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProviderStateMixin{
+
+  TabController _tabController ;
+
+  final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
+
   bool load = true;
-  bool _switchVal = true;
 
-  _DetailsUsersState(this.idUser);
+  _showMsg(msg) {
+    final snackBar = SnackBar(
+        content: Text(msg),
+        action: SnackBarAction(
+          label: 'Fermer',
+          onPressed: () {
+
+          },
+        )
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
 
   @override
 
   void initState(){
-    super.initState();
-    this.getUser();
     this.getUserName();
-
+    super.initState();
+    _tabController = new TabController(vsync: this, length: 3);
   }
 
+  @override
+
   Widget build(BuildContext context){
-    return  WillPopScope(
-      // onWillPop: _onBackPressed,
-        child:Scaffold(
-            backgroundColor: Colors.grey[200],
-            appBar: AppBar(
-              title: Text('DETAILS AGENT'),
-            ),
-            body: load ? ListView(
-              children: <Widget>[
+    return  DefaultTabController(
+        length: 3,
+        child: Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: Color(0xFFDADADA),
+            body: NestedScrollView(
+              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                return <Widget>[
+                  new SliverAppBar(
+                    pinned: true,
+                    bottom: TabBar(
+                      controller: _tabController,
+                      isScrollable: true,
+                      indicatorColor: Colors.white,
+                      indicatorWeight: 6.0,
+                      onTap: (index){
+                        setState(() {
+                          switch(index){
+                            case 0:
+                              PrimaryColor = Color(0xff109618);
+                              boxDeco = Color(0xff109618);
+                              break;
+                            case 1:
+                              PrimaryColor = Color(0xff109618);
+                              boxDeco = Color(0xff109618);
+                              break;
+                            default:
+                          }
+                        });
 
-                SizedBox(
-                  height: 40.0,
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 25.0),
-                  child: Text("NOM ===> $nom"),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 40.0),
-                ),
+                      },
 
-                Container(
-                  margin: EdgeInsets.only(left: 25.0),
-                  child: Text("CONTACT ===> $contact"),
-                ),
+                      tabs: <Widget>[
+                        Tab(
+                          child: Container(
+                              child: Text(
+                                'USER',
+                                style: TextStyle(color: Colors.white, fontSize: 18.0),
+                              )
+                          ) ,
+                        ),
 
-                Padding(
-                  padding: const EdgeInsets.only(top: 40.0),
-                ),
+                        Tab(
+                          child: Container(
+                              child: Text(
+                                'TYPE USER',
+                                style: TextStyle(color: Colors.white, fontSize: 18.0),
+                              )
+                          ) ,
+                        ),
 
-                Container(
-                  margin: EdgeInsets.only(left: 25.0),
-                  child: Text("EMAIL ===> $email"),
-                ),
+                        Tab(
+                          child: Container(
+                              child: Text(
+                                'LAVAGE',
+                                style: TextStyle(color: Colors.white, fontSize: 18.0),
+                              )
+                          ) ,
+                        ),
 
-                Padding(
-                  padding: const EdgeInsets.only(top: 40.0),
-                ),
-
-                Container(
-                  margin: EdgeInsets.only(left: 25.0),
-                  child: Text("STATUT ===> $statut"),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.only(top: 40.0),
-                ),
-
-                Container(
-                  margin: EdgeInsets.only(left: 25.0),
-                  child: Text("NOM DU LAVAGE ===> $nomLavage"),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.only(top: 40.0),
-                ),
-
-                Container(
-                  margin: EdgeInsets.only(left: 25.0),
-                  child: Text("SITUATION GEOGRAPHIQUE DU LAVAGE ===> $situation"),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.only(top: 40.0),
-                ),
-
-                Container(
-                  margin: EdgeInsets.only(left: 25.0),
-                  child: Text("DATE ===> $dateEnreg"),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.only(top: 40.0),
-                ),
-
-                Container(
-                  padding: const EdgeInsets.only(left: 50.0, right: 50.0),
-                  //margin: EdgeInsets.only(left: 25.0),
-                  child: Switch(
-                    onChanged: (bool value){
-                      setState(() {
-                        this._switchVal = value;
-                      });
-                    },
-                    value: this._switchVal,
+                      ],
+                    ),
                   ),
-                ),
+                ];
+              },
+              // backgroundColor: PrimaryColor,
+              //  title: Text(''),
+              body: TabBarView(
+                controller: _tabController,
+                children: <Widget>[
+                  UserSearch(),
+                  TypeUserSearch(),
+                  LavageSearch(),
+                  //  PrestationTabPage(),
+                  // PeriodeTabPage(),
+                ],
+              ),
 
-
-              ],
-            ) : Center(child: CircularProgressIndicator(),),
+            ),
 
           drawer: load ? Drawer(
             // Add a ListView to the drawer. This ensures the user can scroll
             // through the options in the drawer if there isn't enough vertical
             // space to fit everything.
-            child: (admin2 == '0' || admin2 == '1') ? ListView(
+            child: (admin == '0' || admin == '1') ? ListView(
               // Important: Remove any padding from the ListView.
               padding: EdgeInsets.zero,
               children: <Widget>[
@@ -341,45 +351,10 @@ class _DetailsUsersState extends State<DetailsUsers> {
 
               ],
             ),
-          ) : Center(child: CircularProgressIndicator(),),),
-    );
-  }
-
-var email;
-  var statut;
-  var nomLavage;
-  var situation;
-  var admin;
-
-  void getUser() async {
+          ) : Center(child: CircularProgressIndicator(),),
+        ));
 
 
-    //final String url = "http://192.168.43.217:8000/api/getAgent/$idagent/$idlavage"  ;
-
-    var res = await CallApi().getData('getUser/$idUser');
-
-//    final res = await http.get(Uri.encodeFull(url), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
-
-    var resBody = json.decode(res.body)['data'];
-
-    setState(() {
-      nom = resBody['nom'];
-      contact = resBody['numero'];
-      email = resBody['email'];
-      statut = resBody['status'];
-      nomLavage = resBody['nomLavage'];
-      situation = resBody['situation'];
-      admin = resBody['admin'];
-      dateEnreg = resBody['dateEnreg'];
-      //idTari = resBody['id'];
-    });
-
-
-
-    // print('identi est $idpresta');
 
   }
 
@@ -400,11 +375,12 @@ var email;
               }
           ));
     }
+
   }
 
   var nameUser;
-  var admin2;
-
+  var isadmin;
+  var admin;
 
   void getUserName() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -412,10 +388,11 @@ var email;
 
     setState(() {
       nameUser = userName;
-      admin2 = localStorage.getString('Admin');
+      isadmin = localStorage.getString('Admin');
+      admin = localStorage.getString('Admin');
     });
 
-    //print('la valeur de admin est : $admin');
+    print('la valeur de admin est : $isadmin');
 
   }
 }

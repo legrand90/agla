@@ -20,12 +20,12 @@ import 'dashbord.dart';
 import 'historique.dart';
 import 'login_page.dart';
 
-class User extends StatefulWidget {
+class SuperAdmin extends StatefulWidget {
   @override
-  _UserState createState() => new _UserState();
+  _SuperAdminState createState() => new _SuperAdminState();
 }
 
-class _UserState extends State<User> {
+class _SuperAdminState extends State<SuperAdmin> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _nomUser = TextEditingController();
@@ -58,8 +58,9 @@ class _UserState extends State<User> {
   //var _currencies = ['User', 'Admin', 'Super Admin'];
 
   var _currencies = <String>[
-    'PROPRIETAIRE',
-    'GERANT',
+    'MAXOM SUPER ADMIN',
+    'MAXOM DEV',
+    'MAXOM COM',
   ];
 
   static List <Datux> listlavages = List <Datux>() ;
@@ -414,58 +415,6 @@ class _UserState extends State<User> {
 
 
                   Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: loading ? CircularProgressIndicator() : searchTextField = AutoCompleteTextField<Datux>(
-                          key: keys,
-                          clearOnSubmit: false,
-                          suggestions: listlavages,
-                          style: TextStyle(color: Colors.black, fontSize: 16.0),
-                          decoration: InputDecoration(
-                              contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
-                              hintText: "Saisir le lavage",
-                              hintStyle: TextStyle(color: Colors.black)
-                          ),
-                          itemFilter: (item, query){
-                            return item.libelleLavage.toLowerCase().startsWith(query.toLowerCase());
-                          },
-                          itemSorter: (a, b){
-                            return a.libelleLavage.compareTo(b.libelleLavage);
-                          },
-                          itemSubmitted: (item){
-                            setState(() {
-                              searchTextField.textField.controller.text = item.libelleLavage;
-                              searchVal = item.id ;
-                            });
-                          },
-                          itemBuilder: (context, item){
-                            return row(item);
-                          },
-
-                        ),
-
-
-                      ),
-
-                      IconButton(
-                        icon: Icon(Icons.add),
-                        onPressed: (){
-                          Navigator.push(
-                            context,
-                            new MaterialPageRoute(
-                              builder: (BuildContext context){
-                                return Lavage();
-                              },
-                            ),
-                          );
-                        },
-                      )
-
-                    ],
-                  ),
-
-
-                  Row(
                     children : <Widget>[
                       Expanded(child :Container(
                         margin: const EdgeInsets.only(top: 20.0),
@@ -482,11 +431,11 @@ class _UserState extends State<User> {
                                   setState(() {
                                     loader = false;
                                   });
-                                 await _sendDataUser();
+                                  await _sendDataUser();
 
-                                 setState(() {
-                                   loader = true;
-                                 });
+                                  setState(() {
+                                    loader = true;
+                                  });
                                   //_sendDataClient();
                                   //_sendDataMatricule();
                                 },
@@ -545,7 +494,7 @@ class _UserState extends State<User> {
                                   setState(() {
                                     load = false;
                                   });
-                                 await Navigator.push(
+                                  await Navigator.push(
                                     context,
                                     new MaterialPageRoute(
                                       builder: (BuildContext context) {
@@ -554,9 +503,9 @@ class _UserState extends State<User> {
                                     ),
                                   );
 
-                                 setState(() {
-                                   load = true;
-                                 });
+                                  setState(() {
+                                    load = true;
+                                  });
                                 },
                               ),
                             )
@@ -804,21 +753,30 @@ class _UserState extends State<User> {
   Future <String> _sendDataUser() async{
 
     if(validateAndSave()) {
+      var choix;
+      switch(_mySelection2){
+        case 0: choix = '2';
+          break;
+        case 1: choix = '3';
+        break;
+        case 2: choix = '4';
+        break;
+      }
+
+      print('le choix $choix');
       var data = {
         'name': _nomUser.text.toUpperCase(),
         'numero': _contactUser.text,
         'email': _email.text,
         'date': date,
-        'id_lavage': searchVal,
         'password': _password.text,
-        'admin': _mySelection2,
-
+        'admin': choix,
       };
 
       //print('$data');
 
       if((_password.text == _confirmPassword.text)) {
-        var res = await CallApi().postData(data, 'register');
+        var res = await CallApi().postData(data, 'registerSuperAdmin');
         var body = json.decode(res.body);
 
 
@@ -827,8 +785,7 @@ class _UserState extends State<User> {
 
           setState(() {
             _nomUser.text = '';
-            searchTextField.textField.controller.text = '';
-                _contactUser.text = '';
+            _contactUser.text = '';
             _email.text = '';
             _password.text = '';
             _confirmPassword.text = '';
