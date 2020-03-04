@@ -147,7 +147,7 @@ class _UserState extends State<User> {
     // TODO: implement build
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('UTILLISATEURS'),
       ),
@@ -168,7 +168,7 @@ class _UserState extends State<User> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black,
+                          color: Colors.red,
                           fontWeight: FontWeight.bold
                       )
                   ),
@@ -180,7 +180,7 @@ class _UserState extends State<User> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.5),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(30.0),
@@ -192,7 +192,7 @@ class _UserState extends State<User> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
                             Icons.perm_identity,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -218,7 +218,7 @@ class _UserState extends State<User> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.5),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(30.0),
@@ -230,7 +230,7 @@ class _UserState extends State<User> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
                             Icons.phone,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -272,7 +272,7 @@ class _UserState extends State<User> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
                           child: Icon(
                             Icons.email,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -315,7 +315,7 @@ class _UserState extends State<User> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
                           child: Icon(
                             Icons.lock_open,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -358,7 +358,7 @@ class _UserState extends State<User> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
                           child: Icon(
                             Icons.lock_open,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -381,8 +381,9 @@ class _UserState extends State<User> {
                     ),
                   ),
 
-
-                  Row(
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
 
@@ -402,18 +403,19 @@ class _UserState extends State<User> {
                               });
                             },
                             value: _mySelection2 == null ? null : _currencies[_mySelection2],
-                            isExpanded: false,
+                            isExpanded: true,
                             hint: Text('Selectionner statut'),
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
 
-                  ),
+                  )),
 
                   ////////////////////////////////////////////////////////////////
 
-
-                  Row(
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  child: Row(
                     children: <Widget>[
                       Expanded(
                         child: loading ? CircularProgressIndicator() : searchTextField = AutoCompleteTextField<Datux>(
@@ -462,7 +464,7 @@ class _UserState extends State<User> {
                       )
 
                     ],
-                  ),
+                  )),
 
 
                   Row(
@@ -477,7 +479,7 @@ class _UserState extends State<User> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: ()async{
                                   setState(() {
                                     loader = false;
@@ -527,7 +529,7 @@ class _UserState extends State<User> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 child: new Container(
                                   //padding: const EdgeInsets.only(left: 20.0),
                                   alignment: Alignment.center,
@@ -588,7 +590,7 @@ class _UserState extends State<User> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -694,7 +696,7 @@ class _UserState extends State<User> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -714,7 +716,7 @@ class _UserState extends State<User> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -763,7 +765,7 @@ class _UserState extends State<User> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -885,6 +887,26 @@ class _UserState extends State<User> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 
 }

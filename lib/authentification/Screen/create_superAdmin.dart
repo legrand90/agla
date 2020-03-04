@@ -148,7 +148,7 @@ class _SuperAdminState extends State<SuperAdmin> {
     // TODO: implement build
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('UTILLISATEURS'),
       ),
@@ -169,7 +169,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black,
+                          color: Colors.red,
                           fontWeight: FontWeight.bold
                       )
                   ),
@@ -181,7 +181,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.5),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(30.0),
@@ -193,7 +193,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
                             Icons.perm_identity,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -219,7 +219,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.5),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(30.0),
@@ -231,7 +231,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
                             Icons.phone,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -273,7 +273,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
                           child: Icon(
                             Icons.email,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -316,7 +316,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
                           child: Icon(
                             Icons.lock_open,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -359,7 +359,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
                           child: Icon(
                             Icons.lock_open,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -382,8 +382,9 @@ class _SuperAdminState extends State<SuperAdmin> {
                     ),
                   ),
 
-
-                  Row(
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
 
@@ -403,16 +404,15 @@ class _SuperAdminState extends State<SuperAdmin> {
                               });
                             },
                             value: _mySelection2 == null ? null : _currencies[_mySelection2],
-                            isExpanded: false,
+                            isExpanded: true,
                             hint: Text('Selectionner statut'),
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
 
-                  ),
+                  )),
 
                   ////////////////////////////////////////////////////////////////
-
 
                   Row(
                     children : <Widget>[
@@ -426,7 +426,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: ()async{
                                   setState(() {
                                     loader = false;
@@ -476,7 +476,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 child: new Container(
                                   //padding: const EdgeInsets.only(left: 20.0),
                                   alignment: Alignment.center,
@@ -513,6 +513,8 @@ class _SuperAdminState extends State<SuperAdmin> {
                         ),
                       ),)],),
 
+                  SizedBox(height: 50.0,),
+
                   //////////////////////////////////////////////////////////
 
                 ],
@@ -537,7 +539,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -643,7 +645,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -663,7 +665,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -712,7 +714,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -842,6 +844,26 @@ class _SuperAdminState extends State<SuperAdmin> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 
 }

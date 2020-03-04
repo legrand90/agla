@@ -39,10 +39,51 @@ class _DetailsUsersState extends State<DetailsUsers> {
 
   _DetailsUsersState(this.idUser);
 
+  void DesactivateUser() async{
+    var data = {
+      'password': 'desactiver',
+      // 'id_lavage': id
+    };
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+    var res = await CallApi().postDataEdit(data, 'desactiverUser/${this.idUser}');
+    var resbody = json.decode(res.body);
+
+    if(resbody['statut'] == 'success'){
+      setState(() {
+        _switchVal = false;
+      });
+      print("pass $_switchVal");
+      _showMsg('$nom a été désactivé avec success !');
+    }else{
+      _showMsg('La désactivation a échoué !');
+    }
+
+
+    print("${this.idUser}");
+
+  }
+
+  final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
+
+  _showMsg(msg) {
+    final snackBar = SnackBar(
+        content: Text(msg),
+        action: SnackBarAction(
+          label: 'Fermer',
+          onPressed: () {
+
+          },
+        )
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
   @override
 
   void initState(){
     super.initState();
+    //this.DesactivateUser();
     this.getUser();
     this.getUserName();
 
@@ -52,6 +93,7 @@ class _DetailsUsersState extends State<DetailsUsers> {
     return  WillPopScope(
       // onWillPop: _onBackPressed,
         child:Scaffold(
+          key: _scaffoldKey,
             backgroundColor: Colors.grey[200],
             appBar: AppBar(
               title: Text('DETAILS AGENT'),
@@ -124,14 +166,49 @@ class _DetailsUsersState extends State<DetailsUsers> {
                   padding: const EdgeInsets.only(top: 40.0),
                 ),
 
+
+
                 Container(
                   padding: const EdgeInsets.only(left: 50.0, right: 50.0),
                   //margin: EdgeInsets.only(left: 25.0),
                   child: Switch(
-                    onChanged: (bool value){
+                    onChanged: (bool value)async{
+
+                      Future<bool> _sureToDelete(){
+                        return showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text("Voulez-vous vraiment désactiver $nom ? "),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text("Non"),
+                                  onPressed: () {
+                                    setState(() {
+                                      _switchVal = true;
+                                    });
+                                    Navigator.pop(context, false);
+
+                                  }
+                                ),
+                                FlatButton(
+                                  child: Text("Oui"),
+                                  onPressed: () {
+                                    DesactivateUser();
+                                    Navigator.pop(context, false);
+                                  }
+                                  ,
+                                )
+                              ],
+                            )
+                        );
+                      }
                       setState(() {
                         this._switchVal = value;
                       });
+
+                      if(_switchVal == false){
+                        _sureToDelete();
+                      }
                     },
                     value: this._switchVal,
                   ),
@@ -350,6 +427,7 @@ var email;
   var nomLavage;
   var situation;
   var admin;
+  var password;
 
   void getUser() async {
 
@@ -374,8 +452,19 @@ var email;
       situation = resBody['situation'];
       admin = resBody['admin'];
       dateEnreg = resBody['dateEnreg'];
+
       //idTari = resBody['id'];
     });
+
+    if(resBody['password'] == 'desactiver'){
+
+      setState((){
+        _switchVal = false;
+      });
+
+    }else{
+      _switchVal = true;
+    }
 
 
 

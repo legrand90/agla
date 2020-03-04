@@ -32,7 +32,8 @@ class _UserSearchState extends State<UserSearch> {
   final TextEditingController _matricule = TextEditingController();
   String date = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
-  static List <Datu> Listusers = List <Datu>()  ;
+  static List <Datu> Listuser = List <Datu>() ;
+  Listusers listusers = Listusers() ;
   List data = List() ;
   List data2 = List() ;
   List data3 = List() ;//edited line
@@ -64,11 +65,33 @@ class _UserSearchState extends State<UserSearch> {
     return parsed.map<Datu>((json)=>Datu.fromJson(json)).toList();
   }
 
-
-  void getUsers() async {
+  Future<dynamic> getUsers() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
-    var res = await CallApi().getData('users');
+
+    var res = await CallApi().getData('getUserOrderByName');
+    //String url = "http://192.168.43.217:8000/api/agent/$id";
+    //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
+     var resBody = json.decode(res.body)['data'];
+    // final response = await http.get('$url');
+
+    setState(() {
+      listusers = listusersFromJson(res.body);
+    });
+
+    if(listusers.data.length != 0){
+      resBody = json.decode(res.body)['data'];
+    }else{
+      _showMsg("Liste vide !!!");
+    }
+    return listusers;
+  }
+
+
+  void getUsers2() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+    var res = await CallApi().getData('getUserOrderByName');
     //final String urlClient = "http://192.168.43.217:8000/api/client/$id";
     // final res = await http.get(Uri.encodeFull(urlAgent), headers: {"Accept": "application/json","Content-type" : "application/json",});
     // final res2 = await http.get(Uri.encodeFull(urlClient), headers: {"Accept": "application/json","Content-type" : "application/json",});
@@ -76,14 +99,14 @@ class _UserSearchState extends State<UserSearch> {
 
     if(res.statusCode == 200){
 
-      Listusers = loadClients(res.body);
+      Listuser = loadClients(res.body);
 
       setState(() {
         loading  = false ;
       });
 
     }else{
-      _showMsg('ERREUR');
+      _showMsg('Liste vide');
     }
 
   }
@@ -119,6 +142,7 @@ class _UserSearchState extends State<UserSearch> {
 
   @override
   void initState(){
+    this.getUsers2();
     this.getUsers();
     this.getCouleur();
     this.getMarque();
@@ -151,13 +175,9 @@ class _UserSearchState extends State<UserSearch> {
       body: load ? Form(
         key: _formKey,
         // autovalidate: _autoValidate,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              child: ListView(
+                //mainAxisAlignment: MainAxisAlignment.center,
+                //crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
 
                   SizedBox(height: 50.0),
@@ -168,7 +188,7 @@ class _UserSearchState extends State<UserSearch> {
                         child: loading ? CircularProgressIndicator() : searchTextField = AutoCompleteTextField<Datu>(
                           key: key,
                           clearOnSubmit: false,
-                          suggestions: Listusers,
+                          suggestions: Listuser,
                           style: TextStyle(color: Colors.black, fontSize: 16.0),
                           decoration: InputDecoration(
                               contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
@@ -199,11 +219,13 @@ class _UserSearchState extends State<UserSearch> {
                       IconButton(
                         icon: Icon(Icons.search),
                         onPressed: (){
-                          Navigator.push(
+                          //print('val $searchVal');
+
+                          (searchVal != null) ? Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => DetailsUsers(idUser: searchVal),
-                              ));
+                              )) : _showMsg('Veuillez selectionner un utilisateur !');
                         },
                       )
 
@@ -211,17 +233,59 @@ class _UserSearchState extends State<UserSearch> {
                   ),
 
                   ////////////////////////////////////////////////////////////////////////////
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40.0),
+                  SizedBox(
+                    height: 50.0,
                   ),
+
+                  ListView.separated(
+                    separatorBuilder: (BuildContext context, int index) {
+
+                      //indexItem = index;
+
+                      return Divider();
+                    },
+                    shrinkWrap: true,
+                    itemCount: (listusers == null || listusers.data == null || listusers.data.length == 0 )? 0 : listusers.data.length,
+                    itemBuilder: (_,int index)=>ListTile(
+                      title: Column(
+                        children: <Widget>[
+
+                          Row(
+                            children: <Widget>[
+                              Expanded(child: Text(listusers .data [index] .nom),),
+                              //SizedBox(width: 170,),
+
+                              SizedBox(width: 30,),
+
+                            ],
+                          ),
+
+
+                        ],
+                      ),
+
+
+                      onTap: () async{
+                        setState(() {
+                          load = false;
+                        });
+                        await  Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailsUsers(idUser: listusers .data [index].id),
+                            ));
+                        setState(() {
+                          load = true;
+                        });
+                      },
+                    ),
+                  )
 
                   //////////////////////////////////////////////////////////
 
                 ],
               ),
-            ),
-          ),
-        ),
+
       ) : Center(child: CircularProgressIndicator(),),
 
       drawer: load ? Drawer(

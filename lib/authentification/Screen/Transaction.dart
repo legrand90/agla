@@ -339,13 +339,15 @@ class _TransactionState extends State<Transaction> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black,
+                          color: Colors.red,
                           fontWeight: FontWeight.bold
                       )
                   ),
                   SizedBox(height: 50.0),
 
-                  Row(
+                  Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Row(
                     children: <Widget>[
                       Expanded(
                         child: loading ? CircularProgressIndicator() : searchTextField = AutoCompleteTextField<Datu>(
@@ -394,13 +396,15 @@ class _TransactionState extends State<Transaction> {
                           },
                         )
                     ],
-                  ),
+                  )),
 
                   Padding(
                     padding: const EdgeInsets.only(left: 40.0),
                   ),
 
-                  Row(
+                  Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
 
@@ -422,17 +426,19 @@ class _TransactionState extends State<Transaction> {
 
                             },
                             value: idmatricule,
-                            isExpanded: false,
+                            isExpanded: true,
                             hint: Text('Selectionner Matricule'),
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
 
-                  ),
+                  )),
 
                   ////////////////////////////////////////////////////////////////
 
-                  Row(
+                  Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
 
@@ -462,15 +468,17 @@ class _TransactionState extends State<Transaction> {
 
                             },
                             value: _mySelection,
-                            isExpanded: false,
+                            isExpanded: true,
                             hint: Text('Selectionner Agent'),
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
 
-                  ),
+                  )),
 
-                  Row(
+              Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
 
@@ -506,13 +514,13 @@ class _TransactionState extends State<Transaction> {
 
                             },
                             value: _mySelection3,
-                            isExpanded: false,
+                            isExpanded: true,
                             hint: Text('$texte'),
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
 
-                  ),
+                  )),
 
                   visible ?
                     Padding(
@@ -562,7 +570,7 @@ class _TransactionState extends State<Transaction> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: ()async{
                                   setState(() {
                                     loader = false;
@@ -604,7 +612,7 @@ class _TransactionState extends State<Transaction> {
                               shape: new RoundedRectangleBorder(
                                   borderRadius: new BorderRadius.circular(30.0)
                               ),
-                              color: Color(0xff11b719),
+                              color: Color(0xff0200F4),
                               onPressed: () async{
                                 setState(() {
                                   load = false;
@@ -675,7 +683,7 @@ class _TransactionState extends State<Transaction> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -781,7 +789,7 @@ class _TransactionState extends State<Transaction> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -943,6 +951,26 @@ class _TransactionState extends State<Transaction> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 
 

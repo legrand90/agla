@@ -171,7 +171,7 @@ class _ListUsersState extends State<ListUsers> {
                   backgroundColor: Colors.white,
                 ),
                 decoration: BoxDecoration(
-                  color: Color(0xff11b719),
+                  color: Color(0xff0200F4),
                 ),
               ),
               ListTile(
@@ -277,7 +277,7 @@ class _ListUsersState extends State<ListUsers> {
                   setState(() {
                     load = false;
                   });
-                  await _logout();
+                  await _alertDeconnexion();
 
                   setState(() {
                     load = true;
@@ -297,7 +297,7 @@ class _ListUsersState extends State<ListUsers> {
                   backgroundColor: Colors.white,
                 ),
                 decoration: BoxDecoration(
-                  color: Color(0xff11b719),
+                  color: Color(0xff0200F4),
                 ),
               ),
               ListTile(
@@ -346,7 +346,7 @@ class _ListUsersState extends State<ListUsers> {
                   setState(() {
                     load = false;
                   });
-                  await _logout();
+                  await _alertDeconnexion();
 
                   setState(() {
                     load = true;
@@ -395,6 +395,26 @@ class _ListUsersState extends State<ListUsers> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 }
 

@@ -7,6 +7,7 @@ import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Models/Listlavages.dart';
 import 'package:lavage/authentification/Screen/DetailSreen/detailsUsers.dart';
 import 'package:lavage/authentification/Screen/DetailSreen/detailslavages.dart';
+import 'package:lavage/authentification/Screen/Listes/listUsersByIdLavage.dart';
 import 'package:lavage/authentification/Screen/dashbord.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -59,6 +60,8 @@ class _LavageSearchState extends State<LavageSearch> {
 
   bool load = true;
 
+  Listlavages lavages = Listlavages()  ;
+
 
   static List <Datux> loadLavages(String jsonString){
     final parsed = json.decode(jsonString)['data'].cast<Map<String, dynamic>>();
@@ -68,7 +71,7 @@ class _LavageSearchState extends State<LavageSearch> {
 
   void getLavages() async {
 
-    var res = await CallApi().getData('lavage');
+    var res = await CallApi().getData('getLavageOrderByName');
 
     if(res.statusCode == 200){
 
@@ -81,9 +84,31 @@ class _LavageSearchState extends State<LavageSearch> {
       print('les lavages $listlavages');
 
     }else{
-      _showMsg('ERREUR');
+      _showMsg('Liste vide');
     }
 
+  }
+
+  Future<dynamic> getLavage() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+
+    var res = await CallApi().getData('getLavageOrderByName');
+    // String url = "http://192.168.43.217:8000/api/prestation/$id";
+    // final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
+     var resBody = json.decode(res.body)['data'];
+    // final response = await http.get('$url');
+
+    setState(() {
+      lavages = listlavagesFromJson(res.body);
+    });
+
+    if(lavages.data.length != 0){
+      resBody = json.decode(res.body)['data'];
+    }else{
+      _showMsg("Liste vide !!!");
+    }
+    return lavages;
   }
 
 
@@ -118,8 +143,7 @@ class _LavageSearchState extends State<LavageSearch> {
   @override
   void initState(){
     this.getLavages();
-    this.getCouleur();
-    this.getMarque();
+    this.getLavage();
     this.getUserName();
     super.initState();
   }
@@ -148,16 +172,12 @@ class _LavageSearchState extends State<LavageSearch> {
       body: load ? Form(
         key: _formKey,
         // autovalidate: _autoValidate,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
+              child: ListView(
                // mainAxisAlignment: MainAxisAlignment.center,
                 //crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
 
-                  //SizedBox(height: 50.0),
+                  SizedBox(height: 50.0),
 
                   Row(
                     children: <Widget>[
@@ -196,11 +216,12 @@ class _LavageSearchState extends State<LavageSearch> {
                       IconButton(
                         icon: Icon(Icons.search),
                         onPressed: (){
-                          Navigator.push(
+
+                          (searchVal != null) ? Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DetailsLavage(idlav: searchVal ),
-                              ));
+                                builder: (context) => UsersListByIdLavage(idlav: searchVal ),
+                              )) : _showMsg('Veuillez selectionner un lavage !');
                         },
                       )
 
@@ -208,17 +229,53 @@ class _LavageSearchState extends State<LavageSearch> {
                   ),
 
                   ////////////////////////////////////////////////////////////////////////////
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40.0),
+                  SizedBox(
+                    height: 50.0,
                   ),
+
+
+                  ListView.separated(
+                    separatorBuilder: (BuildContext context, int index) {
+
+                      //indexItem = index;
+
+                      return Divider();
+                    },
+                    shrinkWrap: true,
+                    itemCount: (lavages == null || lavages.data == null || lavages.data.length == 0 )? 0 : lavages.data.length,
+                    itemBuilder: (_,int index)=>ListTile(
+                      title: Row(
+                        children: <Widget>[
+                          Expanded(child: Text(lavages.data [index] .libelleLavage),),
+                          // SizedBox(width: 170,),
+
+                          SizedBox(width: 30.0,),
+
+
+                        ],
+                      ),
+
+                      onTap: ()async{
+                        setState(() {
+                          load = false;
+                        });
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UsersListByIdLavage(idlav: lavages.data [index] .id),
+                            ));
+                        setState(() {
+                          load = true;
+                        });
+                      },
+                    ),
+                  )
 
                   //////////////////////////////////////////////////////////
 
                 ],
               ),
-            ),
-          ),
-        ),
+
       ) : Center(child: CircularProgressIndicator(),),
 
       drawer: load ? Drawer(

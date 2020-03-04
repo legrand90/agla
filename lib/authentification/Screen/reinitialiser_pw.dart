@@ -126,7 +126,7 @@ class _ResetPasswordState extends State<ResetPassword> {
     // TODO: implement build
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('REINITIALISATION'),
       ),
@@ -147,7 +147,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black,
+                          color: Colors.red,
                           fontWeight: FontWeight.bold
                       )
                   ),
@@ -175,7 +175,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
                           child: Icon(
                             Icons.lock_open,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -218,7 +218,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
                           child: Icon(
                             Icons.lock_open,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -255,7 +255,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: ()async{
                                   setState(() {
                                     loader = false;
@@ -320,7 +320,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -426,7 +426,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -446,7 +446,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -495,7 +495,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -616,6 +616,26 @@ class _ResetPasswordState extends State<ResetPassword> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 
 }

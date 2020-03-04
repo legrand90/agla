@@ -29,6 +29,8 @@ class _TarificationState extends State<Tarification> {
 
   String montant;
 
+  bool load = true;
+
 
 
 
@@ -305,7 +307,7 @@ class _TarificationState extends State<Tarification> {
         ),
       ),
 
-      drawer: Drawer(
+      drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
         // space to fit everything.
@@ -320,12 +322,15 @@ class _TarificationState extends State<Tarification> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
               title: Text('Accueil'),
-              onTap: () {
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
@@ -334,12 +339,19 @@ class _TarificationState extends State<Tarification> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Nouvelle Entree'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -347,12 +359,18 @@ class _TarificationState extends State<Tarification> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Recherche'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -360,12 +378,19 @@ class _TarificationState extends State<Tarification> {
                     },
                   ),
                 );
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Historique'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -373,12 +398,18 @@ class _TarificationState extends State<Tarification> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Parametre'),
-              onTap: () {
-                Navigator.push(
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -386,17 +417,29 @@ class _TarificationState extends State<Tarification> {
                     },
                   ),
                 );
+                setState(() {
+                  load = true;
+                });
               },
             ),
             ListTile(
               title: Text('Deconnexion'),
-              onTap: () {
-                _logout();
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _alertDeconnexion();
+
+                setState(() {
+                  load = true;
+                });
               },
             ),
+
+
           ],
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator(),),
 
     );
   }
@@ -499,6 +542,26 @@ class _TarificationState extends State<Tarification> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 }
 

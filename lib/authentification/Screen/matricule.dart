@@ -149,7 +149,7 @@ class _MatriculeState extends State<Matricule> {
     // TODO: implement build
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
           title: Text('MATRICULE')
       ),
@@ -170,13 +170,15 @@ class _MatriculeState extends State<Matricule> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black,
+                          color: Colors.red,
                           fontWeight: FontWeight.bold
                       )
                   ),
                   SizedBox(height: 50.0),
 
-                  Row(
+                  Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Row(
                     children: <Widget>[
                       Expanded(
                         child: loading ? CircularProgressIndicator() : searchTextField = AutoCompleteTextField<Datu>(
@@ -225,9 +227,11 @@ class _MatriculeState extends State<Matricule> {
                       )
 
                     ],
-                  ),
+                  )),
 
-                  Row(
+                  Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
 
@@ -247,17 +251,19 @@ class _MatriculeState extends State<Matricule> {
                               });
                             },
                             value: _mySelection2,
-                            isExpanded: false,
+                            isExpanded: true,
                             hint: Text('Selectionner la marque du vehicule'),
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
 
-                  ),
+                  )),
 
                   ////////////////////////////////////////////////////////////////
 
-                  Row(
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
 
@@ -277,13 +283,13 @@ class _MatriculeState extends State<Matricule> {
                               });
                             },
                             value: _mySelection,
-                            isExpanded: false,
+                            isExpanded: true,
                             hint: Text('Selectionner la couleur du vehicule'),
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
 
-                  ),
+                  )),
 
                   SizedBox(height: 30.0),
 
@@ -308,7 +314,7 @@ class _MatriculeState extends State<Matricule> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
                           child: Icon(
                             Icons.directions_car,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -352,7 +358,7 @@ class _MatriculeState extends State<Matricule> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: ()async{
                                   setState(() {
                                     loader = false;
@@ -395,7 +401,7 @@ class _MatriculeState extends State<Matricule> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: () async{
                                   setState(() {
                                     load = false;
@@ -472,7 +478,7 @@ class _MatriculeState extends State<Matricule> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -578,7 +584,7 @@ class _MatriculeState extends State<Matricule> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -721,6 +727,26 @@ class _MatriculeState extends State<Matricule> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 
 

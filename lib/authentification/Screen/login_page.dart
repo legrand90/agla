@@ -53,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
     return showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text("Vous voulez vraiment quitter cette page"),
+          title: Text("Vous voulez vraiment quitter cette page ?"),
           actions: <Widget>[
             FlatButton(
               child: Text("Non"),

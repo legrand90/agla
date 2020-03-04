@@ -39,7 +39,27 @@ class _DashbordScreenState extends State<DashbordScreen> {
     return showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text("Vous voulez vraiment quitter cette page"),
+          title: Text("Vous voulez vraiment quitter cette page ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
           actions: <Widget>[
             FlatButton(
               child: Text("Non"),
@@ -69,7 +89,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
 
   Widget build(BuildContext context){
       return  WillPopScope(
-            onWillPop: () async => false,
+            onWillPop: () async => _onBackPressed(),
           child:  Scaffold(
             backgroundColor: Colors.grey[200],
             appBar: AppBar(
@@ -142,7 +162,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                               shape: new RoundedRectangleBorder(
                                   borderRadius: new BorderRadius.circular(30.0)
                               ),
-                              color: Color(0xff11b719),
+                              color: Color(0xff0200F4),
                               onPressed: (){
                                     Navigator.push(
                                   context,
@@ -166,7 +186,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                                         "Nouvelle Entree",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          //color: Colors.black,
+                                          color: Colors.white,
                                           fontSize: 20.0
                                           //fontWeight: FontWeight.bold
                                         ),
@@ -191,7 +211,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                               shape: new RoundedRectangleBorder(
                                   borderRadius: new BorderRadius.circular(30.0)
                               ),
-                              color: Color(0xff11b719),
+                              color: Color(0xff0200F4),
                               onPressed: (){
                                 Navigator.push(
                                   context,
@@ -215,7 +235,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                                         "Recherche",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          //color: Colors.black,
+                                          color: Colors.white,
                                             fontSize: 20.0
                                           //fontWeight: FontWeight.bold
                                         ),
@@ -240,7 +260,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                               shape: new RoundedRectangleBorder(
                                   borderRadius: new BorderRadius.circular(30.0)
                               ),
-                              color: Color(0xff11b719),
+                              color: Color(0xff0200F4),
                               onPressed: (){
                                 Navigator.push(
                                   context,
@@ -264,7 +284,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                                         "Parametre",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          //color: Colors.black,
+                                          color: Colors.white,
                                             fontSize: 20.0
                                           //fontWeight: FontWeight.bold
                                         ),
@@ -298,7 +318,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                       backgroundColor: Colors.white,
                     ),
                     decoration: BoxDecoration(
-                      color: Color(0xff11b719),
+                      color: Color(0xff0200F4),
                     ),
                   ),
                   ListTile(
@@ -384,7 +404,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                       setState(() {
                         load = false;
                       });
-                      await _logout();
+                      await _alertDeconnexion();
 
                       setState(() {
                         load = true;
@@ -404,7 +424,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                       backgroundColor: Colors.white,
                     ),
                     decoration: BoxDecoration(
-                      color: Color(0xff11b719),
+                      color: Color(0xff0200F4),
                     ),
                   ),
 
@@ -433,7 +453,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                       setState(() {
                         load = false;
                       });
-                      await _logout();
+                      await _alertDeconnexion();
 
                       setState(() {
                         load = true;

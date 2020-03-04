@@ -69,7 +69,7 @@ class _RegisterState extends State<Register> {
                                 width: 150.0,
                                 height: 140.0,
                                 child : FlatButton(
-                                  color: Color(0xff11b719),
+                                  color: Color(0xff0200F4),
                                 onPressed: ()async{
                                     setState(() {
                                       load = false;
@@ -86,7 +86,7 @@ class _RegisterState extends State<Register> {
                                     load =true;
                                   });
                                 },
-                                child: Text('Commission'),
+                                child: Text('Commission',style: TextStyle(color: Colors.white),),
                               )),
                             ),
                             /*
@@ -115,7 +115,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff11b719),
+                                    color: Color(0xff0200F4),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -133,7 +133,7 @@ class _RegisterState extends State<Register> {
                                         load = true;
                                       });
                                     },
-                                    child: Text('Matricule'),
+                                    child: Text('Matricule',style: TextStyle(color: Colors.white)),
                                   )),
                             ),
                             /*
@@ -168,7 +168,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff11b719),
+                                    color: Color(0xff0200F4),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -186,7 +186,7 @@ class _RegisterState extends State<Register> {
                                         load = true;
                                       });
                                     },
-                                    child: Text('Tarification'),
+                                    child: Text('Tarification',style: TextStyle(color: Colors.white)),
                                   )),
                             ),
                             /*
@@ -215,7 +215,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff11b719),
+                                    color: Color(0xff0200F4),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -233,7 +233,7 @@ class _RegisterState extends State<Register> {
                                         load = true;
                                       });
                                     },
-                                    child: Text('Prestation'),
+                                    child: Text('Prestation',style: TextStyle(color: Colors.white)),
                                   )),
                             ),
                             /*
@@ -268,7 +268,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff11b719),
+                                    color: Color(0xff0200F4),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -286,7 +286,7 @@ class _RegisterState extends State<Register> {
                                         load = true;
                                       });
                                     },
-                                    child: Text('Client'),
+                                    child: Text('Client',style: TextStyle(color: Colors.white)),
                                   )),
                             ),
                             /*
@@ -315,7 +315,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff11b719),
+                                    color: Color(0xff0200F4),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -333,7 +333,7 @@ class _RegisterState extends State<Register> {
                                         load = true;
                                       });
                                     },
-                                    child: Text('Agent'),
+                                    child: Text('Agent',style: TextStyle(color: Colors.white)),
                                   )),
                             ),
                             /*
@@ -366,7 +366,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff11b719),
+                                    color: Color(0xff0200F4),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -384,7 +384,7 @@ class _RegisterState extends State<Register> {
                                         load = true;
                                       });
                                     },
-                                    child: Text('Marque'),
+                                    child: Text('Marque',style: TextStyle(color: Colors.white)),
                                   )),
                             ),
                             /*
@@ -413,7 +413,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff11b719),
+                                    color: Color(0xff0200F4),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -431,7 +431,7 @@ class _RegisterState extends State<Register> {
                                         load = true;
                                       });
                                     },
-                                    child: Text('Couleur'),
+                                    child: Text('Couleur',style: TextStyle(color: Colors.white)),
                                   )),
                             ),
                             /*
@@ -466,7 +466,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff11b719),
+                                    color: Color(0xff0200F4),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -484,7 +484,7 @@ class _RegisterState extends State<Register> {
                                         load = true;
                                       });
                                     },
-                                    child: Text('Lavages'),
+                                    child: Text('Lavages',style: TextStyle(color: Colors.white)),
                                   )),
                             ),
                             /*
@@ -513,7 +513,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff11b719),
+                                    color: Color(0xff0200F4),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -531,7 +531,7 @@ class _RegisterState extends State<Register> {
                                         load = true;
                                       });
                                     },
-                                    child: Text('Utilisateurs'),
+                                    child: Text('Utilisateurs',style: TextStyle(color: Colors.white)),
                                   )),
                             ),
                             /*
@@ -566,7 +566,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff11b719),
+                                    color: Color(0xff0200F4),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -583,7 +583,7 @@ class _RegisterState extends State<Register> {
                                         load = true;
                                       });
                                     },
-                                    child: Text('Réinitialiser mot de passe', textAlign: TextAlign.center,),
+                                    child: Text('Réinitialiser mot de passe', textAlign: TextAlign.center,style: TextStyle(color: Colors.white)),
                                   )),
                             ),
                             /*
@@ -612,7 +612,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff11b719),
+                                    color: Color(0xff0200F4),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -629,7 +629,7 @@ class _RegisterState extends State<Register> {
                                         load = true;
                                       });
                                     },
-                                    child: Text('Creér Super Admin', textAlign: TextAlign.center,),
+                                    child: Text('Creér Super Admin', textAlign: TextAlign.center,style: TextStyle(color: Colors.white)),
                                   )),
                             ),
                             /*
@@ -671,7 +671,7 @@ class _RegisterState extends State<Register> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -777,7 +777,7 @@ class _RegisterState extends State<Register> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -797,7 +797,7 @@ class _RegisterState extends State<Register> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -894,6 +894,26 @@ class _RegisterState extends State<Register> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 }
 

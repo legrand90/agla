@@ -105,7 +105,7 @@ class _PrestationState extends State<Prestation> {
     // TODO: implement build
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('PRESTATION'),
       ),
@@ -126,7 +126,7 @@ class _PrestationState extends State<Prestation> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black,
+                          color: Colors.red,
                           fontWeight: FontWeight.bold
                       )
                   ),
@@ -138,7 +138,7 @@ class _PrestationState extends State<Prestation> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.5),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(30.0),
@@ -150,7 +150,7 @@ class _PrestationState extends State<Prestation> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
                             Icons.home,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -176,7 +176,7 @@ class _PrestationState extends State<Prestation> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.5),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(30.0),
@@ -188,7 +188,7 @@ class _PrestationState extends State<Prestation> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
                             Icons.person_outline,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -218,7 +218,7 @@ class _PrestationState extends State<Prestation> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.5),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(30.0),
@@ -232,7 +232,7 @@ class _PrestationState extends State<Prestation> {
                               horizontal: 15.0),
                           child: Icon(
                             Icons.monetization_on,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -273,7 +273,7 @@ class _PrestationState extends State<Prestation> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: ()async{
                                   setState(() {
                                     loading = false;
@@ -321,7 +321,7 @@ class _PrestationState extends State<Prestation> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 child: new Container(
                                   //padding: const EdgeInsets.only(left: 20.0),
                                   alignment: Alignment.center,
@@ -382,7 +382,7 @@ class _PrestationState extends State<Prestation> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -488,7 +488,7 @@ class _PrestationState extends State<Prestation> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -657,6 +657,26 @@ class _PrestationState extends State<Prestation> {
       }
     }
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 
 

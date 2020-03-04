@@ -21,15 +21,22 @@ import '../historique.dart';
 import '../login_page.dart';
 import 'package:http/http.dart' as http;
 
-class UsersList extends StatefulWidget {
+class UsersListByIdLavage extends StatefulWidget {
 
   Listusers listusers = Listusers ()  ;
+  var idlav ;
+
+  UsersListByIdLavage({Key key, @required this.idlav}) : super(key: key);
 
   @override
-  _UsersListState createState() => _UsersListState();
+  _UsersListByIdLavageState createState() => _UsersListByIdLavageState(idlav);
 }
 
-class _UsersListState extends State<UsersList> {
+class _UsersListByIdLavageState extends State<UsersListByIdLavage> {
+
+  var idlav ;
+
+  _UsersListByIdLavageState(this.idlav);
 
   Listusers listusers = Listusers () ;
 
@@ -42,7 +49,7 @@ class _UsersListState extends State<UsersList> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
 
-    var res = await CallApi().getData('users');
+    var res = await CallApi().getData('getUserByIdLavage/${this.idlav}');
     //String url = "http://192.168.43.217:8000/api/agent/$id";
     //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
     // var resBody = json.decode(res.body)['data'];
@@ -143,9 +150,8 @@ class _UsersListState extends State<UsersList> {
 
                 Row(
                   children: <Widget>[
-                    Expanded(child: Text('NOM : ${listusers.data [index] .nom}'),),
+                    Expanded(child: Text(' NOM : ${listusers.data [index] .nom}'),),
                     //SizedBox(width: 170,),
-
                     IconButton(
                       icon: Icon(
                           Icons.edit),
@@ -172,7 +178,6 @@ class _UsersListState extends State<UsersList> {
                 Row(
                   children: <Widget>[
                     Expanded(child: Text('LAVAGE : ${listusers.data[index].idLavage}',),),
-
                     //SizedBox(width: 80.0,),
                     //Text('${listusers.data[index].admin}',),
                   ],
@@ -182,9 +187,8 @@ class _UsersListState extends State<UsersList> {
 
                 Row(
                   children: <Widget>[
-                    Expanded(child: Text('STATUT : ${listusers.data[index].admin}',),),
                     //SizedBox(width: 80.0,),
-
+                    Expanded(child: Text('STATUT : ${listusers.data[index].admin}',),),
                   ],
                 )
               ],
@@ -195,14 +199,14 @@ class _UsersListState extends State<UsersList> {
               setState(() {
                 load = false;
               });
-            await  Navigator.push(
+              await  Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => DetailsUsers(idUser: listusers.data[index].id),
                   ));
-            setState(() {
-              load = true;
-            });
+              setState(() {
+                load = true;
+              });
             },
           ),
         ) : Center(child: CircularProgressIndicator(),),

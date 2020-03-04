@@ -143,7 +143,7 @@ class _CommissionState extends State<Commission> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black,
+                          color: Colors.red,
                           fontWeight: FontWeight.bold
                       )
                   ),
@@ -152,7 +152,9 @@ class _CommissionState extends State<Commission> {
                     padding: const EdgeInsets.only(left: 40.0),
                   ),
 
-                  Row(
+                  Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
 
@@ -172,17 +174,19 @@ class _CommissionState extends State<Commission> {
                               });
                             },
                             value: _mySelection,
-                            isExpanded: false,
+                            isExpanded: true,
                             hint: Text('Selectionner l\'agent'),
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
 
-                  ),
+                  )),
 
                   ////////////////////////////////////////////////////////////////
 
-                  Row(
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
 
@@ -202,13 +206,13 @@ class _CommissionState extends State<Commission> {
                               });
                             },
                             value: _mySelection2,
-                            isExpanded: false,
+                            isExpanded: true,
                             hint:  Text('Selectionner la tarification') ,
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
 
-                  ),
+                  )),
 
                   Container(
                     decoration: BoxDecoration(
@@ -226,7 +230,7 @@ class _CommissionState extends State<Commission> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
                             Icons.monetization_on,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                               size: 27.0
                           ),
                         ),
@@ -266,7 +270,7 @@ class _CommissionState extends State<Commission> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: ()async{
                                   setState(() {
                                     loading = false;
@@ -315,7 +319,7 @@ class _CommissionState extends State<Commission> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 child: new Container(
                                   //padding: const EdgeInsets.only(left: 20.0),
                                   alignment: Alignment.center,
@@ -376,7 +380,7 @@ class _CommissionState extends State<Commission> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -482,7 +486,7 @@ class _CommissionState extends State<Commission> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -592,6 +596,26 @@ class _CommissionState extends State<Commission> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 
 

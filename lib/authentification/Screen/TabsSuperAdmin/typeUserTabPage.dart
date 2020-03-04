@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
+import 'package:lavage/authentification/Models/Users.dart';
+import 'package:lavage/authentification/Screen/DetailSreen/detailsUsers.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,19 +35,21 @@ class _TypeUserSearchState extends State<TypeUserSearch> {
   List data2 = List() ;//edited line
   var id ;
   String _mySelection;
-  String _mySelection2;
+  int _mySelection2;
   bool loading = true;
   bool load = true;
 
+  Listusers listusers = Listusers () ;
+
   var _currencies = <String>[
-    'PROPRIETAIRE',
     'GERANT',
+    'PROPRIETAIRE',
   ];
 
-  Future<String> getAgent() async {
+  Future<String> getTypeUser() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
-    var res = await CallApi().getData('agent/$id');
+    var res = await CallApi().getData('getUserwithType/$_mySelection2');
     //final String urlAgent = "http://192.168.43.217:8000/api/agent/$id";
 
     //final res = await http.get(Uri.encodeFull(urlAgent), headers: {"Accept": "application/json","Content-type" : "application/json",});
@@ -53,34 +57,20 @@ class _TypeUserSearchState extends State<TypeUserSearch> {
 
 
     setState(() {
-      data = resBody;
+      listusers = listusersFromJson(res.body);
     });
 
-    print(resBody);
+    if(listusers.data.length != 0){
+      resBody = json.decode(res.body)['data'];
+    }else{
+      _showMsg("Liste vide !!!");
+    }
+
+    print('type $_mySelection2');
     return "Success";
   }
 
-  Future<String> getTarification() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    var res = await CallApi().getData('tarification/$id');
-    // final String urlTarification = "http://192.168.43.217:8000/api/tarification/$id";
-    //final res = await http.get(Uri.encodeFull(urlTarification), headers: {"Accept": "application/json","Content-type" : "application/json",});
-    var resBody = json.decode(res.body)['data'];
-    //SharedPreferences localStorage = await SharedPreferences.getInstance();
 
-    setState(() {
-
-      data2 = resBody;
-
-      //localStorage.setBool('valeur', null);
-    });
-
-
-
-    print(val);
-    return "Success";
-  }
   //SharedPreferences localStorage = await SharedPreferences.getInstance();
 
 
@@ -101,9 +91,8 @@ class _TypeUserSearchState extends State<TypeUserSearch> {
   @override
   void initState(){
     super.initState();
-    this.getAgent();
     this.getUserName();
-    this.getTarification();
+
   }
   Widget build(BuildContext context){
     final logo = Hero(
@@ -128,14 +117,11 @@ class _TypeUserSearchState extends State<TypeUserSearch> {
       body: load ? Form(
         key: _formKey,
         // autovalidate: _autoValidate,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+
+              child: ListView(
                 children: <Widget>[
+
+                  SizedBox(height: 150.0,),
 
                   Text("TYPE USER",
                       textAlign: TextAlign.center,
@@ -164,12 +150,13 @@ class _TypeUserSearchState extends State<TypeUserSearch> {
                               ),
                               value: value,
                             )).toList(),
-                            onChanged: ( choix){
+                            onChanged: ( choix) async{
                               setState(() {
-                                _mySelection2 = choix ;
+                                _mySelection2 = _currencies.indexOf(choix);
                               });
+                              await getTypeUser();
                             },
-                            value: _mySelection2,
+                            value: _mySelection2 == null ? null : _currencies[_mySelection2],
                             isExpanded: false,
                             hint: Text('Selectionner statut'),
                             style: TextStyle(color: Color(0xff11b719)),
@@ -178,14 +165,60 @@ class _TypeUserSearchState extends State<TypeUserSearch> {
 
                   ),
 
+                  SizedBox(
+                    height: 50.0,
+                  ),
+
+                  ListView.separated(
+                    separatorBuilder: (BuildContext context, int index) {
+
+                      //indexItem = index;
+
+                      return Divider();
+                    },
+                    shrinkWrap: true,
+                    itemCount: (listusers == null || listusers.data == null || listusers.data.length == 0 )? 0 : listusers.data.length,
+                    itemBuilder: (_,int index)=>ListTile(
+                      title: Column(
+                        children: <Widget>[
+
+                          Row(
+                            children: <Widget>[
+                              Expanded(child: Text(listusers .data [index] .nom),),
+                              //SizedBox(width: 170,),
+
+                              SizedBox(width: 30,),
+
+                            ],
+                          ),
+
+
+                        ],
+                      ),
+
+
+                      onTap: () async{
+                        setState(() {
+                          load = false;
+                        });
+                        await  Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailsUsers(idUser: listusers.data[index].id),
+                            ));
+                        setState(() {
+                          load = true;
+                        });
+                      },
+                    ),
+                  )
+
 
                   //////////////////////////////////////////////////////////
 
                 ],
               ),
-            ),
-          ),
-        ),
+
       ) : Center(child: CircularProgressIndicator(),),
 
       drawer: load ? Drawer(

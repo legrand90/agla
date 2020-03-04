@@ -37,6 +37,7 @@ class Datum {
   dynamic status;
   bool success;
   String message;
+  String password;
 
   Datum({
     this.id,
@@ -51,6 +52,7 @@ class Datum {
     this.status,
     this.success,
     this.message,
+    this.password,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -66,6 +68,7 @@ class Datum {
     status: json["status"],
     success: json["success"],
     message: json["message"],
+    password: json["password"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -81,6 +84,7 @@ class Datum {
     "status": status,
     "success": success,
     "message": message,
+    "password": password,
   };
 }
 
