@@ -205,7 +205,7 @@ class _EditClientState extends State<EditClient> {
     // TODO: implement build
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('MODIFICATION CLIENT'),
       ),
@@ -221,12 +221,12 @@ class _EditClientState extends State<EditClient> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   logo,
-                  SizedBox(height: 40.0),
+                 // SizedBox(height: 40.0),
                   Text("MODIFIER LE CLIENT",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black,
+                          color: Colors.red,
                           fontWeight: FontWeight.bold
                       )
                   ),
@@ -238,7 +238,7 @@ class _EditClientState extends State<EditClient> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.5),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(30.0),
@@ -250,7 +250,7 @@ class _EditClientState extends State<EditClient> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
                             Icons.perm_identity,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -276,7 +276,7 @@ class _EditClientState extends State<EditClient> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.5),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(30.0),
@@ -288,7 +288,7 @@ class _EditClientState extends State<EditClient> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
                             Icons.phone,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -330,7 +330,7 @@ class _EditClientState extends State<EditClient> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
                           child: Icon(
                             Icons.email,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -424,7 +424,7 @@ class _EditClientState extends State<EditClient> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: ()async{
                                   setState(() {
                                     loading = false;
@@ -488,7 +488,7 @@ class _EditClientState extends State<EditClient> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -594,7 +594,7 @@ class _EditClientState extends State<EditClient> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -700,6 +700,26 @@ class _EditClientState extends State<EditClient> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 }
 

@@ -35,9 +35,9 @@ class SuperAdminPage extends StatefulWidget {
   _SuperAdminPageState createState() => _SuperAdminPageState();
 }
 
-Color PrimaryColor = Color(0xff109618) ;
+Color PrimaryColor = Color(0xff0200F4) ;
 
-Color boxDeco = Color(0xff109618) ;
+Color boxDeco = Color(0xff0200F4) ;
 
 class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProviderStateMixin{
 
@@ -90,12 +90,12 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
                         setState(() {
                           switch(index){
                             case 0:
-                              PrimaryColor = Color(0xff109618);
-                              boxDeco = Color(0xff109618);
+                              PrimaryColor = Color(0xff0200F4);
+                              boxDeco = Color(0xff0200F4);
                               break;
                             case 1:
-                              PrimaryColor = Color(0xff109618);
-                              boxDeco = Color(0xff109618);
+                              PrimaryColor = Color(0xff0200F4);
+                              boxDeco = Color(0xff0200F4);
                               break;
                             default:
                           }
@@ -166,7 +166,7 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
                     backgroundColor: Colors.white,
                   ),
                   decoration: BoxDecoration(
-                    color: Color(0xff11b719),
+                    color: Color(0xff0200F4),
                   ),
                 ),
                 ListTile(
@@ -272,7 +272,7 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
                     setState(() {
                       load = false;
                     });
-                    await _logout();
+                    await _alertDeconnexion();
 
                     setState(() {
                       load = true;
@@ -292,7 +292,7 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
                     backgroundColor: Colors.white,
                   ),
                   decoration: BoxDecoration(
-                    color: Color(0xff11b719),
+                    color: Color(0xff0200F4),
                   ),
                 ),
                 ListTile(
@@ -341,7 +341,7 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
                     setState(() {
                       load = false;
                     });
-                    await _logout();
+                    await _alertDeconnexion();
 
                     setState(() {
                       load = true;
@@ -394,6 +394,26 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
 
     print('la valeur de admin est : $isadmin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 }
 

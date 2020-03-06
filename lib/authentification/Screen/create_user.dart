@@ -58,8 +58,8 @@ class _UserState extends State<User> {
   //var _currencies = ['User', 'Admin', 'Super Admin'];
 
   var _currencies = <String>[
-    'PROPRIETAIRE',
     'GERANT',
+    'PROPRIETAIRE',
   ];
 
   static List <Datux> listlavages = List <Datux>() ;
@@ -205,7 +205,7 @@ class _UserState extends State<User> {
                             onSaved: (value) => nomClient = value,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Nom client",
+                              hintText: "Nom utilisateur",
                               hintStyle: TextStyle(color: Colors.black),
                             ),
                           ),

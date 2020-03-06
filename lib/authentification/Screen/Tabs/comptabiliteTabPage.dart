@@ -143,7 +143,10 @@ class _ComptabiliteTabPageTabPageState extends State<ComptabiliteTabPage> {
               SizedBox(
                 height: 20.2,
               ),
-              Row(
+
+              Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  child: Row(
                 children: <Widget>[
                   Text("DE :"),
                   Expanded(child: Container(
@@ -219,7 +222,7 @@ class _ComptabiliteTabPageTabPageState extends State<ComptabiliteTabPage> {
                     ),
                   )
                 ],
-              ),
+              )),
 
               SizedBox(
                 height: 30.2,

@@ -101,8 +101,7 @@ class _LavageState extends State<Lavage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      logo,
-                      SizedBox(height: 40.0),
+
                       Text("Creer Lavage",
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -132,7 +131,7 @@ class _LavageState extends State<Lavage> {
                               padding: EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 15.0),
                               child: Icon(
-                                Icons.home,
+                                Icons.local_car_wash,
                                 color: Colors.red,
                               ),
                             ),
@@ -149,7 +148,7 @@ class _LavageState extends State<Lavage> {
                                 onSaved: (value) => nomMarque = value,
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: "Nom de la marque",
+                                  hintText: "Nom du lavage",
                                   hintStyle: TextStyle(color: Colors.black),
                                 ),
                               ),
@@ -175,7 +174,7 @@ class _LavageState extends State<Lavage> {
                               padding: EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 15.0),
                               child: Icon(
-                                Icons.home,
+                                Icons.edit_location,
                                 color: Colors.red,
                               ),
                             ),

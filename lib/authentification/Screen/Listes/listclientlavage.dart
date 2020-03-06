@@ -212,7 +212,7 @@ class _ListClientLavageState extends State<ListClientLavage>{
                   backgroundColor: Colors.white,
                 ),
                 decoration: BoxDecoration(
-                  color: Color(0xff11b719),
+                  color: Color(0xff0200F4),
                 ),
               ),
               ListTile(
@@ -283,7 +283,7 @@ class _ListClientLavageState extends State<ListClientLavage>{
               ListTile(
                 title: Text('Deconnexion'),
                 onTap: () {
-                  _logout();
+                  _alertDeconnexion();
                 },
               ),
             ],
@@ -313,6 +313,26 @@ class _ListClientLavageState extends State<ListClientLavage>{
           ));
     }
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 }
 

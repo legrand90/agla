@@ -1,4 +1,4 @@
-package ci.maxom.lavage;
+package ci.maxom.agla;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

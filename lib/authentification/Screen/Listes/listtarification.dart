@@ -384,6 +384,7 @@ class _TarificationListState extends State<TarificationList> {
 
   }
 
+
   Future<bool> _alertDeconnexion(){
 
     return showDialog(

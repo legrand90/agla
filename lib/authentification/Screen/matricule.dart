@@ -164,8 +164,7 @@ class _MatriculeState extends State<Matricule> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  logo,
-                  SizedBox(height: 40.0),
+
                   Text("MATRICULE",
                       textAlign: TextAlign.center,
                       style: TextStyle(

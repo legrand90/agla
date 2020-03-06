@@ -60,10 +60,9 @@ class _EditUserState extends State<EditUser> {
 
   //var _currencies = ['User', 'Admin', 'Super Admin'];
 
-  var _currencies = <String>[
-    'USER',
-    'ADMIN',
-    'SUPER ADMIN',
+  var _currencies =  <String>[
+    'GERANT',
+    'PROPRIETAIRE',
   ];
 
   static List <Datux> listlavages = List <Datux>() ;
@@ -181,7 +180,7 @@ class _EditUserState extends State<EditUser> {
     // TODO: implement build
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('MODIFICATION'),
       ),
@@ -196,13 +195,12 @@ class _EditUserState extends State<EditUser> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  logo,
-                  SizedBox(height: 40.0),
+
                   Text("MODIFIER UTILISATEUR",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black,
+                          color: Colors.red,
                           fontWeight: FontWeight.bold
                       )
                   ),
@@ -214,7 +212,7 @@ class _EditUserState extends State<EditUser> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.5),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(30.0),
@@ -226,7 +224,7 @@ class _EditUserState extends State<EditUser> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
                             Icons.perm_identity,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -239,7 +237,7 @@ class _EditUserState extends State<EditUser> {
                             onSaved: (value) => nomClient = value,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Nom client",
+                              hintText: "Nom utilisateur",
                               hintStyle: TextStyle(color: Colors.black),
                             ),
                           ),
@@ -252,7 +250,7 @@ class _EditUserState extends State<EditUser> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.5),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(30.0),
@@ -264,7 +262,7 @@ class _EditUserState extends State<EditUser> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
                             Icons.phone,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -306,7 +304,7 @@ class _EditUserState extends State<EditUser> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
                           child: Icon(
                             Icons.email,
-                            color: Color(0xff11b719),
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -334,8 +332,9 @@ class _EditUserState extends State<EditUser> {
                     padding: const EdgeInsets.only(left: 40.0),
                   ),
 
-
-                  Row(
+                  Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
 
@@ -356,17 +355,19 @@ class _EditUserState extends State<EditUser> {
                               });
                             },
                             value: _mySelection2 == null ? null : _currencies[_mySelection2],
-                            isExpanded: false,
+                            isExpanded: true,
                             hint: Text('$statut'),
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
 
-                  ),
+                  )),
 
                   ////////////////////////////////////////////////////////////////
 
-                  Row(
+                  Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Row(
                     children: <Widget>[
                       Expanded(
                         child: loading ? CircularProgressIndicator() : searchTextField = AutoCompleteTextField<Datux>(
@@ -416,7 +417,7 @@ class _EditUserState extends State<EditUser> {
                       )
 
                     ],
-                  ),
+                  )),
 
                   Row(
                     children : <Widget>[
@@ -430,7 +431,7 @@ class _EditUserState extends State<EditUser> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: ()async{
                                   setState(() {
                                     loader = false;
@@ -495,7 +496,7 @@ class _EditUserState extends State<EditUser> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -601,7 +602,7 @@ class _EditUserState extends State<EditUser> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -621,7 +622,7 @@ class _EditUserState extends State<EditUser> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -670,7 +671,7 @@ class _EditUserState extends State<EditUser> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -794,6 +795,26 @@ class _EditUserState extends State<EditUser> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 
 }

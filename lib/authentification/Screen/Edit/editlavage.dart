@@ -155,7 +155,7 @@ class _EditLavageState extends State<EditLavage> {
     // TODO: implement build
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('LAVAGE'),
       ),
@@ -171,13 +171,13 @@ class _EditLavageState extends State<EditLavage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      logo,
-                      SizedBox(height: 40.0),
+                      //logo,
+                      //SizedBox(height: 40.0),
                       Text("MODIFIER LAVAGE",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 16.0,
-                              color: Colors.black,
+                              color: Colors.red,
                               fontWeight: FontWeight.bold
                           )
                       ),
@@ -189,7 +189,7 @@ class _EditLavageState extends State<EditLavage> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.grey.withOpacity(0.5),
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(30.0),
@@ -202,8 +202,8 @@ class _EditLavageState extends State<EditLavage> {
                               padding: EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 15.0),
                               child: Icon(
-                                Icons.home,
-                                color: Color(0xff11b719),
+                                Icons.local_car_wash,
+                                color: Colors.red,
                               ),
                             ),
                             new Expanded(
@@ -232,7 +232,7 @@ class _EditLavageState extends State<EditLavage> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.grey.withOpacity(0.5),
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(30.0),
@@ -245,8 +245,8 @@ class _EditLavageState extends State<EditLavage> {
                               padding: EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 15.0),
                               child: Icon(
-                                Icons.home,
-                                color: Color(0xff11b719),
+                                Icons.edit_location,
+                                color: Colors.red,
                               ),
                             ),
                             new Expanded(
@@ -279,6 +279,7 @@ class _EditLavageState extends State<EditLavage> {
 
                       ////////////////////////////////////////////////////////////////
                       Container(
+
                         margin: const EdgeInsets.only(top: 20.0),
                         // padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                         child: Row(
@@ -289,7 +290,7 @@ class _EditLavageState extends State<EditLavage> {
                                     borderRadius: new BorderRadius.circular(
                                         30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: () async{
                                   setState(() {
                                     loading = false;
@@ -356,7 +357,7 @@ class _EditLavageState extends State<EditLavage> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -462,7 +463,7 @@ class _EditLavageState extends State<EditLavage> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -482,7 +483,7 @@ class _EditLavageState extends State<EditLavage> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -531,7 +532,7 @@ class _EditLavageState extends State<EditLavage> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -659,6 +660,26 @@ class _EditLavageState extends State<EditLavage> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 
 }

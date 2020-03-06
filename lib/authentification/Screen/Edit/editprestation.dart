@@ -158,7 +158,7 @@ class _EditPrestationnState extends State<EditPrestation> {
     // TODO: implement build
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('MODIFICATION PRESTATION'),
       ),
@@ -173,13 +173,13 @@ class _EditPrestationnState extends State<EditPrestation> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  logo,
-                  SizedBox(height: 40.0),
+                  //logo,
+                  //SizedBox(height: 40.0),
                   Text("MODIFIER LA PRESTATION",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black,
+                          color: Colors.red,
                           fontWeight: FontWeight.bold
                       )
                   ),
@@ -191,7 +191,7 @@ class _EditPrestationnState extends State<EditPrestation> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.5),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(30.0),
@@ -202,8 +202,8 @@ class _EditPrestationnState extends State<EditPrestation> {
                         new Padding(
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
-                            Icons.home,
-                            color: Color(0xff11b719),
+                            Icons.edit,
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -229,7 +229,7 @@ class _EditPrestationnState extends State<EditPrestation> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.5),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(30.0),
@@ -240,8 +240,8 @@ class _EditPrestationnState extends State<EditPrestation> {
                         new Padding(
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
-                            Icons.person_outline,
-                            color: Color(0xff11b719),
+                            Icons.edit,
+                            color: Colors.red,
                           ),
                         ),
                         new Expanded(
@@ -281,7 +281,7 @@ class _EditPrestationnState extends State<EditPrestation> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: ()async{
                                   setState(() {
                                     loading = false;
@@ -345,7 +345,7 @@ class _EditPrestationnState extends State<EditPrestation> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -451,7 +451,7 @@ class _EditPrestationnState extends State<EditPrestation> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -550,6 +550,26 @@ class _EditPrestationnState extends State<EditPrestation> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 
 }

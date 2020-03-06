@@ -179,10 +179,12 @@ class _LavageSearchState extends State<LavageSearch> {
 
                   SizedBox(height: 50.0),
 
-                  Row(
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+          child: Row(
                     children: <Widget>[
                       Expanded(
-                        child: loading ? CircularProgressIndicator() : searchTextField = AutoCompleteTextField<Datux>(
+                        child: loading ? Center(child: CircularProgressIndicator()) : searchTextField = AutoCompleteTextField<Datux>(
                           key: keys,
                           clearOnSubmit: false,
                           suggestions: listlavages,
@@ -226,24 +228,20 @@ class _LavageSearchState extends State<LavageSearch> {
                       )
 
                     ],
-                  ),
+                  )),
 
                   ////////////////////////////////////////////////////////////////////////////
                   SizedBox(
                     height: 50.0,
                   ),
 
-
-                  ListView.separated(
-                    separatorBuilder: (BuildContext context, int index) {
-
-                      //indexItem = index;
-
-                      return Divider();
-                    },
+        Container(
+          height: 300.0,
+          child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: (lavages == null || lavages.data == null || lavages.data.length == 0 )? 0 : lavages.data.length,
-                    itemBuilder: (_,int index)=>ListTile(
+                    itemBuilder: (_,int index)=>Container(
+                        child: Card(child:ListTile(
                       title: Row(
                         children: <Widget>[
                           Expanded(child: Text(lavages.data [index] .libelleLavage),),
@@ -268,8 +266,8 @@ class _LavageSearchState extends State<LavageSearch> {
                           load = true;
                         });
                       },
-                    ),
-                  )
+                    ))),
+                  ))
 
                   //////////////////////////////////////////////////////////
 

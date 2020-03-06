@@ -271,9 +271,8 @@ class _AgentTabPageState extends State<AgentTabPage> {
               ),
 
               Container(
-                margin: EdgeInsets.only(left: 15.0),
-              child:
-              Row(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
 
@@ -295,7 +294,7 @@ class _AgentTabPageState extends State<AgentTabPage> {
                           await checkDate();
                         },
                         value: _mySelection,
-                        isExpanded: false,
+                        isExpanded: true,
                         hint: Text('Selectionner l\'agent'),
                         style: TextStyle(color: Color(0xff11b719)),
                       ))
@@ -418,7 +417,7 @@ class _AgentTabPageState extends State<AgentTabPage> {
                           children: <Widget>[
                             Text('${serchValue2.data [index] .idPrestation}'),
                             SizedBox(width: 20.0,),
-                            Text('${serchValue2.data [index] .idTarification} Fcfa'),
+                            Text('${serchValue2.data [index].idTarification} Fcfa'),
                           ],
                         ),
                         SizedBox(height: 10.0,),
@@ -509,6 +508,8 @@ class _AgentTabPageState extends State<AgentTabPage> {
     }
 
   }
+
+
 }
 
 

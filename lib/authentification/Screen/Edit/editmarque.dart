@@ -155,7 +155,7 @@ class _EditMarqueState extends State<EditMarque> {
     // TODO: implement build
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('PAGE DE MODIFICQTION'),
       ),
@@ -164,20 +164,20 @@ class _EditMarqueState extends State<EditMarque> {
             key: _formKey,
             autovalidate: _autoValidate,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Center(
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      logo,
-                      SizedBox(height: 40.0),
+                      //logo,
+                      //SizedBox(height: 40.0),
                       Text("MODIFIER LA MARQUE",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 16.0,
-                              color: Colors.black,
+                              color: Colors.red,
                               fontWeight: FontWeight.bold
                           )
                       ),
@@ -189,7 +189,7 @@ class _EditMarqueState extends State<EditMarque> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.grey.withOpacity(0.5),
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(30.0),
@@ -202,8 +202,8 @@ class _EditMarqueState extends State<EditMarque> {
                               padding: EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 15.0),
                               child: Icon(
-                                Icons.home,
-                                color: Color(0xff11b719),
+                                Icons.directions_car,
+                                color: Colors.red,
                               ),
                             ),
                             new Expanded(
@@ -246,7 +246,7 @@ class _EditMarqueState extends State<EditMarque> {
                                     borderRadius: new BorderRadius.circular(
                                         30.0)
                                 ),
-                                color: Color(0xff11b719),
+                                color: Color(0xff0200F4),
                                 onPressed: () async{
                                   setState(() {
                                     loading = false;
@@ -313,7 +313,7 @@ class _EditMarqueState extends State<EditMarque> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -419,7 +419,7 @@ class _EditMarqueState extends State<EditMarque> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -439,7 +439,7 @@ class _EditMarqueState extends State<EditMarque> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff11b719),
+                color: Color(0xff0200F4),
               ),
             ),
             ListTile(
@@ -488,7 +488,7 @@ class _EditMarqueState extends State<EditMarque> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;
@@ -592,6 +592,26 @@ class _EditMarqueState extends State<EditMarque> {
 
     //print('la valeur de admin est : $admin');
 
+  }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
   }
 
 }

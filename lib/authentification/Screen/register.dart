@@ -846,7 +846,7 @@ class _RegisterState extends State<Register> {
                 setState(() {
                   load = false;
                 });
-                await _logout();
+                await _alertDeconnexion();
 
                 setState(() {
                   load = true;

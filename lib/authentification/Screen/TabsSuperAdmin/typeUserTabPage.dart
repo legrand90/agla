@@ -121,13 +121,13 @@ class _TypeUserSearchState extends State<TypeUserSearch> {
               child: ListView(
                 children: <Widget>[
 
-                  SizedBox(height: 150.0,),
+                  SizedBox(height: 40.0,),
 
                   Text("TYPE USER",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black,
+                          color: Colors.red,
                           fontWeight: FontWeight.bold
                       )
                   ),
@@ -136,7 +136,9 @@ class _TypeUserSearchState extends State<TypeUserSearch> {
                     padding: const EdgeInsets.only(left: 40.0),
                   ),
 
-                  Row(
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+          child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
 
@@ -157,28 +159,26 @@ class _TypeUserSearchState extends State<TypeUserSearch> {
                               await getTypeUser();
                             },
                             value: _mySelection2 == null ? null : _currencies[_mySelection2],
-                            isExpanded: false,
+                            isExpanded: true,
                             hint: Text('Selectionner statut'),
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
 
-                  ),
+                  )),
 
                   SizedBox(
                     height: 50.0,
                   ),
 
-                  ListView.separated(
-                    separatorBuilder: (BuildContext context, int index) {
+        Container(
+          height: 300.0,
+          child: ListView.builder(
 
-                      //indexItem = index;
-
-                      return Divider();
-                    },
                     shrinkWrap: true,
                     itemCount: (listusers == null || listusers.data == null || listusers.data.length == 0 )? 0 : listusers.data.length,
-                    itemBuilder: (_,int index)=>ListTile(
+                    itemBuilder: (_,int index)=>Container(
+                        child: Card(child:ListTile(
                       title: Column(
                         children: <Widget>[
 
@@ -210,8 +210,8 @@ class _TypeUserSearchState extends State<TypeUserSearch> {
                           load = true;
                         });
                       },
-                    ),
-                  )
+                    ))),
+                  ))
 
 
                   //////////////////////////////////////////////////////////

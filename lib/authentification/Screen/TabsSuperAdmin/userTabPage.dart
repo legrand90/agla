@@ -182,10 +182,12 @@ class _UserSearchState extends State<UserSearch> {
 
                   SizedBox(height: 50.0),
 
-                  Row(
+                  Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Row(
                     children: <Widget>[
                       Expanded(
-                        child: loading ? CircularProgressIndicator() : searchTextField = AutoCompleteTextField<Datu>(
+                        child: loading ? Center(child: CircularProgressIndicator()) : searchTextField = AutoCompleteTextField<Datu>(
                           key: key,
                           clearOnSubmit: false,
                           suggestions: Listuser,
@@ -230,23 +232,21 @@ class _UserSearchState extends State<UserSearch> {
                       )
 
                     ],
-                  ),
+                  )),
 
                   ////////////////////////////////////////////////////////////////////////////
                   SizedBox(
                     height: 50.0,
                   ),
 
-                  ListView.separated(
-                    separatorBuilder: (BuildContext context, int index) {
+        Container(
+          height: 300.0,
+          child: ListView.builder(
 
-                      //indexItem = index;
-
-                      return Divider();
-                    },
                     shrinkWrap: true,
                     itemCount: (listusers == null || listusers.data == null || listusers.data.length == 0 )? 0 : listusers.data.length,
-                    itemBuilder: (_,int index)=>ListTile(
+                    itemBuilder: (_,int index)=>Container(
+                        child: Card(child:ListTile(
                       title: Column(
                         children: <Widget>[
 
@@ -278,8 +278,8 @@ class _UserSearchState extends State<UserSearch> {
                           load = true;
                         });
                       },
-                    ),
-                  )
+                    ),)),
+                  ))
 
                   //////////////////////////////////////////////////////////
 

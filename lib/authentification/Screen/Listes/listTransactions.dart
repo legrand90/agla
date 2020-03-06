@@ -27,6 +27,7 @@ class _ListTransactionState extends State<ListTransaction> {
   var json2 ;
   bool toggle = false;
   var affiche = false;
+  bool load = true;
 
   Listtransactions listtransa = Listtransactions();
 
@@ -124,7 +125,7 @@ class _ListTransactionState extends State<ListTransaction> {
                 ),
               ];
             },
-            body:ListView(
+            body: ListView(
               //shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 children: <Widget>[
@@ -235,98 +236,139 @@ class _ListTransactionState extends State<ListTransaction> {
 
                 ])
         ) ,
-        drawer: Drawer(
-          // Add a ListView to the drawer. This ensures the user can scroll
-          // through the options in the drawer if there isn't enough vertical
-          // space to fit everything.
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                UserAccountsDrawerHeader(
-                  accountName: Text('$nameUser'),
-                  accountEmail: Text(''),
-                  currentAccountPicture: CircleAvatar(
-                    backgroundColor: Colors.white,
+      drawer: load ? Drawer(
+        // Add a ListView to the drawer. This ensures the user can scroll
+        // through the options in the drawer if there isn't enough vertical
+        // space to fit everything.
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text('$nameUser'),
+              accountEmail: Text(''),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+              ),
+              decoration: BoxDecoration(
+                color: Color(0xff0200F4),
+              ),
+            ),
+            ListTile(
+              title: Text('Accueil'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return DashbordScreen();
+                    },
                   ),
-                  decoration: BoxDecoration(
-                    color: Color(0xff11b719),
-                  ),
-                ),
-                ListTile(
-                  title: Text('Accueil'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                        builder: (BuildContext context) {
-                          return DashbordScreen();
-                        },
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: Text('Nouvelle Entree'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                        builder: (BuildContext context){
-                          return Transaction();
-                        },
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: Text('Recherche'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                        builder: (BuildContext context) {
-                          return ClientPage();
-                        },
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: Text('Historique'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                        builder: (BuildContext context) {
-                          return Historique();
-                        },
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: Text('Parametre'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                        builder: (BuildContext context) {
-                          return Register();
-                        },
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: Text('Deconnexion'),
-                  onTap: () {
-                    //_logout();
-                  },
-                ),
-              ]),
+                );
 
-        ));
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('Nouvelle Entree'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Transaction();
+                    },
+                  ),
+                );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('Recherche'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return ClientPage();
+                    },
+                  ),
+                );
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('Historique'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Historique();
+                    },
+                  ),
+                );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('Parametre'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Register();
+                    },
+                  ),
+                );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('Deconnexion'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _alertDeconnexion();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+
+
+          ],
+        ),
+      ) : Center(child: CircularProgressIndicator(),),);
 
   }
 
@@ -363,5 +405,26 @@ class _ListTransactionState extends State<ListTransaction> {
     //print('la valeur de admin est : $admin');
 
   }
+
+  Future<bool> _alertDeconnexion(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Non"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text("Oui"),
+              onPressed: () => _logout(),
+            )
+          ],
+        )
+    );
+  }
+
 }
 
