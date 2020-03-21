@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/fa_icon.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:http/http.dart' as http;
@@ -13,6 +15,7 @@ import 'package:lavage/authentification/Screen/lavage.dart';
 
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../Transaction.dart';
 import '../dashbord.dart';
@@ -47,10 +50,13 @@ class _EditUserState extends State<EditUser> {
   var idClient = 0;
   bool success = false;
 
+
   bool loading = true;
   bool loader = true;
   bool load = true;
-  String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
+  String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
+
+  var fenetre = 'MODIFIER UTILISATEUR';
 
 
 //  final String urlCouleur = "http://192.168.43.217:8000/api/couleur";
@@ -102,6 +108,7 @@ class _EditUserState extends State<EditUser> {
   var idlav;
   var  admin;
   var statut;
+  var libLavage;
 
   void getUserEdith() async {
 
@@ -114,13 +121,13 @@ class _EditUserState extends State<EditUser> {
         _nomUser.text = resBody['nom'] ;
         _email.text = resBody['email'] ;
         _contactUser.text = resBody['numero'] ;
-        searchTextField.textField.controller.text = resBody['nomLavage'] ;
+        libLavage = resBody['nomLavage'] ;
         admin = resBody['admin'] ;
         statut = resBody['status'] ;
         idlav = resBody['id_lavage'] ;
       });
 
-      print('les lavages $statut');
+      print('les lavages ${resBody['nomLavage']}');
 
     }else{
       _showMsg('ERREUR');
@@ -148,7 +155,7 @@ class _EditUserState extends State<EditUser> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(ag.libelleLavage, style: TextStyle(fontSize: 16.0),)
+        Text(ag.libelleLavage, style: TextStyle(fontSize: 20.0),)
       ],
     );
   }
@@ -160,6 +167,7 @@ class _EditUserState extends State<EditUser> {
     this.getUserName();
     this.getUserEdith();
     this.getLavages();
+    this.getStatut();
   }
   Widget build(BuildContext context){
     final logo = Hero(
@@ -238,7 +246,7 @@ class _EditUserState extends State<EditUser> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Nom utilisateur",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -276,7 +284,7 @@ class _EditUserState extends State<EditUser> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Contact",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -319,7 +327,7 @@ class _EditUserState extends State<EditUser> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Email",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -356,8 +364,8 @@ class _EditUserState extends State<EditUser> {
                             },
                             value: _mySelection2 == null ? null : _currencies[_mySelection2],
                             isExpanded: true,
-                            hint: Text('$statut'),
-                            style: TextStyle(color: Color(0xff11b719)),
+                            hint: Text('$statut', style: TextStyle(fontSize: 18.0)),
+                            style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
                           ))
                     ],
 
@@ -370,15 +378,15 @@ class _EditUserState extends State<EditUser> {
                       child: Row(
                     children: <Widget>[
                       Expanded(
-                        child: loading ? CircularProgressIndicator() : searchTextField = AutoCompleteTextField<Datux>(
+                        child: loading ? Center(child: CircularProgressIndicator()) : searchTextField = AutoCompleteTextField<Datux>(
                           key: keys,
                           clearOnSubmit: false,
                           suggestions: listlavages,
                           style: TextStyle(color: Colors.black, fontSize: 16.0),
                           decoration: InputDecoration(
                               contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
-                              hintText: "Saisir le lavage",
-                              hintStyle: TextStyle(color: Colors.black)
+                              hintText: "$libLavage",
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0)
                           ),
                           itemFilter: (item, query){
                             return item.libelleLavage.toLowerCase().startsWith(query.toLowerCase());
@@ -481,6 +489,65 @@ class _EditUserState extends State<EditUser> {
         ),
       ) : Center(child: CircularProgressIndicator(),),
 
+      bottomNavigationBar: BottomNavigationBar(
+        //backgroundColor: Color(0xff0200F4),
+        //currentIndex: 0, // this will be set when a new tab is tapped
+        items: [
+          BottomNavigationBarItem(
+            //backgroundColor: Color(0xff0200F4),
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.settings),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Register();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.mode_edit),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Transaction();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+              icon: IconButton(
+                color: Color(0xff0200F4),
+                icon: Icon(Icons.search),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return ClientPage();
+                      },
+                    ),
+                  );
+                },
+              ),
+              title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+          )
+        ],
+      ),
+
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
@@ -491,7 +558,7 @@ class _EditUserState extends State<EditUser> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: Text(''),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLav \nVous êtes $statu') : Text('Vous êtes $statu'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -617,7 +684,7 @@ class _EditUserState extends State<EditUser> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: Text(''),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLav \nVous êtes $statu') : Text('Vous êtes $statu'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -665,6 +732,39 @@ class _EditUserState extends State<EditUser> {
                 });
               },
             ),
+
+            ListTile(
+              title: Text('Tutoriel'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                // await Navigator.push(
+                //  context,
+                // new MaterialPageRoute(
+                //   builder: (BuildContext context) {
+                //    return Register();
+                //  },
+                // ),
+                // );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('A propos'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                //await _alertDeconnexion();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
             ListTile(
               title: Text('Deconnexion'),
               onTap: () async{
@@ -678,6 +778,37 @@ class _EditUserState extends State<EditUser> {
                 });
               },
             ),
+
+            Container(
+              margin: const EdgeInsets.only(top: 210.0,),
+              padding: EdgeInsets.symmetric(horizontal:20.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(child: Text('Suivez-nous', style: TextStyle(color: Colors.red),),),
+                  //SizedBox(width: 170,),
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.blue,
+                    icon: FaIcon(FontAwesomeIcons.facebook),
+                    onPressed: ()async{
+                      await _launchFacebookURL();
+
+                    },
+                  ),
+
+                  SizedBox(width: 20,),
+
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.red,
+                    icon: FaIcon(FontAwesomeIcons.chrome),
+                    onPressed: ()async{
+                      await _launchMaxomURL();
+                    },
+                  ),
+                ],
+              ),
+            )
 
           ],
         ),
@@ -715,6 +846,8 @@ class _EditUserState extends State<EditUser> {
   bool defaultLavage = false ;
 
   Future <String> UpdateUser() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id_user = localStorage.getInt('ID');
 
       var data = {
         'name': _nomUser.text.toUpperCase(),
@@ -726,6 +859,14 @@ class _EditUserState extends State<EditUser> {
 
       };
 
+      var dataLog = {
+        'fenetre': '$fenetre',
+        'tache': "Modification d'Utilisateur",
+        'execution': "Update",
+        'id_user': id_user,
+        'dateEnreg': date,
+      };
+
       //print('$data');
 
 
@@ -735,6 +876,7 @@ class _EditUserState extends State<EditUser> {
 
         //print('la valeur $body');
         if (body['statut'] == 'success') {
+          var res = await CallApi().postData(dataLog, 'create_log');
 
           setState(() {
             _nomUser.text = '';
@@ -815,6 +957,61 @@ class _EditUserState extends State<EditUser> {
           ],
         )
     );
+  }
+
+  var adm;
+  var statu;
+  var libLav;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
+  }
+
+  _launchFacebookURL() async {
+    const url = 'https://www.facebook.com/AGLA-103078671237266/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchMaxomURL() async {
+    const url = 'https://maxom.ci';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
 }

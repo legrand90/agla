@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/fa_icon.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
 import 'package:lavage/authentification/Screen/dashbord.dart';
@@ -11,6 +13,7 @@ import 'package:lavage/authentification/Models/Agent.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:lavage/authentification/Screen/Listes/listagents.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../Transaction.dart';
 import '../historique.dart';
@@ -54,6 +57,8 @@ class _EditAgentState extends State<EditAgent> {
   bool loading = true;
   bool load = true;
 
+  var fenetre = 'MODIFICATION AGENT';
+
   // Listagents listagents = Listagents ()  ;
 
   Future <void> _changeLoadingVisible() async {
@@ -66,6 +71,7 @@ class _EditAgentState extends State<EditAgent> {
   void UpdateAgent() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
+    var id_user = localStorage.getInt('ID');
 
       //try {
       var data = {
@@ -78,12 +84,22 @@ class _EditAgentState extends State<EditAgent> {
         // 'id_lavage': id
       };
 
+    var dataLog = {
+      'fenetre': '$fenetre',
+      'tache': "Modification d'un Agent",
+      'execution': "Update",
+      'id_user': id_user,
+      'dateEnreg': dateHeure,
+      'id_lavage': id,
+    };
+
 
       var res = await CallApi().postDataEdit(data, 'update_agent/$idagent/$id');
       var body = json.decode(res.body);
       print(body);
 
       if (res.statusCode == 200) {
+        var res = await CallApi().postData(dataLog, 'create_log');
 
         _nomAgent.text = '';
         _contactAgent.text = '';
@@ -159,6 +175,7 @@ class _EditAgentState extends State<EditAgent> {
     super.initState();
     this.getAgent();
     this.getUserName();
+    this.getStatut();
   }
   Widget build(BuildContext context){
     final logo = Hero(
@@ -238,7 +255,7 @@ class _EditAgentState extends State<EditAgent> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Nom agent",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -275,7 +292,7 @@ class _EditAgentState extends State<EditAgent> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Contact",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -317,7 +334,7 @@ class _EditAgentState extends State<EditAgent> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Domicile",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -355,7 +372,7 @@ class _EditAgentState extends State<EditAgent> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Contact d'urgence",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -424,6 +441,65 @@ class _EditAgentState extends State<EditAgent> {
         ),
       ) : Center(child: CircularProgressIndicator(),),
 
+      bottomNavigationBar: BottomNavigationBar(
+        //backgroundColor: Color(0xff0200F4),
+        //currentIndex: 0, // this will be set when a new tab is tapped
+        items: [
+          BottomNavigationBarItem(
+            //backgroundColor: Color(0xff0200F4),
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.settings),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Register();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.mode_edit),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Transaction();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+              icon: IconButton(
+                color: Color(0xff0200F4),
+                icon: Icon(Icons.search),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return ClientPage();
+                      },
+                    ),
+                  );
+                },
+              ),
+              title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+          )
+        ],
+      ),
+
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
@@ -434,7 +510,7 @@ class _EditAgentState extends State<EditAgent> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: Text(''),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -539,6 +615,39 @@ class _EditAgentState extends State<EditAgent> {
                 });
               },
             ),
+
+            ListTile(
+              title: Text('Tutoriel'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                // await Navigator.push(
+                //  context,
+                // new MaterialPageRoute(
+                //   builder: (BuildContext context) {
+                //    return Register();
+                //  },
+                // ),
+                // );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('A propos'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                //await _alertDeconnexion();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
             ListTile(
               title: Text('Deconnexion'),
               onTap: () async{
@@ -552,6 +661,38 @@ class _EditAgentState extends State<EditAgent> {
                 });
               },
             ),
+
+            Container(
+              margin: const EdgeInsets.only(top: 55.0,),
+              padding: EdgeInsets.symmetric(horizontal:20.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(child: Text('Suivez-nous', style: TextStyle(color: Colors.red),),),
+                  //SizedBox(width: 170,),
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.blue,
+                    icon: FaIcon(FontAwesomeIcons.facebook),
+                    onPressed: ()async{
+                      await _launchFacebookURL();
+
+                    },
+                  ),
+
+                  SizedBox(width: 20,),
+
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.red,
+                    icon: FaIcon(FontAwesomeIcons.chrome),
+                    onPressed: ()async{
+
+                      await _launchMaxomURL();
+                    },
+                  ),
+                ],
+              ),
+            )
 
 
           ],
@@ -666,6 +807,61 @@ class _EditAgentState extends State<EditAgent> {
           ],
         )
     );
+  }
+
+  var adm;
+  var statu;
+  var libLavage;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
+  }
+
+  _launchFacebookURL() async {
+    const url = 'https://www.facebook.com/AGLA-103078671237266/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchMaxomURL() async {
+    const url = 'https://maxom.ci';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
 

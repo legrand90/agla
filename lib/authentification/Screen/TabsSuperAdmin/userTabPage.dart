@@ -135,7 +135,7 @@ class _UserSearchState extends State<UserSearch> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(ag.nom, style: TextStyle(fontSize: 16.0),)
+        Text(ag.nom, style: TextStyle(fontSize: 20.0),)
       ],
     );
   }
@@ -148,6 +148,7 @@ class _UserSearchState extends State<UserSearch> {
     this.getMarque();
     this.getUserName();
     super.initState();
+    this.getStatut();
   }
 
   @override
@@ -298,7 +299,7 @@ class _UserSearchState extends State<UserSearch> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: Text(''),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -537,6 +538,44 @@ class _UserSearchState extends State<UserSearch> {
     });
 
     //print('la valeur de admin est : $admin');
+
+  }
+
+  var adm;
+  var statu;
+  var libLavage;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
 
   }
 

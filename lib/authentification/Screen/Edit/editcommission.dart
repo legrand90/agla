@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/fa_icon.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
@@ -11,6 +13,7 @@ import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lavage/authentification/Screen/dashbord.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../Transaction.dart';
 import '../historique.dart';
@@ -42,7 +45,7 @@ class _EditCommissionState extends State<EditCommission> {
   final TextEditingController _prestaMontant = TextEditingController();
   //final TextEditingController _password = TextEditingController();
 
-  String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
+  String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
   String gainAgent;
 
 
@@ -62,6 +65,8 @@ class _EditCommissionState extends State<EditCommission> {
 
   bool loading = true;
   bool load = true;
+
+  var fenetre = 'MODIFICATION COMMISSION';
 
 
   Future<String> getAgent() async {
@@ -89,6 +94,7 @@ class _EditCommissionState extends State<EditCommission> {
   void UpdateCommission() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
+     var id_user = localStorage.getInt('ID');
 
       //try {
       var data = {
@@ -100,12 +106,22 @@ class _EditCommissionState extends State<EditCommission> {
 
       };
 
+    var dataLog = {
+      'fenetre': '$fenetre',
+      'tache': "Modification de Commission",
+      'execution': "Update",
+      'id_user': id_user,
+      'dateEnreg': date,
+      'id_lavage': id,
+    };
+
 
       var res = await CallApi().postDataEdit(data, 'update_commission/$idcommission/$id');
       var body = json.decode(res.body);
       print(body);
 
       if (res.statusCode == 200) {
+        var res = await CallApi().postData(dataLog, 'create_log');
 
         setState(() {
 //          _gainAgent.text = '';
@@ -211,6 +227,7 @@ class _EditCommissionState extends State<EditCommission> {
     this.getTarification();
     this.getCommissionData();
     this.getUserName();
+    this.getStatut();
   }
   Widget build(BuildContext context){
     final logo = Hero(
@@ -273,7 +290,7 @@ class _EditCommissionState extends State<EditCommission> {
                             items: data.map((value) => DropdownMenuItem(
                               child: Text(
                                 value['nom'],
-                                style: TextStyle(color: Colors.black),
+                                style: TextStyle(color: Colors.black, fontSize: 18.0),
                               ),
                               value: value['id'].toString(),
                             )).toList(),
@@ -285,8 +302,8 @@ class _EditCommissionState extends State<EditCommission> {
                             },
                             value: _mySelection,
                             isExpanded: true,
-                            hint: Text('$nomAgent'),
-                            style: TextStyle(color: Color(0xff11b719)),
+                            hint: Text('$nomAgent', style: TextStyle(fontSize: 18.0)),
+                            style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
                           ))
                     ],
 
@@ -306,7 +323,7 @@ class _EditCommissionState extends State<EditCommission> {
                             items: data2.map((value) => DropdownMenuItem(
                               child: Text(
                                 value['prestation_montant'],
-                                style: TextStyle(color: Colors.black),
+                                style: TextStyle(color: Colors.black, fontSize: 18.0),
                               ),
                               value: value['id'].toString(),
                             )).toList(),
@@ -318,8 +335,8 @@ class _EditCommissionState extends State<EditCommission> {
                             },
                             value: _mySelection2,
                             isExpanded: true,
-                            hint:  Text('$prestaEtMontant') ,
-                            style: TextStyle(color: Color(0xff11b719)),
+                            hint:  Text('$prestaEtMontant', style: TextStyle(fontSize: 18.0)) ,
+                            style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
                           ))
                     ],
 
@@ -355,7 +372,7 @@ class _EditCommissionState extends State<EditCommission> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Gain en Fcfa",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -434,6 +451,65 @@ class _EditCommissionState extends State<EditCommission> {
         ),
       ) : Center(child: CircularProgressIndicator(),),
 
+      bottomNavigationBar: BottomNavigationBar(
+        //backgroundColor: Color(0xff0200F4),
+        //currentIndex: 0, // this will be set when a new tab is tapped
+        items: [
+          BottomNavigationBarItem(
+            //backgroundColor: Color(0xff0200F4),
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.settings),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Register();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.mode_edit),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Transaction();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+              icon: IconButton(
+                color: Color(0xff0200F4),
+                icon: Icon(Icons.search),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return ClientPage();
+                      },
+                    ),
+                  );
+                },
+              ),
+              title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+          )
+        ],
+      ),
+
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
@@ -444,7 +520,7 @@ class _EditCommissionState extends State<EditCommission> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: Text(''),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -549,6 +625,39 @@ class _EditCommissionState extends State<EditCommission> {
                 });
               },
             ),
+
+            ListTile(
+              title: Text('Tutoriel'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                // await Navigator.push(
+                //  context,
+                // new MaterialPageRoute(
+                //   builder: (BuildContext context) {
+                //    return Register();
+                //  },
+                // ),
+                // );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('A propos'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                //await _alertDeconnexion();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
             ListTile(
               title: Text('Deconnexion'),
               onTap: () async{
@@ -562,6 +671,38 @@ class _EditCommissionState extends State<EditCommission> {
                 });
               },
             ),
+
+            Container(
+              margin: const EdgeInsets.only(top: 55.0,),
+              padding: EdgeInsets.symmetric(horizontal:20.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(child: Text('Suivez-nous', style: TextStyle(color: Colors.red),),),
+                  //SizedBox(width: 170,),
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.blue,
+                    icon: FaIcon(FontAwesomeIcons.facebook),
+                    onPressed: ()async{
+                      await _launchFacebookURL();
+
+                    },
+                  ),
+
+                  SizedBox(width: 20,),
+
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.red,
+                    icon: FaIcon(FontAwesomeIcons.chrome),
+                    onPressed: ()async{
+
+                      await _launchMaxomURL();
+                    },
+                  ),
+                ],
+              ),
+            )
 
 
           ],
@@ -686,6 +827,62 @@ class _EditCommissionState extends State<EditCommission> {
           ],
         )
     );
+  }
+
+  var adm;
+  var statu;
+  var libLavage;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
+
+  }
+
+  _launchFacebookURL() async {
+    const url = 'https://www.facebook.com/AGLA-103078671237266/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchMaxomURL() async {
+    const url = 'https://maxom.ci';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
 }

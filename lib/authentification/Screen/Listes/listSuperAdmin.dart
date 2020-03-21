@@ -1,13 +1,22 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/fa_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Models/Agent.dart';
-import 'package:lavage/authentification/Models/Prestations.dart';
+import 'package:lavage/authentification/Models/Users.dart';
+import 'package:lavage/authentification/Screen/DetailSreen/detailsSuperAdmin.dart';
+import 'package:lavage/authentification/Screen/DetailSreen/detailsUsers.dart';
+import 'package:lavage/authentification/Screen/DetailSreen/detailsagent.dart';
+import 'package:lavage/authentification/Screen/Edit/editSuperAdmin.dart';
+import 'package:lavage/authentification/Screen/Edit/editagent.dart';
+import 'package:lavage/authentification/Screen/Edit/edituser.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
+import 'package:lavage/authentification/Screen/TabsSuperAdmin/superAdmin.dart';
+import 'package:lavage/authentification/Screen/create_superAdmin.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,80 +26,180 @@ import '../historique.dart';
 import '../login_page.dart';
 import 'package:http/http.dart' as http;
 
+class SuperAdminList extends StatefulWidget {
 
-
-class DetailsPrestation extends StatefulWidget {
-
-     int idpresta ;
-
-  DetailsPrestation({Key key, @required this.idpresta}) : super(key: key);
+  Listusers listusers = Listusers ()  ;
 
   @override
-  _DetailsPrestationState createState() => _DetailsPrestationState(idpresta);
+  _SuperAdminListState createState() => _SuperAdminListState();
 }
 
-class _DetailsPrestationState extends State<DetailsPrestation> {
+class _SuperAdminListState extends State<SuperAdminList> {
 
-  int idpresta ;
+  Listusers listusers = Listusers () ;
 
-  var data ;
-
-  var libelle ;
-
-  var descrip ;
-
+  var admin ;
+  var iduser ;
   bool load = true;
 
-  _DetailsPrestationState(this.idpresta);
+
+  Future<dynamic> getUsers() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+
+    var res = await CallApi().getData('getListSuperAdmin');
+    //String url = "http://192.168.43.217:8000/api/agent/$id";
+    //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
+    // var resBody = json.decode(res.body)['data'];
+    // final response = await http.get('$url');
+
+    setState(() {
+      listusers =  listusersFromJson(res.body);
+    });
+    return listusers;
+  }
+
+  final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
+
+  _showMsg(msg) {
+    final snackBar = SnackBar(
+        content: Text(msg),
+        action: SnackBarAction(
+          label: 'Fermer',
+          onPressed: () {
+
+          },
+        )
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+
+  void getAdmin() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var isadmin = localStorage.getString('Admin');
+
+    setState(() {
+      admin = isadmin;
+    });
+
+    print('la valeur de admin est : $admin');
+
+  }
+
+  void DeleteUser() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+
+    var res = await CallApi().postDataDelete('delete_agent/$iduser/$id');
+//    if (res.statusCode == 200) {
+//      _showMsg('Donnees supprimees avec succes');
+//
+//    }else{
+//      _showMsg("Erreur de suppression");
+//    }
+  }
+
+
+
 
   @override
 
   void initState(){
     super.initState();
-    this.getTarification();
-    this.getPrestation();
+    this.getUsers();
     this.getUserName();
+    this.getAdmin();
     this.getStatut();
-
   }
 
   Widget build(BuildContext context){
     return  WillPopScope(
       // onWillPop: _onBackPressed,
       child:Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
-          title: Text('DETAILS DE LA PRESTATIONS'),
-        ),
-        body: load ? ListView(
-          children: <Widget>[
-            SizedBox(
-              height: 40.0,
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 25.0),
-              child: Text("PRESTATION ===> $libelle"),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 40.0),
-            ),
-
-            Container(
-              margin: EdgeInsets.only(left: 25.0),
-              child: Text("DESCRIPTION ===> $descrip"),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 40.0),
-            ),
-
-//            Container(
-//              margin: EdgeInsets.only(left: 25.0),
-//              child: Text("MONTANT ===> $data"),
-//            ),
-
+          title: Text('INFORMATIONS UTILISATEURS'),
+          actions: <Widget>[
+            IconButton(icon: Icon(Icons.search),
+                onPressed: () {
+                  Navigator.push(context,
+                      new MaterialPageRoute(
+                          builder: (BuildContext context){
+                            return  SuperAdminPage();
+                          }
+                      ));
+                  //showSearch(context: context, delegate: DataSearch(listWords));
+                })
           ],
+        ),
+
+        body: load ? ListView.separated(
+          separatorBuilder: (BuildContext context, int index) {
+
+            //indexItem = index;
+
+            return Divider();
+          },
+          itemCount: (listusers == null || listusers.data == null || listusers.data.length == 0 )? 0 : listusers.data.length,
+          itemBuilder: (_,int index)=>ListTile(
+            title: Column(
+              children: <Widget>[
+
+                Row(
+                  children: <Widget>[
+                    Expanded(child: Text('NOM : ${listusers.data [index] .nom}'),),
+                    //SizedBox(width: 170,),
+
+                    IconButton(
+                      icon: Icon(
+                          Icons.edit),
+                      onPressed: ()async{
+                        setState(() {
+                          load = false;
+                        });
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditSuperAdmin(idUser: listusers.data [index] .id,),
+                            ));
+                        setState(() {
+                          load = true;
+                        });
+                      },
+                    ),
+
+                    SizedBox(width: 30,),
+
+                  ],
+                ),
+
+                Row(
+                  children: <Widget>[
+                    Expanded(child: Text('STATUT : ${listusers.data[index].admin}',),),
+                    //SizedBox(width: 80.0,),
+
+                  ],
+                )
+              ],
+            ),
+
+
+            onTap: () async{
+              setState(() {
+                load = false;
+              });
+              await  Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailsSuperAdmin(idUser: listusers.data[index].id),
+                  ));
+              setState(() {
+                load = true;
+              });
+            },
+          ),
         ) : Center(child: CircularProgressIndicator(),),
 
         bottomNavigationBar: BottomNavigationBar(
@@ -152,11 +261,20 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
           ],
         ),
 
+
+//        ListView.builder(
+//          itemCount: (listagents == null || listagents.data == null || listagents.data.length == 0 )? 0 : listagents.data.length,
+//          itemBuilder: (_,int index)=>ListTile(
+//            title: Text(listagents.data [index] .nom),
+//
+//          ),
+//        ),
+
         drawer: load ? Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
-          child: ListView(
+          child: (admin == '0' || admin == '1') ? ListView(
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: <Widget>[
@@ -267,6 +385,75 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
                   });
                 },
               ),
+              ListTile(
+                title: Text('Deconnexion'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _alertDeconnexion();
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+
+            ],
+          ) : ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text('$nameUser'),
+                accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.white,
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xff0200F4),
+                ),
+              ),
+              ListTile(
+                title: Text('Accueil'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return DashbordScreen();
+                      },
+                    ),
+                  );
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+
+              ListTile(
+                title: Text('Parametre'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Register();
+                      },
+                    ),
+                  );
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
 
               ListTile(
                 title: Text('Tutoriel'),
@@ -315,7 +502,7 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
               ),
 
               Container(
-                margin: const EdgeInsets.only(top: 55.0,),
+                margin: const EdgeInsets.only(top: 210.0,),
                 padding: EdgeInsets.symmetric(horizontal:20.0),
                 child: Row(
                   children: <Widget>[
@@ -338,7 +525,6 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
                       color: Colors.red,
                       icon: FaIcon(FontAwesomeIcons.chrome),
                       onPressed: ()async{
-
                         await _launchMaxomURL();
                       },
                     ),
@@ -346,10 +532,12 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
                 ),
               )
 
-
             ],
           ),
-        ) : Center(child: CircularProgressIndicator(),),)
+        ) : Center(child: CircularProgressIndicator(),),
+
+
+      ),
     );
   }
 
@@ -373,66 +561,6 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
 
   }
 
-    void getTarification() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    // this.param = _mySelection3;
-
-    //final String urlTari = "http://192.168.43.217:8000/api/getTarification/$idpresta/$id" ;
-
-    var res = await CallApi().getData('getTarification/$idpresta/$id');
-
-//    setState(() {
-//      param = _mySelection3;
-//    });
-
-    //var chaine = param + urlTari ;
-
-//    final res = await http.get(Uri.encodeFull(urlTari), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
-
-    var resBody = json.decode(res.body)['data'];
-
-    setState(() {
-      data = resBody['montant'];
-      //idTari = resBody['id'];
-    });
-
-
-    print('identi est $idpresta');
-
-  }
-
-
-  void getPrestation() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var idlavage = localStorage.getString('id_lavage');
-    // this.param = _mySelection3;
-
-    //final String url = "http://192.168.43.217:8000/api/getPrestation/$idpresta/$idlavage"  ;
-
-    var res = await CallApi().getData('getPrestation/$idpresta/$idlavage');
-
-//    final res = await http.get(Uri.encodeFull(url), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
-
-    var resBody = json.decode(res.body)['data'];
-
-    setState(() {
-      libelle = resBody['libelle_prestation'];
-      descrip = resBody['descrip_prestation'];
-      //idTari = resBody['id'];
-    });
-
-
-   // print('identi est $idpresta');
-
-  }
-
   var nameUser;
 
   void getUserName() async{
@@ -442,6 +570,14 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
     setState(() {
       nameUser = userName;
     });
+
+    //print('la valeur de admin est : $admin');
+
+  }
+
+  void route() async{
+
+
 
     //print('la valeur de admin est : $admin');
 
@@ -502,7 +638,6 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
       }
     }
 
-
   }
 
   _launchFacebookURL() async {
@@ -522,7 +657,6 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
       throw 'Could not launch $url';
     }
   }
-
 }
 
 

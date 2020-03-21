@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +12,9 @@ import 'package:lavage/authentification/Screen/lavage.dart';
 
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import 'Listes/listSuperAdmin.dart';
 import 'Listes/listUsers.dart';
 import 'Listes/listagents.dart';
 import 'Tabs/clientPage.dart';
@@ -47,13 +50,15 @@ class _SuperAdminState extends State<SuperAdmin> {
   bool loading = true;
   bool loader = true;
   bool load = true;
-  String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
+  String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
 
 
 //  final String urlCouleur = "http://192.168.43.217:8000/api/couleur";
 //  final String urlMarque = "http://192.168.43.217:8000/api/marque";
   List data = List() ;
   List data2 = List() ;//edited line
+
+  var fenetre = 'CREER ADMIN';
 
   //var _currencies = ['User', 'Admin', 'Super Admin'];
 
@@ -128,6 +133,7 @@ class _SuperAdminState extends State<SuperAdmin> {
     super.initState();
     this.getUserName();
     this.getLavages();
+    this.getStatut();
   }
   Widget build(BuildContext context){
     final logo = Hero(
@@ -150,7 +156,7 @@ class _SuperAdminState extends State<SuperAdmin> {
       key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('UTILLISATEURS'),
+        title: Text('$fenetre'),
       ),
       body: load ? Form(
         key: _formKey,
@@ -206,8 +212,8 @@ class _SuperAdminState extends State<SuperAdmin> {
                             onSaved: (value) => nomClient = value,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Nom client",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintText: "Nom Admin",
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -245,7 +251,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Contact",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -288,7 +294,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Email",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -331,7 +337,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Password",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -374,7 +380,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Confirmer password",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -394,7 +400,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                             items: _currencies.map((String value) => DropdownMenuItem<String>(
                               child: Text(
                                 value,
-                                style: TextStyle(color: Colors.black),
+                                style: TextStyle(color: Colors.black, fontSize: 18.0),
                               ),
                               value: value,
                             )).toList(),
@@ -405,8 +411,8 @@ class _SuperAdminState extends State<SuperAdmin> {
                             },
                             value: _mySelection2 == null ? null : _currencies[_mySelection2],
                             isExpanded: true,
-                            hint: Text('Selectionner statut'),
-                            style: TextStyle(color: Color(0xff11b719)),
+                            hint: Text('Selectionner statut', style: TextStyle(fontSize: 18.0)),
+                            style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
                           ))
                     ],
 
@@ -431,7 +437,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                                   setState(() {
                                     loader = false;
                                   });
-                                  await _sendDataUser();
+                                  await checkContact();
 
                                   setState(() {
                                     loader = true;
@@ -498,7 +504,7 @@ class _SuperAdminState extends State<SuperAdmin> {
                                     context,
                                     new MaterialPageRoute(
                                       builder: (BuildContext context) {
-                                        return UsersList();
+                                        return SuperAdminList();
                                       },
                                     ),
                                   );
@@ -524,6 +530,65 @@ class _SuperAdminState extends State<SuperAdmin> {
         ),
       ) : Center(child: CircularProgressIndicator(),),
 
+      bottomNavigationBar: BottomNavigationBar(
+        //backgroundColor: Color(0xff0200F4),
+        //currentIndex: 0, // this will be set when a new tab is tapped
+        items: [
+          BottomNavigationBarItem(
+            //backgroundColor: Color(0xff0200F4),
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.settings),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Register();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.mode_edit),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Transaction();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+              icon: IconButton(
+                color: Color(0xff0200F4),
+                icon: Icon(Icons.search),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return ClientPage();
+                      },
+                    ),
+                  );
+                },
+              ),
+              title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+          )
+        ],
+      ),
+
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
@@ -534,7 +599,7 @@ class _SuperAdminState extends State<SuperAdmin> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: Text(''),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -660,7 +725,7 @@ class _SuperAdminState extends State<SuperAdmin> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: Text(''),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -708,6 +773,39 @@ class _SuperAdminState extends State<SuperAdmin> {
                 });
               },
             ),
+
+            ListTile(
+              title: Text('Tutoriel'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                // await Navigator.push(
+                //  context,
+                // new MaterialPageRoute(
+                //   builder: (BuildContext context) {
+                //    return Register();
+                //  },
+                // ),
+                // );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('A propos'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                //await _alertDeconnexion();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
             ListTile(
               title: Text('Deconnexion'),
               onTap: () async{
@@ -721,6 +819,37 @@ class _SuperAdminState extends State<SuperAdmin> {
                 });
               },
             ),
+
+            Container(
+              margin: const EdgeInsets.only(top: 210.0,),
+              padding: EdgeInsets.symmetric(horizontal:20.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(child: Text('Suivez-nous', style: TextStyle(color: Colors.red),),),
+                  //SizedBox(width: 170,),
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.blue,
+                    icon: FaIcon(FontAwesomeIcons.facebook),
+                    onPressed: ()async{
+                      await _launchFacebookURL();
+
+                    },
+                  ),
+
+                  SizedBox(width: 20,),
+
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.red,
+                    icon: FaIcon(FontAwesomeIcons.chrome),
+                    onPressed: ()async{
+                      await _launchMaxomURL();
+                    },
+                  ),
+                ],
+              ),
+            )
 
           ],
         ),
@@ -755,6 +884,8 @@ class _SuperAdminState extends State<SuperAdmin> {
   Future <String> _sendDataUser() async{
 
     if(validateAndSave()) {
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+      var id_user = localStorage.getInt('ID');
       var choix;
       switch(_mySelection2){
         case 0: choix = '2';
@@ -765,7 +896,7 @@ class _SuperAdminState extends State<SuperAdmin> {
         break;
       }
 
-      print('le choix $choix');
+     // print('le choix $choix');
       var data = {
         'name': _nomUser.text.toUpperCase(),
         'numero': _contactUser.text,
@@ -773,6 +904,14 @@ class _SuperAdminState extends State<SuperAdmin> {
         'date': date,
         'password': _password.text,
         'admin': choix,
+      };
+
+      var dataLog = {
+        'fenetre': '$fenetre',
+        'tache': "Enregistrement d'un Admin",
+        'execution': "Enregistrer",
+        'id_user': id_user,
+        'dateEnreg': date,
       };
 
       //print('$data');
@@ -784,6 +923,7 @@ class _SuperAdminState extends State<SuperAdmin> {
 
         //print('la valeur $body');
         if (body['success']) {
+          var res = await CallApi().postData(dataLog, 'create_log');
 
           setState(() {
             _nomUser.text = '';
@@ -864,6 +1004,72 @@ class _SuperAdminState extends State<SuperAdmin> {
           ],
         )
     );
+  }
+
+  void checkContact()async{
+    var resContact = await CallApi().getData('checkContactUser/${_contactUser.text}');
+    var contactbody = json.decode(resContact.body)['data'];
+
+    if(contactbody != null){
+      _showMsg("Ce numéro existe deja !");
+    }else{
+      _sendDataUser();
+    }
+  }
+
+  var adm;
+  var statu;
+  var libLavage;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
+  }
+
+  _launchFacebookURL() async {
+    const url = 'https://www.facebook.com/AGLA-103078671237266/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchMaxomURL() async {
+    const url = 'https://maxom.ci';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
 }

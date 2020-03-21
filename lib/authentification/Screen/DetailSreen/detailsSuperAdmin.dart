@@ -18,37 +18,76 @@ import '../login_page.dart';
 import 'package:http/http.dart' as http;
 
 
+class DetailsSuperAdmin extends StatefulWidget {
 
-class DetailsPrestation extends StatefulWidget {
+  int idUser ;
 
-     int idpresta ;
-
-  DetailsPrestation({Key key, @required this.idpresta}) : super(key: key);
+  DetailsSuperAdmin({Key key, @required this.idUser}) : super(key: key);
 
   @override
-  _DetailsPrestationState createState() => _DetailsPrestationState(idpresta);
+  _DetailsSuperAdminState createState() => _DetailsSuperAdminState(idUser);
 }
 
-class _DetailsPrestationState extends State<DetailsPrestation> {
+class _DetailsSuperAdminState extends State<DetailsSuperAdmin> {
 
-  int idpresta ;
+  int idUser ;
 
-  var data ;
-
-  var libelle ;
-
-  var descrip ;
-
+  var nom ;
+  var contact ;
+  var contactUrgence ;
+  var quartier ;
+  var dateEnreg ;
   bool load = true;
+  bool _switchVal = true;
 
-  _DetailsPrestationState(this.idpresta);
+  _DetailsSuperAdminState(this.idUser);
+
+  void DesactivateUser() async{
+    var data = {
+      'password': 'desactiver',
+      // 'id_lavage': id
+    };
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+    var res = await CallApi().postDataEdit(data, 'desactiverUser/${this.idUser}');
+    var resbody = json.decode(res.body);
+
+    if(resbody['statut'] == 'success'){
+      setState(() {
+        _switchVal = false;
+      });
+      print("pass $_switchVal");
+      _showMsg('$nom a été désactivé avec success !');
+    }else{
+      _showMsg('La désactivation a échoué !');
+    }
+
+
+    print("${this.idUser}");
+
+  }
+
+  final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
+
+  _showMsg(msg) {
+    final snackBar = SnackBar(
+        content: Text(msg),
+        action: SnackBarAction(
+          label: 'Fermer',
+          onPressed: () {
+
+          },
+        )
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
 
   @override
 
   void initState(){
     super.initState();
-    this.getTarification();
-    this.getPrestation();
+    //this.DesactivateUser();
+    this.getUser();
     this.getUserName();
     this.getStatut();
 
@@ -58,18 +97,28 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
     return  WillPopScope(
       // onWillPop: _onBackPressed,
       child:Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
-          title: Text('DETAILS DE LA PRESTATIONS'),
+          title: Text('DETAILS AGENT'),
         ),
         body: load ? ListView(
           children: <Widget>[
+
             SizedBox(
               height: 40.0,
             ),
             Container(
               margin: EdgeInsets.only(left: 25.0),
-              child: Text("PRESTATION ===> $libelle"),
+              child: Text("NOM ===> $nom"),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 40.0),
+            ),
+
+            Container(
+              margin: EdgeInsets.only(left: 25.0),
+              child: Text("CONTACT ===> $contact"),
             ),
 
             Padding(
@@ -78,17 +127,80 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
 
             Container(
               margin: EdgeInsets.only(left: 25.0),
-              child: Text("DESCRIPTION ===> $descrip"),
+              child: Text("EMAIL ===> $email"),
             ),
 
             Padding(
               padding: const EdgeInsets.only(top: 40.0),
             ),
 
-//            Container(
-//              margin: EdgeInsets.only(left: 25.0),
-//              child: Text("MONTANT ===> $data"),
-//            ),
+            Container(
+              margin: EdgeInsets.only(left: 25.0),
+              child: Text("STATUT ===> $statut"),
+            ),
+
+
+            Padding(
+              padding: const EdgeInsets.only(top: 40.0),
+            ),
+
+            Container(
+              margin: EdgeInsets.only(left: 25.0),
+              child: Text("DATE ===> $dateEnreg"),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(top: 40.0),
+            ),
+
+
+
+            Container(
+              padding: const EdgeInsets.only(left: 50.0, right: 50.0),
+              //margin: EdgeInsets.only(left: 25.0),
+              child: Switch(
+                onChanged: (bool value)async{
+
+                  Future<bool> _sureToDelete(){
+                    return showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text("Voulez-vous vraiment désactiver $nom ? "),
+                          actions: <Widget>[
+                            FlatButton(
+                                child: Text("Non"),
+                                onPressed: () {
+                                  setState(() {
+                                    _switchVal = true;
+                                  });
+                                  Navigator.pop(context, false);
+
+                                }
+                            ),
+                            FlatButton(
+                              child: Text("Oui"),
+                              onPressed: () {
+                                DesactivateUser();
+                                Navigator.pop(context, false);
+                              }
+                              ,
+                            )
+                          ],
+                        )
+                    );
+                  }
+                  setState(() {
+                    this._switchVal = value;
+                  });
+
+                  if(_switchVal == false){
+                    _sureToDelete();
+                  }
+                },
+                value: this._switchVal,
+              ),
+            ),
+
 
           ],
         ) : Center(child: CircularProgressIndicator(),),
@@ -156,7 +268,7 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
-          child: ListView(
+          child: (admin2 == '0' || admin2 == '1') ? ListView(
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: <Widget>[
@@ -267,6 +379,75 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
                   });
                 },
               ),
+              ListTile(
+                title: Text('Deconnexion'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _alertDeconnexion();
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+
+            ],
+          ) : ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text('$nameUser'),
+                accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.white,
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xff0200F4),
+                ),
+              ),
+              ListTile(
+                title: Text('Accueil'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return DashbordScreen();
+                      },
+                    ),
+                  );
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+
+              ListTile(
+                title: Text('Parametre'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Register();
+                      },
+                    ),
+                  );
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
 
               ListTile(
                 title: Text('Tutoriel'),
@@ -315,7 +496,7 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
               ),
 
               Container(
-                margin: const EdgeInsets.only(top: 55.0,),
+                margin: const EdgeInsets.only(top: 210.0,),
                 padding: EdgeInsets.symmetric(horizontal:20.0),
                 child: Row(
                   children: <Widget>[
@@ -338,7 +519,6 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
                       color: Colors.red,
                       icon: FaIcon(FontAwesomeIcons.chrome),
                       onPressed: ()async{
-
                         await _launchMaxomURL();
                       },
                     ),
@@ -346,11 +526,58 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
                 ),
               )
 
-
             ],
           ),
-        ) : Center(child: CircularProgressIndicator(),),)
+        ) : Center(child: CircularProgressIndicator(),),),
     );
+  }
+
+  var email;
+  var statut;
+  var nomLavage;
+  var situation;
+  var admin;
+  var password;
+
+  void getUser() async {
+
+
+    //final String url = "http://192.168.43.217:8000/api/getAgent/$idagent/$idlavage"  ;
+
+    var res = await CallApi().getData('getUserSuperAdmin/$idUser');
+
+//    final res = await http.get(Uri.encodeFull(url), headers: {
+//      "Accept": "application/json",
+//      "Content-type": "application/json",
+//    });
+
+    var resBody = json.decode(res.body)['data'];
+
+    setState(() {
+      nom = resBody['nom'];
+      contact = resBody['numero'];
+      email = resBody['email'];
+      statut = resBody['status'];
+      admin = resBody['admin'];
+      dateEnreg = resBody['dateEnreg'];
+
+      //idTari = resBody['id'];
+    });
+
+    if(resBody['password'] == 'desactiver'){
+
+      setState((){
+        _switchVal = false;
+      });
+
+    }else{
+      _switchVal = true;
+    }
+
+
+
+    // print('identi est $idpresta');
+
   }
 
   void _logout() async{
@@ -370,70 +597,11 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
               }
           ));
     }
-
-  }
-
-    void getTarification() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    // this.param = _mySelection3;
-
-    //final String urlTari = "http://192.168.43.217:8000/api/getTarification/$idpresta/$id" ;
-
-    var res = await CallApi().getData('getTarification/$idpresta/$id');
-
-//    setState(() {
-//      param = _mySelection3;
-//    });
-
-    //var chaine = param + urlTari ;
-
-//    final res = await http.get(Uri.encodeFull(urlTari), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
-
-    var resBody = json.decode(res.body)['data'];
-
-    setState(() {
-      data = resBody['montant'];
-      //idTari = resBody['id'];
-    });
-
-
-    print('identi est $idpresta');
-
-  }
-
-
-  void getPrestation() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var idlavage = localStorage.getString('id_lavage');
-    // this.param = _mySelection3;
-
-    //final String url = "http://192.168.43.217:8000/api/getPrestation/$idpresta/$idlavage"  ;
-
-    var res = await CallApi().getData('getPrestation/$idpresta/$idlavage');
-
-//    final res = await http.get(Uri.encodeFull(url), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
-
-    var resBody = json.decode(res.body)['data'];
-
-    setState(() {
-      libelle = resBody['libelle_prestation'];
-      descrip = resBody['descrip_prestation'];
-      //idTari = resBody['id'];
-    });
-
-
-   // print('identi est $idpresta');
-
   }
 
   var nameUser;
+  var admin2;
+
 
   void getUserName() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -441,6 +609,7 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
 
     setState(() {
       nameUser = userName;
+      admin2 = localStorage.getString('Admin');
     });
 
     //print('la valeur de admin est : $admin');
@@ -502,7 +671,6 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
       }
     }
 
-
   }
 
   _launchFacebookURL() async {
@@ -522,7 +690,6 @@ class _DetailsPrestationState extends State<DetailsPrestation> {
       throw 'Could not launch $url';
     }
   }
-
 }
 
 

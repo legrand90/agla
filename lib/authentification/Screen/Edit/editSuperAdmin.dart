@@ -1,213 +1,145 @@
 import 'dart:async';
-import 'dart:convert';
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
-import 'package:lavage/authentification/Models/Client.dart';
-import 'package:lavage/authentification/Screen/DetailSreen/detailsMatricule.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:lavage/authentification/Models/Listlavages.dart';
+import 'package:lavage/authentification/Screen/Listes/listSuperAdmin.dart';
+import 'package:lavage/authentification/Screen/Listes/listUsers.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
-import 'package:lavage/authentification/Screen/dashbord.dart';
+import 'package:lavage/authentification/Screen/lavage.dart';
+
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../Transaction.dart';
-import '../client.dart';
+import '../dashbord.dart';
 import '../historique.dart';
 import '../login_page.dart';
 
-//import 'Agent.dart';
-//import 'Listes/listMatricule.dart';
-//import 'Listes/listclients.dart';
-//import 'Tabs/clientPage.dart';
-//import 'Transaction.dart';
-//import 'client.dart';
-
-
-class EditMatricule extends StatefulWidget {
-
-  var idmatricule;
-  var idcouleur;
-  var idmarque;
-  var idcli;
-  EditMatricule({Key key, @required this.idmatricule, this.idcouleur, this.idmarque, this.idcli}) : super(key: key);
-
+class EditSuperAdmin extends StatefulWidget {
+  var idUser;
+  EditSuperAdmin({Key key, @required this.idUser}) : super(key: key);
   @override
-  _EditMatriculeState createState() => new _EditMatriculeState(idmatricule, idcouleur, idmarque, idcli);
+  _EditSuperAdminState createState() => new _EditSuperAdminState(idUser);
 }
 
-class _EditMatriculeState extends State<EditMatricule> {
-  var idmatricule;
-  var idcouleur;
-  var idmarque;
-  var idcli;
-  _EditMatriculeState(this.idmatricule, this.idcouleur, this.idmarque, this.idcli);
-
-  AutoCompleteTextField searchTextField;
-  GlobalKey <AutoCompleteTextFieldState<Datu>> key = GlobalKey();
-
+class _EditSuperAdminState extends State<EditSuperAdmin> {
+  var idUser;
+  _EditSuperAdminState(this.idUser);
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _matricule = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _nomUser = TextEditingController();
+  final TextEditingController _contactUser = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  final TextEditingController _confirmPassword = TextEditingController();
+//  final TextEditingController _couleurVehicule = TextEditingController();
+//  final TextEditingController _marqueVehicule = TextEditingController();
+
+  String _mySelection;
+  int _mySelection2;
+  String email;
+  String nomClient;
+  String contactClient;
+  String matricule;
+  var idClient = 0;
+  bool success = false;
+
+
+  bool loading = true;
+  bool loader = true;
+  bool load = true;
   String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
 
-  static List <Datu> listclients = List <Datu>()  ;
+
+//  final String urlCouleur = "http://192.168.43.217:8000/api/couleur";
+//  final String urlMarque = "http://192.168.43.217:8000/api/marque";
   List data = List() ;
-  List data2 = List() ;
-  List data3 = List() ;//edited line
-  var data4 ;
-  var commission;
-  var tarification;
-  var id ;
-  var idTari ;
-  var id_commission;
+  List data2 = List() ;//edited line
+
+  var fenetre = 'MODIFIER ADMIN';
+
+  //var _currencies = ['User', 'Admin', 'Super Admin'];
+
+  var _currencies = <String>[
+    'MAXOM SUPER ADMIN',
+    'MAXOM DEV',
+    'MAXOM COM',
+  ];
+
+  static List <Datux> listlavages = List <Datux>() ;
+
+  AutoCompleteTextField searchTextField;
+
+  GlobalKey <AutoCompleteTextFieldState<Datux>> keys = GlobalKey();
 
   var searchVal ;
 
-  var matricule ;
-
-  String _mySelection;
-  String _mySelection2;
-
-
-
-  bool visible = false;
-
-  bool loading = true;
-
-  bool defaultColor = false;
-
-  bool defaultMarque = false ;
-
-  bool defaultClient = false ;
-
-  bool loader = true;
-
-  bool load = true;
-
-  var fenetre = 'MODIFICATION INFOS VEHICULE';
-
-
-
-
-  static List <Datu> loadClients(String jsonString){
+  static List <Datux> loadLavages(String jsonString){
     final parsed = json.decode(jsonString)['data'].cast<Map<String, dynamic>>();
-    return parsed.map<Datu>((json)=>Datu.fromJson(json)).toList();
+    return parsed.map<Datux>((json)=>Datux.fromJson(json)).toList();
   }
 
 
-  void getClients() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    //final String urlClient = "http://192.168.43.217:8000/api/client/$id";
+  void getLavages() async {
 
-    var res2 = await CallApi().getData('client/$id');
-    // final res = await http.get(Uri.encodeFull(urlAgent), headers: {"Accept": "application/json","Content-type" : "application/json",});
-    //final res2 = await http.get(Uri.encodeFull(urlClient), headers: {"Accept": "application/json","Content-type" : "application/json",});
-    //var resBody = json.decode(res.body)['data'];
+    var res = await CallApi().getData('lavage');
 
-    if(res2.statusCode == 200){
+    if(res.statusCode == 200){
 
-      listclients = loadClients(res2.body);
+      listlavages = loadLavages(res.body);
 
       setState(() {
         loading  = false ;
       });
 
+      //print('les lavages $listlavages');
+
     }else{
       _showMsg('ERREUR');
     }
 
-
-
-//    setState(() {
-//      listclients = loadClients(res2.body);
-//      // data = resBody;
-//    });
-
-    print('CLIENTS : ${listclients.length}');
   }
 
+  var idlav;
+  var  admin;
+  var statut;
+  var libLavage;
 
-  void UpdateMatricule() async{
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    var id_user = localStorage.getInt('ID');
+  void getUserEdith() async {
 
-      //try {
-      var data = {
-        'id_client': defaultClient ? searchVal : this.idcli,
-        'libelle_matricule': _matricule.text,
-        'dateEnreg': date,
-        'id_lavage': id,
-        'id_couleur': defaultColor ? _mySelection : idcouleur,
-        'id_marque': defaultMarque ? _mySelection2 : idmarque,
+    var res = await CallApi().getData('getUserSuperAdmin/$idUser');
+    var resBody = json.decode(res.body)['data'];
 
-      };
+    if(res.statusCode == 200){
 
-    var dataLog = {
-      'fenetre': '$fenetre',
-      'tache': "Modification infos vehicule",
-      'execution': "Update",
-      'id_user': id_user,
-      'dateEnreg': date,
-      'id_lavage': id,
-    };
+      setState(() {
+        _nomUser.text = resBody['nom'] ;
+        _email.text = resBody['email'] ;
+        _contactUser.text = resBody['numero'] ;
+        statut = resBody['status'] ;
+      });
 
+      print('les lavages ${resBody['nomLavage']}');
 
-      var res = await CallApi().postDataEdit(data, 'update_matricule/$idmatricule/$id');
-      var body = json.decode(res.body);
-     // print(body);
-
-      if (res.statusCode == 200) {
-        var res = await CallApi().postData(dataLog, 'create_log');
-
-        setState(() {
-          _matricule.text = '';
-          searchTextField.textField.controller.text = '';
-          searchVal = '' ;
-          _mySelection = null;
-          _mySelection2 = null;
-
-          defaultColor = false ;
-          defaultMarque = false ;
-         // defaultClient = false ;
-
-        });
-
-       // _showMsg('Donnees mises a jour avec succes');
-
-        Navigator.push(
-          context,
-          new MaterialPageRoute(
-            builder: (BuildContext context) {
-              return DetailsMatricule(idclient: int.parse(defaultClient ? searchVal : idcli));
-            },
-          ),
-        );
-
-
-      }else{
-        _showMsg("Erreur d'enregistrement");
-      }
+    }else{
+      _showMsg('ERREUR');
+    }
 
   }
-
-
-
-  //SharedPreferences localStorage = await SharedPreferences.getInstance();
-
 
   final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
-
-  _showMsg(msg) {
+  _showMsg(msg){
     final snackBar = SnackBar(
         content: Text(msg),
-        action: SnackBarAction(
+        action : SnackBarAction(
           label: 'Fermer',
-          onPressed: () {
+          onPressed: (){
 
           },
         )
@@ -215,58 +147,26 @@ class _EditMatriculeState extends State<EditMatricule> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
-  Widget row(Datu ag){
+
+
+  Widget row(Datux ag){
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(ag.nom, style: TextStyle(fontSize: 20.0),)
+        Text(ag.libelleLavage, style: TextStyle(fontSize: 16.0),)
       ],
     );
-  }
-
-  void getMatriculeEdit() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var idlavage = localStorage.getString('id_lavage');
-    // this.param = _mySelection3;
-
-    //final String url = "http://192.168.43.217:8000/api/getMatriculeEdit/$idmatricule/$idlavage"  ;
-
-    var res = await CallApi().getData('getMatriculeEdit/$idmatricule/$idlavage');
-
-//    final res = await http.get(Uri.encodeFull(url), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
-
-    var resBody = json.decode(res.body)['data'];
-
-    setState(() {
-      _matricule.text = resBody['matricule'];
-      //idcli = resBody['id_client'];
-
-    });
-
-
-
-    // print('identi est $idpresta');
-
   }
 
 
   @override
   void initState(){
-    this.getClients();
-    this.getMarque();
-    this.getCouleur();
-    this.getMatriculeEdit();
-    this.getNomCouleur_NomMarque_NomClient();
     super.initState();
     this.getUserName();
-
-
+    this.getUserEdith();
+    this.getLavages();
+    this.getStatut();
   }
-
-  @override
   Widget build(BuildContext context){
     final logo = Hero(
       tag: 'logo',
@@ -288,11 +188,11 @@ class _EditMatriculeState extends State<EditMatricule> {
       key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
-          title: Text('MODIFICATION MATRICULE')
+        title: Text('MODIFICATION'),
       ),
       body: load ? Form(
         key: _formKey,
-        // autovalidate: _autoValidate,
+        //autovalidate: _autoValidate,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Center(
@@ -301,9 +201,8 @@ class _EditMatriculeState extends State<EditMatricule> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  logo,
-                  SizedBox(height: 40.0),
-                  Text("MATRICULE",
+
+                  Text("MODIFIER UTILISATEUR",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
@@ -312,129 +211,85 @@ class _EditMatriculeState extends State<EditMatricule> {
                       )
                   ),
                   SizedBox(height: 50.0),
-
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40.0),
+                  ),
                   Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                      child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: loading ? Center(child: CircularProgressIndicator()) : searchTextField = AutoCompleteTextField<Datu>(
-                          key: key,
-                          clearOnSubmit: false,
-                          suggestions: listclients,
-                          style: TextStyle(color: Colors.black, fontSize: 16.0),
-                          decoration: InputDecoration(
-                              contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
-                              hintText: "Saisir Client",
-                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0)
-                          ),
-                          itemFilter: (item, query){
-                            return item.nom.toLowerCase().startsWith(query.toLowerCase());
-                          },
-                          itemSorter: (a, b){
-                            return a.nom.compareTo(b.nom);
-                          },
-                          itemSubmitted: (item){
-                            setState(() {
-                              searchTextField.textField.controller.text = item.nom;
-                              searchVal = item.id ;
-                              defaultClient = true ;
-                            });
-                          },
-                          itemBuilder: (context, item){
-                            return row(item);
-                          },
-
-                        ),
-
-
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.5),
+                        width: 1.0,
                       ),
-
-                      IconButton(
-                        icon: Icon(Icons.add),
-                        onPressed: (){
-                          Navigator.push(
-                            context,
-                            new MaterialPageRoute(
-                              builder: (BuildContext context){
-                                return Client();
-                              },
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                          child: Icon(
+                            Icons.perm_identity,
+                            color: Colors.red,
+                          ),
+                        ),
+                        new Expanded(
+                          child: TextFormField(
+                            textCapitalization: TextCapitalization.characters,
+                            keyboardType: TextInputType.text,
+                            autofocus: false,
+                            controller: _nomUser,
+                            validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
+                            onSaved: (value) => nomClient = value,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Nom Admin",
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
-                          );
-                        },
-                      )
-
-                    ],
-                  )),
-
-                  Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-
-                      SizedBox(width: 5.0,),
-
-                      Expanded(
-                          child : DropdownButton<String>(
-                            items: data2.map((value) => DropdownMenuItem<String>(
-                              child: Text(
-                                value['marque'],
-                                style: TextStyle(color: Colors.black, fontSize: 18.0),
-                              ),
-                              value: value['id'].toString(),
-                            )).toList(),
-                            onChanged: (choix){
-                              setState(() {
-                                _mySelection2 = choix ;
-                                defaultMarque = true;
-                              });
-                            },
-                            value: _mySelection2,
-                            isExpanded: true,
-                            hint: Text('$libmarque', style: TextStyle(fontSize: 18.0)),
-                            style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
-                          ))
-                    ],
-
-                  )),
-
-                  ////////////////////////////////////////////////////////////////
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
 
                   Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-
-                      SizedBox(width: 5.0,),
-                      Expanded(
-                          child : DropdownButton(
-                            items: data.map((value) => DropdownMenuItem(
-                              child: Text(
-                                value['couleur'],
-                                style: TextStyle(color: Colors.black, fontSize: 18.0),
-                              ),
-                              value: value['id'].toString(),
-                            )).toList(),
-                            onChanged: (choix){
-                              setState(() {
-                                _mySelection = choix ;
-                                defaultColor = true;
-                              });
-                            },
-                            value:  _mySelection ,
-                            isExpanded: true,
-                            hint: Text('$libCouleur', style: TextStyle(fontSize: 18.0)),
-                            style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
-                          ))
-                    ],
-
-                  )),
-
-                  SizedBox(height: 30.0),
-
-
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.5),
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                          child: Icon(
+                            Icons.phone,
+                            color: Colors.red,
+                          ),
+                        ),
+                        new Expanded(
+                          child: TextFormField(
+                            textCapitalization: TextCapitalization.characters,
+                            keyboardType: TextInputType.phone,
+                            //autofocus: false,
+                            controller: _contactUser,
+                            validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
+                            onSaved: (value) => contactClient = value,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Contact",
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  ////////////////////////////////////////////////////////////////////////////
                   Padding(
                     padding: const EdgeInsets.only(left: 40.0),
                   ),
@@ -454,22 +309,22 @@ class _EditMatriculeState extends State<EditMatricule> {
                         new Padding(
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
                           child: Icon(
-                            Icons.directions_car,
+                            Icons.email,
                             color: Colors.red,
                           ),
                         ),
                         new Expanded(
                           child: TextFormField(
-                            textCapitalization: TextCapitalization.characters,
+                            //textCapitalization: TextCapitalization.characters,
                             keyboardType: TextInputType.text,
-                            // obscureText: true,
+                            //obscureText: true,
                             autofocus: false,
-                            controller: _matricule,
+                            controller: _email,
                             validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
-                            //  onSaved: (value) => matricule = value,
+                            //onSaved: (value) => _password = value,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Matricule",
+                              hintText: "Email",
                               hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
@@ -479,11 +334,40 @@ class _EditMatriculeState extends State<EditMatricule> {
                   ),
 
 
-
-                  ////////////////////////////////////////////////////////////////////////////
                   Padding(
                     padding: const EdgeInsets.only(left: 40.0),
                   ),
+
+                  Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+
+                          SizedBox(width: 5.0,),
+                          Expanded(
+                              child : DropdownButton<String>(
+                                items: _currencies.map((String value) => DropdownMenuItem<String>(
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(color: Colors.black, fontSize: 18.0),
+                                  ),
+                                  value: value,
+                                )).toList(),
+                                onChanged: ( choix){
+                                  setState(() {
+                                    _mySelection2 = _currencies.indexOf(choix) ;
+                                    defaultAdmin = true ;
+                                  });
+                                },
+                                value: _mySelection2 == null ? null : _currencies[_mySelection2],
+                                isExpanded: true,
+                                hint: Text('$statut', style: TextStyle(fontSize: 18.0)),
+                                style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
+                              ))
+                        ],
+
+                      )),
 
                   ////////////////////////////////////////////////////////////////
 
@@ -504,14 +388,13 @@ class _EditMatriculeState extends State<EditMatricule> {
                                   setState(() {
                                     loader = false;
                                   });
+                                  await UpdateUser();
 
-                                   await UpdateMatricule();
-
-                                   setState(() {
-                                     loader = true;
-                                   });
-
-
+                                  setState(() {
+                                    loader = true;
+                                  });
+                                  //_sendDataClient();
+                                  //_sendDataMatricule();
                                 },
                                 child: new Container(
                                   child: new Row(
@@ -531,23 +414,12 @@ class _EditMatriculeState extends State<EditMatricule> {
                                   ),
                                 ),
                               ) : Center(child: CircularProgressIndicator(),),
-                            ),
-
-                            Container(
-                              width: 10.0,
-                            ),
-
-
-
+                            )
                           ],
                         ),
                       )),
 
                       //////////////////////////////////////////////////////////
-//                      Container(
-//                        width: 50.0,
-//                      ),
-
 
                     ],
                   ),
@@ -624,13 +496,13 @@ class _EditMatriculeState extends State<EditMatricule> {
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
         // space to fit everything.
-        child: ListView(
+        child: (admin == '0' || admin == '1') ? ListView(
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: Text(''),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLav \nVous êtes $statu') : Text('Vous êtes $statu'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -735,6 +607,75 @@ class _EditMatriculeState extends State<EditMatricule> {
                 });
               },
             ),
+            ListTile(
+              title: Text('Deconnexion'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _alertDeconnexion();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+
+          ],
+        ) : ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text('$nameUser'),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLav \nVous êtes $statu') : Text('Vous êtes $statu'),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+              ),
+              decoration: BoxDecoration(
+                color: Color(0xff0200F4),
+              ),
+            ),
+            ListTile(
+              title: Text('Accueil'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return DashbordScreen();
+                    },
+                  ),
+                );
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+
+            ListTile(
+              title: Text('Parametre'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Register();
+                    },
+                  ),
+                );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
 
             ListTile(
               title: Text('Tutoriel'),
@@ -783,7 +724,7 @@ class _EditMatriculeState extends State<EditMatricule> {
             ),
 
             Container(
-              margin: const EdgeInsets.only(top: 55.0,),
+              margin: const EdgeInsets.only(top: 210.0,),
               padding: EdgeInsets.symmetric(horizontal:20.0),
               child: Row(
                 children: <Widget>[
@@ -806,7 +747,6 @@ class _EditMatriculeState extends State<EditMatricule> {
                     color: Colors.red,
                     icon: FaIcon(FontAwesomeIcons.chrome),
                     onPressed: ()async{
-
                       await _launchMaxomURL();
                     },
                   ),
@@ -817,7 +757,6 @@ class _EditMatriculeState extends State<EditMatricule> {
           ],
         ),
       ) : Center(child: CircularProgressIndicator(),),
-
     );
   }
 
@@ -845,34 +784,77 @@ class _EditMatriculeState extends State<EditMatricule> {
     }
     return false;
   }
-  void _sendDataMatricule() async{
-    if(validateAndSave()) {
-      SharedPreferences localStorage = await SharedPreferences.getInstance();
-      var idlavage = localStorage.getString('id_lavage');
-      var data = {
-        'id_client': searchVal,
-        'libelle_matricule': _matricule.text,
-        'dateEnreg': date,
-        'id_lavage': idlavage,
 
-      };
+  bool defaultAdmin = false;
 
-      var res = await CallApi().postAppData(data, 'create_matricule');
-      // var body = json.decode(res.body)['data'];
+  bool defaultLavage = false ;
 
-      if(res.statusCode == 200){
-        setState(() {
-          _matricule.text = '';
-          searchTextField.textField.controller.text = '';
-          searchVal = '' ;
+  Future <String> UpdateUser() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id_user = localStorage.getInt('ID');
 
-        });
-        _showMsg('Donnees enregistrees avec success');
-
-      }else{
-        _showMsg("ERREUR");
-      }
+    var choix;
+    switch(_mySelection2){
+      case 0: choix = '2';
+      break;
+      case 1: choix = '3';
+      break;
+      case 2: choix = '4';
+      break;
     }
+
+    var data = {
+      'name': _nomUser.text.toUpperCase(),
+      'numero': _contactUser.text,
+      'email': _email.text,
+      'date': date,
+      'password': _password.text,
+      'admin': choix,
+    };
+
+    var dataLog = {
+      'fenetre': '$fenetre',
+      'tache': "Modification d'Admin",
+      'execution': "Update",
+      'id_user': id_user,
+      'dateEnreg': date,
+    };
+
+    //print('$data');
+
+
+    var res = await CallApi().postDataEdit(data, 'update_user/$idUser');
+    var body = json.decode(res.body);
+
+
+    //print('la valeur $body');
+    if (body['statut'] == 'success') {
+      var res = await CallApi().postData(dataLog, 'create_log');
+
+      setState(() {
+        _nomUser.text = '';
+        _contactUser.text = '';
+        _email.text = '';
+        _mySelection2 = null;
+        defaultAdmin = false ;
+        defaultLavage = false ;
+      });
+
+      Navigator.push(
+        context,
+        new MaterialPageRoute(
+          builder: (BuildContext context) {
+            return SuperAdminList();
+          },
+        ),
+      );
+
+    } else {
+      _showMsg("Erreur d'enregistrement des donnees");
+    }
+
+
+
   }
 
   void _logout() async{
@@ -895,70 +877,6 @@ class _EditMatriculeState extends State<EditMatricule> {
 
   }
 
-//  final String urlCouleur = "http://192.168.43.217:8000/api/couleur";
-//  final String urlMarque = "http://192.168.43.217:8000/api/marque";
-
-  Future<String> getCouleur() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-
-
-    var res = await CallApi().getData('couleur');
-    //final res = await http.get(Uri.encodeFull(urlCouleur), headers: {"Accept": "application/json","Content-type" : "application/json",});
-    var resBody = json.decode(res.body)['data'];
-
-    setState(() {
-      data = resBody;
-    });
-
-    print(resBody);
-    return "Success";
-  }
-
-  Future<String> getMarque() async {
-
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-
-    var id = localStorage.getString('id_lavage');
-
-    var res = await CallApi().getData('marque');
-   // final res = await http.get(Uri.encodeFull(urlMarque), headers: {"Accept": "application/json","Content-type" : "application/json",});
-    var resBody = json.decode(res.body)['data'];
-
-    setState(() {
-      data2 = resBody;
-    });
-
-    //print(resBody);
-    return "Success";
-  }
-
-  var libCouleur ;
-  var libmarque ;
-
-  Future<String> getNomCouleur_NomMarque_NomClient() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-
-
-    var res = await CallApi().getData('getCouleur/$idcouleur');
-    var res2 = await CallApi().getData('getMarqueVehicule/$idmarque');
-    var res3 = await CallApi().getData('getClientEdit/$idcli/$id');
-    //final res = await http.get(Uri.encodeFull(urlCouleur), headers: {"Accept": "application/json","Content-type" : "application/json",});
-    var resBody = json.decode(res.body)['data'];
-    var resBody2 = json.decode(res2.body)['data'];
-    var resBody3 = json.decode(res3.body)['data'];
-
-    setState(() {
-      libCouleur = resBody['couleur'];
-      libmarque = resBody2['marque'];
-      searchTextField.textField.controller.text = resBody3['nom'];
-      //_mySelection = libCouleur;
-    });
-
-    print('marque $resBody2');
-    return "Success";
-  }
 
   var nameUser;
 
@@ -994,6 +912,43 @@ class _EditMatriculeState extends State<EditMatricule> {
     );
   }
 
+  var adm;
+  var statu;
+  var libLav;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
+  }
+
   _launchFacebookURL() async {
     const url = 'https://www.facebook.com/AGLA-103078671237266/';
     if (await canLaunch(url)) {
@@ -1011,6 +966,7 @@ class _EditMatriculeState extends State<EditMatricule> {
       throw 'Could not launch $url';
     }
   }
+
 }
 
 

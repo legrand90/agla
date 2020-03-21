@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/fa_icon.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
@@ -11,6 +13,7 @@ import 'package:lavage/authentification/Screen/dashbord.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'Agent.dart';
 import 'Listes/listclientlavage.dart';
@@ -43,7 +46,7 @@ class _TransactionState extends State<Transaction> {
 
   _TransactionState(this.counter);
 
-  var texte = 'Selectionner prestation' ;
+  var texte = 'PRESTATION' ;
 
   var val ;
   var idclient ;
@@ -54,11 +57,13 @@ class _TransactionState extends State<Transaction> {
   bool loader = true;
   bool load = true;
 
+  var fenetre = 'TRANSACTIONS';
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _gainAgent = TextEditingController();
   //final TextEditingController _password = TextEditingController();
 
-  String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
+  String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
 
   String gainAgent;
 
@@ -123,15 +128,14 @@ class _TransactionState extends State<Transaction> {
 
     if(res.statusCode == 200){
 
-      listclients = loadClients(res.body);
-
       setState(() {
+        listclients = loadClients(res.body);
         loading = false ;
         // data = resBody;
       });
     }
 
-    //print('AGENTS : ${listclients.length}');
+    print('Cli : ${listclients.length}');
 
   }
 
@@ -216,7 +220,7 @@ class _TransactionState extends State<Transaction> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(ag.nom, style: TextStyle(fontSize: 16.0),)
+        Text(ag.nom, style: TextStyle(fontSize: 18.0),)
       ],
     );
   }
@@ -278,23 +282,29 @@ class _TransactionState extends State<Transaction> {
 //
 //  }
 
+  Timer timer;
+
 
   @override
   void initState(){
     super.initState();
     this.getAgent();
-    this.getClients();
+    //this.getClients();
     this.getUserName();
-    this.getClient();
-    //this.getLastTarification();
+    //this.getClient();
     this.getPrestation();
-    //this.getRecette();
-    //this.getMatriculeVehicule();
-    //this.getTarification();
-
+    this.getStatut();
+    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => this.getClients());
     //this.getLastCommission();
-
   }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+
   Widget build(BuildContext context){
    // SystemChrome.setPreferredOrientations([
     //  DeviceOrientation.portraitUp,
@@ -320,7 +330,7 @@ class _TransactionState extends State<Transaction> {
       key: _scaffoldKey,
       backgroundColor: Color(0xFFDADADA),
       appBar: AppBar(
-          title: Text('TRANSACTIONS')
+          title: Text('$fenetre')
       ),
       body: load ? Form(
         key: _formKey,
@@ -338,27 +348,27 @@ class _TransactionState extends State<Transaction> {
                   Text("TRANSACTION",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontSize: 16.0,
+                          fontSize: 20.0,
                           color: Colors.red,
                           fontWeight: FontWeight.bold
                       )
                   ),
-                  SizedBox(height: 50.0),
+                  SizedBox(height: 30.0),
 
                   Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      margin: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                       child: Row(
                     children: <Widget>[
                       Expanded(
-                        child: loading ? CircularProgressIndicator() : searchTextField = AutoCompleteTextField<Datu>(
+                        child: loading ? Center(child: CircularProgressIndicator()) : searchTextField = AutoCompleteTextField<Datu>(
                           key: key,
                           clearOnSubmit: false,
                           suggestions: listclients,
                           style: TextStyle(color: Colors.black, fontSize: 16.0),
                           decoration: InputDecoration(
                               contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
-                              hintText: "Saisir Client",
-                              hintStyle: TextStyle(color: Colors.black)
+                              hintText: "CLIENT",
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0)
                           ),
                           itemFilter: (item, query){
                             return item.nom.toLowerCase().startsWith(query.toLowerCase());
@@ -403,7 +413,7 @@ class _TransactionState extends State<Transaction> {
                   ),
 
                   Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      margin: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                       child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -414,7 +424,7 @@ class _TransactionState extends State<Transaction> {
                             items: listmatri.map((value) => DropdownMenuItem(
                               child: Text(
                                 value['matricule'],
-                                style: TextStyle(color: Colors.black),
+                                style: TextStyle(color: Colors.black, fontSize: 18.0),
                               ),
                               value: value['id'].toString(),
                             )).toList(),
@@ -427,7 +437,7 @@ class _TransactionState extends State<Transaction> {
                             },
                             value: idmatricule,
                             isExpanded: true,
-                            hint: Text('Selectionner Matricule'),
+                            hint: Text('MATRICULE', style: TextStyle(fontSize: 18.0),),
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
@@ -437,7 +447,7 @@ class _TransactionState extends State<Transaction> {
                   ////////////////////////////////////////////////////////////////
 
                   Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      margin: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                       child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -448,7 +458,7 @@ class _TransactionState extends State<Transaction> {
                             items: data.map((value) => DropdownMenuItem(
                               child: Text(
                                 value['nom'],
-                                style: TextStyle(color: Colors.black),
+                                style: TextStyle(color: Colors.black, fontSize: 18.0),
                               ),
                               value: value['id'].toString(),
                             )).toList(),
@@ -469,7 +479,7 @@ class _TransactionState extends State<Transaction> {
                             },
                             value: _mySelection,
                             isExpanded: true,
-                            hint: Text('Selectionner Agent'),
+                            hint: Text('AGENT', style: TextStyle(fontSize: 18.0),),
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
@@ -477,7 +487,7 @@ class _TransactionState extends State<Transaction> {
                   )),
 
               Container(
-                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  margin: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -488,7 +498,7 @@ class _TransactionState extends State<Transaction> {
                             items: data3.map((value) => DropdownMenuItem(
                               child: Text(
                                 value['libelle_prestation'],
-                                style: TextStyle(color: Colors.black),
+                                style: TextStyle(color: Colors.black, fontSize: 18.0),
                               ),
                               value: value['id'].toString(),
                             )).toList(),
@@ -515,7 +525,7 @@ class _TransactionState extends State<Transaction> {
                             },
                             value: _mySelection3,
                             isExpanded: true,
-                            hint: Text('$texte'),
+                            hint: Text('$texte', style: TextStyle(fontSize: 18.0),),
                             style: TextStyle(color: Color(0xff11b719)),
                           ))
                     ],
@@ -524,28 +534,24 @@ class _TransactionState extends State<Transaction> {
 
                   visible ?
                     Padding(
-                        padding: EdgeInsets.only(top: 30.0),
+                        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                         child: Row(
                           children: <Widget>[
+                              Text('Coût (en FCFA) :', style: TextStyle(fontSize: 18.0)),
                             Expanded(
-                              child: Text('Cout :'),
-                            ),
-                            Expanded(
-                              child: Text('$data4'),
+                              child: Text('  $data4', style: TextStyle(fontSize: 18.0)),
                             ),
                           ],
                         )) : Text(''),
 
                     visible ?
                     Padding(
-                        padding: EdgeInsets.only(top: 30.0),
+                        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                         child: Row(
                           children: <Widget>[
+                            Text('Commission (en FCFA) :', style: TextStyle(fontSize: 18.0)),
                             Expanded(
-                              child: Text('Commission :'),
-                            ),
-                            Expanded(
-                              child: Text('$commission'),
+                              child: Text('  $commission', style: TextStyle(fontSize: 18.0)),
                             ),
                           ],
                         )) : Text(''),
@@ -561,7 +567,7 @@ class _TransactionState extends State<Transaction> {
                     children : <Widget>[
                       Expanded(child :
                       Container(
-                        margin: const EdgeInsets.only(top: 20.0),
+                        margin: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                         //padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                         child: Row(
                         children: <Widget>[
@@ -660,13 +666,74 @@ class _TransactionState extends State<Transaction> {
 //                      ),
                     ],
                   ),
+                  SizedBox(height: 70.0),
 
                 ],
               ),
             ),
-          ),
+        ),
+
         ),
       ) : Center(child: CircularProgressIndicator(),),
+
+      bottomNavigationBar: BottomNavigationBar(
+        //backgroundColor: Color(0xff0200F4),
+        //currentIndex: 0, // this will be set when a new tab is tapped
+        items: [
+          BottomNavigationBarItem(
+            //backgroundColor: Color(0xff0200F4),
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.settings),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Register();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.mode_edit),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Transaction();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+              icon: IconButton(
+                color: Color(0xff0200F4),
+                icon: Icon(Icons.search),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return ClientPage();
+                      },
+                    ),
+                  );
+                },
+              ),
+              title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+          )
+        ],
+      ),
 
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
@@ -678,7 +745,7 @@ class _TransactionState extends State<Transaction> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: Text(''),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -783,6 +850,39 @@ class _TransactionState extends State<Transaction> {
                 });
               },
             ),
+
+            ListTile(
+              title: Text('Tutoriel'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                // await Navigator.push(
+                //  context,
+                // new MaterialPageRoute(
+                //   builder: (BuildContext context) {
+                //    return Register();
+                //  },
+                // ),
+                // );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('A propos'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                //await _alertDeconnexion();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
             ListTile(
               title: Text('Deconnexion'),
               onTap: () async{
@@ -796,6 +896,38 @@ class _TransactionState extends State<Transaction> {
                 });
               },
             ),
+
+            Container(
+              margin: const EdgeInsets.only(top: 55.0,),
+              padding: EdgeInsets.symmetric(horizontal:20.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(child: Text('Suivez-nous', style: TextStyle(color: Colors.red),),),
+                  //SizedBox(width: 170,),
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.blue,
+                    icon: FaIcon(FontAwesomeIcons.facebook),
+                    onPressed: ()async{
+                      await _launchFacebookURL();
+
+                    },
+                  ),
+
+                  SizedBox(width: 20,),
+
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.red,
+                    icon: FaIcon(FontAwesomeIcons.chrome),
+                    onPressed: ()async{
+
+                      await _launchMaxomURL();
+                    },
+                  ),
+                ],
+              ),
+            )
 
 
           ],
@@ -833,6 +965,7 @@ class _TransactionState extends State<Transaction> {
     if(validateAndSave()) {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       var idlavage = localStorage.getString('id_lavage');
+      var id_user = localStorage.getInt('ID');
       var data = {
         'id_prestation': _mySelection3,
         'dateEnreg': date,
@@ -845,9 +978,20 @@ class _TransactionState extends State<Transaction> {
 
       };
 
+      var dataLog = {
+        'fenetre': '$fenetre',
+        'tache': "Enregistrement des Transactions",
+        'execution': "Enregistrer",
+        'id_user': id_user,
+        'dateEnreg': date,
+        'id_lavage': idlavage,
+      };
+
       var res = await CallApi().postAppData(data, 'create_transaction');
 
+
       if(res.statusCode == 200){
+        var resLog = await CallApi().postData(dataLog, 'create_log');
 
         setState(() {
           _mySelection = null;
@@ -971,6 +1115,61 @@ class _TransactionState extends State<Transaction> {
           ],
         )
     );
+  }
+
+  var adm;
+  var statu;
+  var libLavage;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
+  }
+
+  _launchFacebookURL() async {
+    const url = 'https://www.facebook.com/AGLA-103078671237266/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchMaxomURL() async {
+    const url = 'https://maxom.ci';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
 

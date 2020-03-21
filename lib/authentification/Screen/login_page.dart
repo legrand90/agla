@@ -73,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
     return showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text("Pour la reinitialisation de votre mot de passe, veuillez contacter le service clientel a ce numero : 035 904 54 . Merci ! "),
+          title: Text("Pour la reinitialisation de votre mot de passe, veuillez contacter le service technique . Merci ! "),
           actions: <Widget>[
             FlatButton(
               child: Text("Ok", style: TextStyle(fontSize: 20.0),),
@@ -163,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Entrez votre numéro",
-                                  hintStyle: TextStyle(color: Colors.black),
+                                  hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                                 ),
                               ),
                             )
@@ -204,7 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Entrez votre mot de passe",
-                                  hintStyle: TextStyle(color: Colors.black),
+                                  hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                                 ),
                               ),
                             )
@@ -301,7 +301,11 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
 
+                      SizedBox(height: 50.0,),
+
                       //////////////////////////////////////////////////////////
+
+                      Container(child: Center(child: Text("Un produit de MAXOM", style: TextStyle(color: Colors.red),),),),
 
                     ],
                   ),
@@ -353,19 +357,19 @@ FlatButton okButton(BuildContext context){
         var body = json.decode(res.body);
         print(body);
         if(body['success']){
-
           SharedPreferences localStorage = await SharedPreferences.getInstance();
           localStorage.setString('token', body['token']);
           localStorage.setString('user', body['token']);
           localStorage.setString('id_lavage', body['user']['id_lavage']);
           localStorage.setString('nom', body['user']['name']);
           localStorage.setString('Admin', body['user']['admin']);
+          localStorage.setInt('ID', body['user']['id']);
 
           setState(() {
             nomUser = localStorage.getString("nom");
           });
           //print("le nom est $nomUser");
-          print("is admin : ${localStorage.getString('Admin')}");
+          //print("ID : ${localStorage.getInt('ID')}");
 
           await Navigator.push(context,
             new MaterialPageRoute(

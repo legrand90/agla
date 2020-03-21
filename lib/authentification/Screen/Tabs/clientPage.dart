@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Models/Agent.dart';
@@ -13,6 +14,7 @@ import 'package:lavage/authentification/Screen/Tabs/prestationTabPage.dart';
 import 'package:lavage/authentification/Screen/prestation.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../Transaction.dart';
 import '../dashbord.dart';
 import '../historique.dart';
@@ -59,6 +61,7 @@ class _ClientPagetState extends State<ClientPage> with SingleTickerProviderState
 
   void initState(){
     this.getUserName();
+    this.getStatut();
     super.initState();
     _tabController = new TabController(vsync: this, length: 3);
   }
@@ -146,6 +149,65 @@ class _ClientPagetState extends State<ClientPage> with SingleTickerProviderState
 
       ),
 
+          bottomNavigationBar: BottomNavigationBar(
+            //backgroundColor: Color(0xff0200F4),
+            //currentIndex: 0, // this will be set when a new tab is tapped
+            items: [
+              BottomNavigationBarItem(
+                //backgroundColor: Color(0xff0200F4),
+                icon: new IconButton(
+                  color: Color(0xff0200F4),
+                  icon: Icon(Icons.settings),
+                  onPressed: (){
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return Register();
+                        },
+                      ),
+                    );
+                  },
+                ),
+                title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+              ),
+              BottomNavigationBarItem(
+                icon: new IconButton(
+                  color: Color(0xff0200F4),
+                  icon: Icon(Icons.mode_edit),
+                  onPressed: (){
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return Transaction();
+                        },
+                      ),
+                    );
+                  },
+                ),
+                title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+              ),
+              BottomNavigationBarItem(
+                  icon: IconButton(
+                    color: Color(0xff0200F4),
+                    icon: Icon(Icons.search),
+                    onPressed: (){
+                      Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return ClientPage();
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+              )
+            ],
+          ),
+
           drawer: Drawer(
             // Add a ListView to the drawer. This ensures the user can scroll
             // through the options in the drawer if there is't enough vertical
@@ -156,7 +218,7 @@ class _ClientPagetState extends State<ClientPage> with SingleTickerProviderState
               children: <Widget>[
                 UserAccountsDrawerHeader(
                   accountName: Text('$nameUser'),
-                  accountEmail: Text(''),
+                  accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: Colors.white,
                   ),
@@ -229,12 +291,57 @@ class _ClientPagetState extends State<ClientPage> with SingleTickerProviderState
                     );
                   },
                 ),
+
+                ListTile(
+                  title: Text('Tutoriel'),
+                  onTap: () async{
+
+                  },
+                ),
+                ListTile(
+                  title: Text('A propos'),
+                  onTap: () async{
+
+                  },
+                ),
                 ListTile(
                   title: Text('Deconnexion'),
                   onTap: () {
                     _alertDeconnexion();
                   },
                 ),
+
+                Container(
+                  margin: const EdgeInsets.only(top: 55.0,),
+                  padding: EdgeInsets.symmetric(horizontal:20.0),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(child: Text('Suivez-nous', style: TextStyle(color: Colors.red),),),
+                      //SizedBox(width: 170,),
+                      IconButton(
+                        iconSize: 40.0,
+                        color: Colors.blue,
+                        icon: FaIcon(FontAwesomeIcons.facebook),
+                        onPressed: ()async{
+                          await _launchFacebookURL();
+
+                        },
+                      ),
+
+                      SizedBox(width: 20,),
+
+                      IconButton(
+                        iconSize: 40.0,
+                        color: Colors.red,
+                        icon: FaIcon(FontAwesomeIcons.chrome),
+                        onPressed: ()async{
+
+                          await _launchMaxomURL();
+                        },
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           )
@@ -298,6 +405,61 @@ class _ClientPagetState extends State<ClientPage> with SingleTickerProviderState
           ],
         )
     );
+  }
+
+  var adm;
+  var statu;
+  var libLavage;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
+  }
+
+  _launchFacebookURL() async {
+    const url = 'https://www.facebook.com/AGLA-103078671237266/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchMaxomURL() async {
+    const url = 'https://maxom.ci';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
 

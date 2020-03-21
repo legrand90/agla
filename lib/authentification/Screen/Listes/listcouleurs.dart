@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/fa_icon.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Models/Agent.dart';
@@ -12,6 +14,7 @@ import 'package:lavage/authentification/Screen/Edit/editcouleur.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../Couleur.dart';
 import '../Transaction.dart';
 import '../dashbord.dart';
@@ -64,10 +67,26 @@ class _ListCouleurState extends State<ListCouleur> {
     return listcolor;
   }
 
+  String dateHeure = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
+
+  var fenetre = 'LISTE DES COULEURS';
+
   void DeleteCouleur() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
+    var id_user = localStorage.getInt('ID');
+
+
+    var dataLog = {
+      'fenetre': '$fenetre',
+      'tache': "Suppression d'une Couleur",
+      'execution': "Supprimer",
+      'id_user': id_user,
+      'dateEnreg': dateHeure,
+    };
     var res = await CallApi().postDataDelete('delete_couleur/$idcolor');
+    var resLog = await CallApi().postData(dataLog, 'create_log');
+
 //    if (res.statusCode == 200) {
 //      _showMsg('Donnees supprimees avec succes');
 //
@@ -109,6 +128,7 @@ class _ListCouleurState extends State<ListCouleur> {
     this.getPost();
     this.getUserName();
     this.getAdmin();
+    this.getStatut();
   }
 
   Widget build(BuildContext context){
@@ -206,6 +226,65 @@ class _ListCouleurState extends State<ListCouleur> {
           ),
         ) : Center(child: CircularProgressIndicator(),),
 
+        bottomNavigationBar: BottomNavigationBar(
+          //backgroundColor: Color(0xff0200F4),
+          //currentIndex: 0, // this will be set when a new tab is tapped
+          items: [
+            BottomNavigationBarItem(
+              //backgroundColor: Color(0xff0200F4),
+              icon: new IconButton(
+                color: Color(0xff0200F4),
+                icon: Icon(Icons.settings),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Register();
+                      },
+                    ),
+                  );
+                },
+              ),
+              title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+            ),
+            BottomNavigationBarItem(
+              icon: new IconButton(
+                color: Color(0xff0200F4),
+                icon: Icon(Icons.mode_edit),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Transaction();
+                      },
+                    ),
+                  );
+                },
+              ),
+              title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+            ),
+            BottomNavigationBarItem(
+                icon: IconButton(
+                  color: Color(0xff0200F4),
+                  icon: Icon(Icons.search),
+                  onPressed: (){
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return ClientPage();
+                        },
+                      ),
+                    );
+                  },
+                ),
+                title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+            )
+          ],
+        ),
+
         drawer: load ? Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
@@ -216,7 +295,7 @@ class _ListCouleurState extends State<ListCouleur> {
             children: <Widget>[
               UserAccountsDrawerHeader(
                 accountName: Text('$nameUser'),
-                accountEmail: Text(''),
+                accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor: Colors.white,
                 ),
@@ -342,7 +421,7 @@ class _ListCouleurState extends State<ListCouleur> {
             children: <Widget>[
               UserAccountsDrawerHeader(
                 accountName: Text('$nameUser'),
-                accountEmail: Text(''),
+                accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor: Colors.white,
                 ),
@@ -390,6 +469,39 @@ class _ListCouleurState extends State<ListCouleur> {
                   });
                 },
               ),
+
+              ListTile(
+                title: Text('Tutoriel'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  // await Navigator.push(
+                  //  context,
+                  // new MaterialPageRoute(
+                  //   builder: (BuildContext context) {
+                  //    return Register();
+                  //  },
+                  // ),
+                  // );
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+              ListTile(
+                title: Text('A propos'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  //await _alertDeconnexion();
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
               ListTile(
                 title: Text('Deconnexion'),
                 onTap: () async{
@@ -403,6 +515,37 @@ class _ListCouleurState extends State<ListCouleur> {
                   });
                 },
               ),
+
+              Container(
+                margin: const EdgeInsets.only(top: 210.0,),
+                padding: EdgeInsets.symmetric(horizontal:20.0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(child: Text('Suivez-nous', style: TextStyle(color: Colors.red),),),
+                    //SizedBox(width: 170,),
+                    IconButton(
+                      iconSize: 40.0,
+                      color: Colors.blue,
+                      icon: FaIcon(FontAwesomeIcons.facebook),
+                      onPressed: ()async{
+                        await _launchFacebookURL();
+
+                      },
+                    ),
+
+                    SizedBox(width: 20,),
+
+                    IconButton(
+                      iconSize: 40.0,
+                      color: Colors.red,
+                      icon: FaIcon(FontAwesomeIcons.chrome),
+                      onPressed: ()async{
+                        await _launchMaxomURL();
+                      },
+                    ),
+                  ],
+                ),
+              )
 
             ],
           ),
@@ -487,6 +630,61 @@ class _ListCouleurState extends State<ListCouleur> {
           ],
         )
     );
+  }
+
+  var adm;
+  var statu;
+  var libLavage;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
+  }
+
+  _launchFacebookURL() async {
+    const url = 'https://www.facebook.com/AGLA-103078671237266/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchMaxomURL() async {
+    const url = 'https://maxom.ci';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
 

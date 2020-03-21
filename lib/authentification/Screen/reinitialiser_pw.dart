@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:http/http.dart' as http;
@@ -14,6 +15,7 @@ import 'package:lavage/authentification/Screen/lavage.dart';
 
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'Transaction.dart';
 import 'dashbord.dart';
@@ -48,13 +50,15 @@ class _ResetPasswordState extends State<ResetPassword> {
   bool loading = true;
   bool loader = true;
   bool load = true;
-  String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
+  String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
 
 
 //  final String urlCouleur = "http://192.168.43.217:8000/api/couleur";
 //  final String urlMarque = "http://192.168.43.217:8000/api/marque";
   List data = List() ;
   List data2 = List() ;//edited line
+
+  var fenetre = 'REINITIALISER MOT DE PASSE';
 
   //var _currencies = ['User', 'Admin', 'Super Admin'];
 
@@ -106,6 +110,7 @@ class _ResetPasswordState extends State<ResetPassword> {
   void initState(){
     super.initState();
     this.getUserName();
+    this.getStatut();
   }
   Widget build(BuildContext context){
     final logo = Hero(
@@ -128,7 +133,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('REINITIALISATION'),
+        title: Text('$fenetre'),
       ),
       body: load ? Form(
         key: _formKey,
@@ -190,7 +195,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Nouveau mot de passe",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -233,7 +238,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Confirmer",
-                              hintStyle: TextStyle(color: Colors.black),
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
                         )
@@ -305,6 +310,65 @@ class _ResetPasswordState extends State<ResetPassword> {
         ),
       ) : Center(child: CircularProgressIndicator()),
 
+      bottomNavigationBar: BottomNavigationBar(
+        //backgroundColor: Color(0xff0200F4),
+        //currentIndex: 0, // this will be set when a new tab is tapped
+        items: [
+          BottomNavigationBarItem(
+            //backgroundColor: Color(0xff0200F4),
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.settings),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Register();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.mode_edit),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Transaction();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+              icon: IconButton(
+                color: Color(0xff0200F4),
+                icon: Icon(Icons.search),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return ClientPage();
+                      },
+                    ),
+                  );
+                },
+              ),
+              title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+          )
+        ],
+      ),
+
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
@@ -315,7 +379,7 @@ class _ResetPasswordState extends State<ResetPassword> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: Text(''),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -441,7 +505,7 @@ class _ResetPasswordState extends State<ResetPassword> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: Text(''),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -489,6 +553,39 @@ class _ResetPasswordState extends State<ResetPassword> {
                 });
               },
             ),
+
+            ListTile(
+              title: Text('Tutoriel'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                // await Navigator.push(
+                //  context,
+                // new MaterialPageRoute(
+                //   builder: (BuildContext context) {
+                //    return Register();
+                //  },
+                // ),
+                // );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('A propos'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                //await _alertDeconnexion();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
             ListTile(
               title: Text('Deconnexion'),
               onTap: () async{
@@ -502,6 +599,37 @@ class _ResetPasswordState extends State<ResetPassword> {
                 });
               },
             ),
+
+            Container(
+              margin: const EdgeInsets.only(top: 210.0,),
+              padding: EdgeInsets.symmetric(horizontal:20.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(child: Text('Suivez-nous', style: TextStyle(color: Colors.red),),),
+                  //SizedBox(width: 170,),
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.blue,
+                    icon: FaIcon(FontAwesomeIcons.facebook),
+                    onPressed: ()async{
+                      await _launchFacebookURL();
+
+                    },
+                  ),
+
+                  SizedBox(width: 20,),
+
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.red,
+                    icon: FaIcon(FontAwesomeIcons.chrome),
+                    onPressed: ()async{
+                      await _launchMaxomURL();
+                    },
+                  ),
+                ],
+              ),
+            )
 
           ],
         ),
@@ -537,10 +665,20 @@ class _ResetPasswordState extends State<ResetPassword> {
 
 
   Future <String> UpdatePassword() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id_user = localStorage.getInt('ID');
 
     var data = {
       'password': _password.text,
 
+    };
+
+    var dataLog = {
+      'fenetre': '$fenetre',
+      'tache': "Réinitialisation de mot de passe",
+      'execution': "Enregistrer",
+      'id_user': id_user,
+      'dateEnreg': date,
     };
 
     //print('$data');
@@ -552,9 +690,9 @@ class _ResetPasswordState extends State<ResetPassword> {
 
       //print('la valeur $body');
       if (body['statut'] == 'success') {
+        var res = await CallApi().postData(dataLog, 'create_log');
 
         setState(() {
-
           _password.text = '';
           _confirmPassword.text = '';
 
@@ -636,6 +774,61 @@ class _ResetPasswordState extends State<ResetPassword> {
           ],
         )
     );
+  }
+
+  var adm;
+  var statu;
+  var libLavage;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
+  }
+
+  _launchFacebookURL() async {
+    const url = 'https://www.facebook.com/AGLA-103078671237266/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchMaxomURL() async {
+    const url = 'https://maxom.ci';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
 }

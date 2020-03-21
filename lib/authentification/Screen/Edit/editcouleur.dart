@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Screen/Listes/listcouleurs.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
@@ -9,6 +11,7 @@ import 'dart:convert';
 import 'package:lavage/authentification/widgets/loading.dart';
 import 'package:lavage/authentification/Screen/dashbord.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../Transaction.dart';
 import '../historique.dart';
@@ -30,6 +33,8 @@ class _EditCouleurState extends State<EditCouleur> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _nomCouleur = TextEditingController();
 
+  String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
+
   String nomCouleur;
 
 
@@ -40,10 +45,12 @@ class _EditCouleurState extends State<EditCouleur> {
   bool load = true;
 
   var body;
+  var fenetre = 'MODIFIER COULEUR';
 
   void UpdateCouleur() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
+    var id_user = localStorage.getInt('ID');
 
       //try {
       var data = {
@@ -51,12 +58,22 @@ class _EditCouleurState extends State<EditCouleur> {
        // 'id_lavage': id
       };
 
+    var dataLog = {
+      'fenetre': '$fenetre',
+      'tache': "Modification d'une Couleur",
+      'execution': "Update",
+      'id_user': id_user,
+      'dateEnreg': date,
+    };
+
 
       var res = await CallApi().postDataEdit(data, 'update_couleur/$idcouleur');
       var body = json.decode(res.body);
       print(body);
 
       if (res.statusCode == 200) {
+
+        var res = await CallApi().postData(dataLog, 'create_log');
 
         _nomCouleur.text = '';
 
@@ -107,7 +124,7 @@ class _EditCouleurState extends State<EditCouleur> {
 
     //final String url = "http://192.168.43.217:8000/api/getCouleur/$idcouleur/$idlavage"  ;
 
-    var res = await CallApi().getData('getCouleur/$idcouleur/$idlavage');
+    var res = await CallApi().getData('getCouleur/$idcouleur');
 
 //    final res = await http.get(Uri.encodeFull(url), headers: {
 //      "Accept": "application/json",
@@ -132,6 +149,7 @@ class _EditCouleurState extends State<EditCouleur> {
     super.initState();
     this.getCouleur();
     this.getUserName();
+    this.getStatut();
 
   }
   Widget build(BuildContext context) {
@@ -218,7 +236,7 @@ class _EditCouleurState extends State<EditCouleur> {
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Nom de la couleur",
-                                  hintStyle: TextStyle(color: Colors.black),
+                                  hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                                 ),
                               ),
                             )
@@ -338,6 +356,65 @@ class _EditCouleurState extends State<EditCouleur> {
           ),
           inAsyncCall: _loadingVisible) : Center(child: CircularProgressIndicator(),),
 
+      bottomNavigationBar: BottomNavigationBar(
+        //backgroundColor: Color(0xff0200F4),
+        //currentIndex: 0, // this will be set when a new tab is tapped
+        items: [
+          BottomNavigationBarItem(
+            //backgroundColor: Color(0xff0200F4),
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.settings),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Register();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.mode_edit),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Transaction();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+              icon: IconButton(
+                color: Color(0xff0200F4),
+                icon: Icon(Icons.search),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return ClientPage();
+                      },
+                    ),
+                  );
+                },
+              ),
+              title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+          )
+        ],
+      ),
+
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
@@ -348,7 +425,7 @@ class _EditCouleurState extends State<EditCouleur> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: Text(''),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -474,7 +551,7 @@ class _EditCouleurState extends State<EditCouleur> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: Text(''),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -522,6 +599,39 @@ class _EditCouleurState extends State<EditCouleur> {
                 });
               },
             ),
+
+            ListTile(
+              title: Text('Tutoriel'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                // await Navigator.push(
+                //  context,
+                // new MaterialPageRoute(
+                //   builder: (BuildContext context) {
+                //    return Register();
+                //  },
+                // ),
+                // );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('A propos'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                //await _alertDeconnexion();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
             ListTile(
               title: Text('Deconnexion'),
               onTap: () async{
@@ -535,6 +645,37 @@ class _EditCouleurState extends State<EditCouleur> {
                 });
               },
             ),
+
+            Container(
+              margin: const EdgeInsets.only(top: 210.0,),
+              padding: EdgeInsets.symmetric(horizontal:20.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(child: Text('Suivez-nous', style: TextStyle(color: Colors.red),),),
+                  //SizedBox(width: 170,),
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.blue,
+                    icon: FaIcon(FontAwesomeIcons.facebook),
+                    onPressed: ()async{
+                      await _launchFacebookURL();
+
+                    },
+                  ),
+
+                  SizedBox(width: 20,),
+
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.red,
+                    icon: FaIcon(FontAwesomeIcons.chrome),
+                    onPressed: ()async{
+                      await _launchMaxomURL();
+                    },
+                  ),
+                ],
+              ),
+            )
 
           ],
         ),
@@ -625,6 +766,61 @@ class _EditCouleurState extends State<EditCouleur> {
           ],
         )
     );
+  }
+
+  var adm;
+  var statu;
+  var libLavage;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
+  }
+
+  _launchFacebookURL() async {
+    const url = 'https://www.facebook.com/AGLA-103078671237266/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchMaxomURL() async {
+    const url = 'https://maxom.ci';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
 }

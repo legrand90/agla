@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/fa_icon.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Screen/Listes/listmarques.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
@@ -11,6 +14,7 @@ import 'package:lavage/authentification/widgets/loading.dart';
 
 import 'package:lavage/authentification/Screen/dashbord.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../Transaction.dart';
 import '../historique.dart';
@@ -34,7 +38,11 @@ class _EditMarqueState extends State<EditMarque> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _nomMarque = TextEditingController();
 
+  String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
+
   String nomMarque;
+
+  var fenetre = 'MODIFIER MARQUE';
 
 
   bool _autoValidate = false;
@@ -54,6 +62,7 @@ class _EditMarqueState extends State<EditMarque> {
   void UpdateMarque() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
+    var id_user = localStorage.getInt('ID');
 
       //try {
       var data = {
@@ -61,12 +70,21 @@ class _EditMarqueState extends State<EditMarque> {
         // 'id_lavage': id
       };
 
+    var dataLog = {
+      'fenetre': '$fenetre',
+      'tache': "Modification d'une Marque",
+      'execution': "Update",
+      'id_user': id_user,
+      'dateEnreg': date,
+    };
+
 
       var res = await CallApi().postDataEdit(data, 'update_marque/$idmarq');
       var body = json.decode(res.body);
       print(body);
 
       if (res.statusCode == 200) {
+        var res = await CallApi().postData(dataLog, 'create_log');
 
         _nomMarque.text = '';
 
@@ -110,7 +128,7 @@ class _EditMarqueState extends State<EditMarque> {
 
     //final String url = "http://192.168.43.217:8000/api/getMarque/$idmarq/$idlavage"  ;
 
-    var res = await CallApi().getData('getMarque/$idmarq/$idlavage');
+    var res = await CallApi().getData('getMark/$idmarq');
 
 //    final res = await http.get(Uri.encodeFull(url), headers: {
 //      "Accept": "application/json",
@@ -121,11 +139,10 @@ class _EditMarqueState extends State<EditMarque> {
 
     setState(() {
       _nomMarque.text = resBody['marque'];
-
     });
 
 
-    // print('identi est $idpresta');
+     print('identi est ${resBody['marque']}');
 
   }
 
@@ -220,7 +237,7 @@ class _EditMarqueState extends State<EditMarque> {
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Nom de la marque",
-                                  hintStyle: TextStyle(color: Colors.black),
+                                  hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                                 ),
                               ),
                             )
@@ -297,6 +314,65 @@ class _EditMarqueState extends State<EditMarque> {
             ),
           ) ,
           inAsyncCall: _loadingVisible) : Center(child: CircularProgressIndicator(),),
+
+      bottomNavigationBar: BottomNavigationBar(
+        //backgroundColor: Color(0xff0200F4),
+        //currentIndex: 0, // this will be set when a new tab is tapped
+        items: [
+          BottomNavigationBarItem(
+            //backgroundColor: Color(0xff0200F4),
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.settings),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Register();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+            icon: new IconButton(
+              color: Color(0xff0200F4),
+              icon: Icon(Icons.mode_edit),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Transaction();
+                    },
+                  ),
+                );
+              },
+            ),
+            title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+          ),
+          BottomNavigationBarItem(
+              icon: IconButton(
+                color: Color(0xff0200F4),
+                icon: Icon(Icons.search),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return ClientPage();
+                      },
+                    ),
+                  );
+                },
+              ),
+              title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+          )
+        ],
+      ),
 
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
@@ -482,6 +558,39 @@ class _EditMarqueState extends State<EditMarque> {
                 });
               },
             ),
+
+            ListTile(
+              title: Text('Tutoriel'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                // await Navigator.push(
+                //  context,
+                // new MaterialPageRoute(
+                //   builder: (BuildContext context) {
+                //    return Register();
+                //  },
+                // ),
+                // );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('A propos'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                //await _alertDeconnexion();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
             ListTile(
               title: Text('Deconnexion'),
               onTap: () async{
@@ -495,6 +604,37 @@ class _EditMarqueState extends State<EditMarque> {
                 });
               },
             ),
+
+            Container(
+              margin: const EdgeInsets.only(top: 210.0,),
+              padding: EdgeInsets.symmetric(horizontal:20.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(child: Text('Suivez-nous', style: TextStyle(color: Colors.red),),),
+                  //SizedBox(width: 170,),
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.blue,
+                    icon: FaIcon(FontAwesomeIcons.facebook),
+                    onPressed: ()async{
+                      await _launchFacebookURL();
+
+                    },
+                  ),
+
+                  SizedBox(width: 20,),
+
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.red,
+                    icon: FaIcon(FontAwesomeIcons.chrome),
+                    onPressed: ()async{
+                      await _launchMaxomURL();
+                    },
+                  ),
+                ],
+              ),
+            )
 
           ],
         ),
@@ -612,6 +752,24 @@ class _EditMarqueState extends State<EditMarque> {
           ],
         )
     );
+  }
+
+  _launchFacebookURL() async {
+    const url = 'https://www.facebook.com/AGLA-103078671237266/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchMaxomURL() async {
+    const url = 'https://maxom.ci';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
 }

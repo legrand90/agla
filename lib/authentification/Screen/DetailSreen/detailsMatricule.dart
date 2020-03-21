@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Models/Agent.dart';
@@ -14,6 +15,7 @@ import 'package:lavage/authentification/Screen/Edit/editmatricule.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../Transaction.dart';
 import '../dashbord.dart';
 import '../historique.dart';
@@ -87,11 +89,28 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
 
   }
 
+  String dateHeure = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
+
+  var fenetre = 'INFOS VEHICULE';
+
   void DeleteMatricule() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
+    var id_user = localStorage.getInt('ID');
+
+    var dataLog = {
+      'fenetre': '$fenetre',
+      'tache': "Suppression d'un Matricule",
+      'execution': "Supprimer",
+      'id_user': id_user,
+      'dateEnreg': dateHeure,
+      'id_lavage': id,
+    };
+
 
     var res = await CallApi().postDataDelete('delete_matricule/$idmatri/$id');
+    var resLog = await CallApi().postData(dataLog, 'create_log');
+
 //    if (res.statusCode == 200) {
 //      _showMsg('Donnees supprimees avec succes');
 //
@@ -108,6 +127,7 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
     this.getPost();
     this.getAdmin();
     this.getUserName();
+    this.getStatut();
   }
 
   Widget build(BuildContext context){
@@ -136,18 +156,26 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
                  IconButton(
                       icon: Icon(
                           Icons.edit),
-                      onPressed: (){
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditMatricule(
-                                idmatricule: listmatri.data [index] .id,
-                                idcouleur: listmatri.data [index] .idCouleur,
-                                idmarque: listmatri.data [index] .idMarque,
-                                idcli: listmatri.data [index] .idClient,
+                      onPressed: ()async{
 
-                              ),
-                            ));
+                        if(admin == '1'){
+
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditMatricule(
+                                  idmatricule: listmatri.data [index] .id,
+                                  idcouleur: listmatri.data [index] .idCouleur,
+                                  idmarque: listmatri.data [index] .idMarque,
+                                  idcli: listmatri.data [index] .idClient,
+
+                                ),
+                              ));
+
+                        }else{
+                          _showMsg('Vous ne pouvez pas effectuer cette action !!!');
+                        }
+
                       },
                     ),
 
@@ -189,10 +217,10 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
                           idmatri = listmatri.data [index] .id;
                         });
                         //deleteItem();
-                        if((admin == '1') || (admin == '2')){
+                        if((admin == '2') || (admin == '3')){
                           _sureToDelete();
-                        }else if(admin == '0'){
-                          print('desole');
+
+                        }else{
                           _showMsg('Vous ne pouvez pas effectuer cette action !!!');
                         }
 
@@ -204,6 +232,65 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
               )
           ),
         ) : Center(child: CircularProgressIndicator(),),
+
+        bottomNavigationBar: BottomNavigationBar(
+          //backgroundColor: Color(0xff0200F4),
+          //currentIndex: 0, // this will be set when a new tab is tapped
+          items: [
+            BottomNavigationBarItem(
+              //backgroundColor: Color(0xff0200F4),
+              icon: new IconButton(
+                color: Color(0xff0200F4),
+                icon: Icon(Icons.settings),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Register();
+                      },
+                    ),
+                  );
+                },
+              ),
+              title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+            ),
+            BottomNavigationBarItem(
+              icon: new IconButton(
+                color: Color(0xff0200F4),
+                icon: Icon(Icons.mode_edit),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Transaction();
+                      },
+                    ),
+                  );
+                },
+              ),
+              title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+            ),
+            BottomNavigationBarItem(
+                icon: IconButton(
+                  color: Color(0xff0200F4),
+                  icon: Icon(Icons.search),
+                  onPressed: (){
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return ClientPage();
+                        },
+                      ),
+                    );
+                  },
+                ),
+                title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+            )
+          ],
+        ),
 
 
 
@@ -227,7 +314,7 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
             children: <Widget>[
               UserAccountsDrawerHeader(
                 accountName: Text('$nameUser'),
-                accountEmail: Text(''),
+                accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor: Colors.white,
                 ),
@@ -332,6 +419,39 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
                   });
                 },
               ),
+
+              ListTile(
+                title: Text('Tutoriel'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  // await Navigator.push(
+                  //  context,
+                  // new MaterialPageRoute(
+                  //   builder: (BuildContext context) {
+                  //    return Register();
+                  //  },
+                  // ),
+                  // );
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+              ListTile(
+                title: Text('A propos'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  //await _alertDeconnexion();
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
               ListTile(
                 title: Text('Deconnexion'),
                 onTap: () async{
@@ -345,6 +465,38 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
                   });
                 },
               ),
+
+              Container(
+                margin: const EdgeInsets.only(top: 55.0,),
+                padding: EdgeInsets.symmetric(horizontal:20.0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(child: Text('Suivez-nous', style: TextStyle(color: Colors.red),),),
+                    //SizedBox(width: 170,),
+                    IconButton(
+                      iconSize: 40.0,
+                      color: Colors.blue,
+                      icon: FaIcon(FontAwesomeIcons.facebook),
+                      onPressed: ()async{
+                        await _launchFacebookURL();
+
+                      },
+                    ),
+
+                    SizedBox(width: 20,),
+
+                    IconButton(
+                      iconSize: 40.0,
+                      color: Colors.red,
+                      icon: FaIcon(FontAwesomeIcons.chrome),
+                      onPressed: ()async{
+
+                        await _launchMaxomURL();
+                      },
+                    ),
+                  ],
+                ),
+              )
 
 
             ],
@@ -404,6 +556,62 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
           ],
         )
     );
+  }
+
+  var adm;
+  var statu;
+  var libLavage;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
+
+  }
+
+  _launchFacebookURL() async {
+    const url = 'https://www.facebook.com/AGLA-103078671237266/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchMaxomURL() async {
+    const url = 'https://maxom.ci';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
 }
