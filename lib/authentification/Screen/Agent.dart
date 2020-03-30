@@ -1,17 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Screen/dashbord.dart';
 import 'package:lavage/authentification/Screen/register.dart';
+import 'package:mime/mime.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/authentification/Models/Agent.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import 'package:lavage/authentification/Screen/Listes/listagents.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http_parser/http_parser.dart';
+
 
 import 'Tabs/clientPage.dart';
 import 'Transaction.dart';
@@ -34,6 +40,9 @@ class _AgentState extends State<Agent> {
   final TextEditingController _contactAgent = TextEditingController();
   final TextEditingController _domicilAgent = TextEditingController();
   final TextEditingController _contactUrgence = TextEditingController();
+  final TextEditingController _numeroCNI = TextEditingController();
+  final TextEditingController _photo = TextEditingController();
+  final TextEditingController dateCtl = TextEditingController();
 
 
   String dateHeure = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
@@ -47,11 +56,47 @@ class _AgentState extends State<Agent> {
   bool _loadingVisible = false;
   bool loading = true;
   bool load = true;
+  var mydate1;
+
+  var urlPhoto;
 
   var fenetre = 'AGENT';
 
   int _currentIndex = 0;
   final List<Widget> _children = [];
+
+  var _currencies2 = <String>[
+    '1-EN CONCUBINAGE',
+    '2-CELIBATAIRE',
+  ];
+
+  int _mySelection2;
+
+  var _currencies = <String>[
+    '1-OUI',
+    '2-NON',
+  ];
+
+  int _mySelection;
+
+  var _currencies3 = <String>[
+    '1-OUI',
+    '2-NON',
+  ];
+
+  int _mySelection3;
+
+  var _currencies4 = <String>[
+    '1-OUI',
+    '2-NON',
+  ];
+
+  int _mySelection4;
+
+  File _imageFile;
+  // To track the file uploading state
+  bool _isUploading = false;
+  String baseUrl = 'http://192.168.43.223:8000/api/savePhoto';
 
 
   // Listagents listagents = Listagents ()  ;
@@ -210,6 +255,61 @@ class _AgentState extends State<Agent> {
                       ),
 
                       Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        child: TextFormField(
+                          controller: dateCtl,
+                          decoration: InputDecoration(
+                            labelText: "Date de Naissance",
+                            hintText: "DATE",),
+                          onTap: () async{
+                            DateTime date = DateTime(1900);
+                            FocusScope.of(context).requestFocus(new FocusNode());
+
+                            date = await showDatePicker(
+                                context: context,
+                                initialDate:DateTime.now(),
+                                firstDate:DateTime(1900),
+                                lastDate: DateTime(2100));
+
+                            dateCtl.text = DateFormat('yyyy-MM-dd').format(date);
+                            mydate1 = DateFormat('dd-MM-yyyy').format(date);
+
+                          },
+                        ),
+                      ),
+
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.5),
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        child: Row(
+                          children: <Widget>[
+                            new Expanded(
+                              child: TextFormField(
+                                textCapitalization: TextCapitalization.characters,
+                                keyboardType: TextInputType.text,
+                                autofocus: false,
+                                controller: _numeroCNI,
+                                validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
+                                //onSaved: (value) => nomAgent = value,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "N° CNI OU ATTESTATION D'IDENTITE",
+                                  hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+
+                      Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(
@@ -327,7 +427,44 @@ class _AgentState extends State<Agent> {
                         ),
                       ),
 
-                      
+                      ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                      Container(
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top: 40.0, left: 10.0, right: 10.0),
+                              child: OutlineButton(
+                                onPressed: () => _openImagePickerModal(context),
+                                borderSide:
+                                BorderSide(color: Theme.of(context).accentColor, width: 1.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(Icons.camera_alt),
+                                    SizedBox(
+                                      width: 5.0,
+                                    ),
+                                    Text('Ajouter Photo'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            _imageFile == null
+                                ? Text('Prenez une photo')
+                                : Image.file(
+                              _imageFile,
+                              fit: BoxFit.cover,
+                              height: 300.0,
+                              alignment: Alignment.topCenter,
+                              width: MediaQuery.of(context).size.width,
+                            ),
+                           // _buildUploadBtn(),
+                          ],
+                        ),
+
+                      ),
+
                       Row(
                         children : <Widget>[
                           Expanded(child :Container(
@@ -346,7 +483,7 @@ class _AgentState extends State<Agent> {
                                     loading = false;
                                   });
 
-                                 await  _sendDataAgent();
+                                 await  _startUploading();
 
                                   setState(() {
                                     loading = true;
@@ -743,6 +880,9 @@ class _AgentState extends State<Agent> {
         'contactUrgence': _contactUrgence.text,
         'dateEnreg': dateHeure,
         'id_lavage': id,
+        'numero_cni': _numeroCNI.text,
+        'photo': urlPhoto,
+        'dateNaiss': mydate1,
       };
 
       var dataLog = {
@@ -884,7 +1024,125 @@ class _AgentState extends State<Agent> {
       throw 'Could not launch $url';
     }
   }
+
+  void _openImagePickerModal(BuildContext context) {
+    final flatButtonColor = Theme.of(context).primaryColor;
+    print('Image Picker Modal Called');
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 150.0,
+            padding: EdgeInsets.all(10.0),
+            child: Column(
+              children: <Widget>[
+                Text(
+                  'Faire un Choix',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                FlatButton(
+                  textColor: flatButtonColor,
+                  child: Text('Utiliser la Camera'),
+                  onPressed: () {
+                    _getImage(context, ImageSource.camera);
+
+                  },
+                ),
+                FlatButton(
+                  textColor: flatButtonColor,
+                  child: Text('Utiliser la Gallery'),
+                  onPressed: () {
+                    _getImage(context, ImageSource.gallery);
+
+                  },
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  void _getImage(BuildContext context, ImageSource source) async {
+    File image = await ImagePicker.pickImage(source: source);
+    setState(() {
+      _imageFile = image;
+    });
+    // Closes the bottom sheet
+    Navigator.pop(context);
+  }
+
+  Future<Map<String, dynamic>> _uploadImage(File image) async {
+
+    final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8]).split('/');
+
+    final imageUploadRequest = http.MultipartRequest('POST', Uri.parse(baseUrl));
+
+    final file = await http.MultipartFile.fromPath('photo', image.path,
+        contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
+
+    imageUploadRequest.fields['photo'] = mimeTypeData[1];
+
+    imageUploadRequest.files.add(file);
+
+
+    try {
+      final streamedResponse = await imageUploadRequest.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode != 200) {
+        return null;
+      }
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      //_resetState();
+      return responseData;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  void _startUploading() async {
+
+    print('imageFile: $mydate1');
+
+    if(validateAndSave()) {
+      if((_imageFile != null) && (mydate1 != null)) {
+        final Map<String, dynamic> response = await _uploadImage(_imageFile);
+        // Check if any error occured
+        if (response == null) {
+          _showMsg("Erreur d'enregistrement de la photo .");
+        } else {
+          print("contenu ${response['nomImage']}");
+
+          setState(() {
+            urlPhoto = response['nomImage'];
+          });
+
+          if (urlPhoto != '') {
+            _sendDataAgent();
+
+            await Navigator.push(
+                context,
+                new MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return Agent();
+                  },
+                ));
+          }
+        }
+
+      }else {
+        _showMsg('Erreur: la photo et la date de naissance de l\'agent sont requises. Vérifier si elles sont bien renseignées...Merci!');
+      }
+    }
+  }
 }
+
+
+
+
 
 
 

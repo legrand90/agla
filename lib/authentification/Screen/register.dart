@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Screen/Agent.dart';
 import 'package:lavage/authentification/Screen/Couleur.dart';
+import 'package:lavage/authentification/Screen/Listes/listlog.dart';
 import 'package:lavage/authentification/Screen/Listes/listusers_pw.dart';
 import 'package:lavage/authentification/Screen/Marque.dart';
 import 'package:lavage/authentification/Screen/client.dart';
@@ -14,6 +15,7 @@ import 'package:lavage/authentification/Screen/commission.dart';
 import 'package:lavage/authentification/Screen/create_user.dart';
 import 'package:lavage/authentification/Screen/lavage.dart';
 import 'package:lavage/authentification/Screen/matricule.dart';
+import 'package:lavage/authentification/Screen/photo.dart';
 import 'package:lavage/authentification/Screen/prestation.dart';
 import 'package:lavage/authentification/Screen/tarification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -651,6 +653,58 @@ class _RegisterState extends State<Register> {
                           ),
                         ),
                       )
+
+
+                    ],
+                  ) : Text(''),
+
+                  (admin == '2') ? Row(
+                    children: <Widget>[
+                      SizedBox(
+                        width: 150.0,
+                        height: 140.0,
+                        child: new Card(
+                          child: Container(
+                            child: Center(
+                              child: Container(
+                                  width: 150.0,
+                                  height: 140.0,
+                                  child : FlatButton(
+                                    color: Color(0xff0200F4),
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                          builder: (BuildContext context) {
+                                            return ListLogs();
+                                          },
+                                        ),
+                                      );
+                                      setState(() {
+                                        load = true;
+                                      });
+                                    },
+                                    child: Text('LOG', textAlign: TextAlign.center,style: TextStyle(color: Colors.white)),
+                                  )),
+                            ),
+                            /*
+                        new Stack(
+                          children: <Widget>[
+                            new Image.asset(
+                              'assets/mobile1.png',
+                              width: 200.0,
+                              height: 120.0,
+                            ),
+                          ],
+                        ),
+                        */
+                            //   onTap{("")}
+                          ),
+                        ),
+                      ),
 
 
                     ],

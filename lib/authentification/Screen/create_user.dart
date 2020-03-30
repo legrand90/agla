@@ -937,6 +937,7 @@ class _UserState extends State<User> {
   }
   Future <String> _sendDataUser() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
     var id_user = localStorage.getInt('ID');
 
     if(validateAndSave()) {
@@ -957,6 +958,7 @@ class _UserState extends State<User> {
         'execution': "Enregistrer",
         'id_user': id_user,
         'dateEnreg': date,
+        'id_lavage': id,
       };
 
       //print('$data');

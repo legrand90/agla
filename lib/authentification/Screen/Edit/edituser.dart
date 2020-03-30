@@ -847,6 +847,7 @@ class _EditUserState extends State<EditUser> {
 
   Future <String> UpdateUser() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
     var id_user = localStorage.getInt('ID');
 
       var data = {
@@ -865,6 +866,7 @@ class _EditUserState extends State<EditUser> {
         'execution': "Update",
         'id_user': id_user,
         'dateEnreg': date,
+        'id_lavage': id,
       };
 
       //print('$data');

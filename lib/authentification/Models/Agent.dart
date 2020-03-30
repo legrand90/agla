@@ -36,6 +36,9 @@ class Datum {
   String idLavage;
   bool success;
   String message;
+  String dateNaiss;
+  String numeroCni;
+  String photo;
 
   Datum({
     this.id,
@@ -47,6 +50,9 @@ class Datum {
     this.idLavage,
     this.success,
     this.message,
+    this.dateNaiss,
+    this.numeroCni,
+    this.photo,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -59,6 +65,9 @@ class Datum {
     idLavage: json["id_lavage"],
     success: json["success"],
     message: json["message"],
+    dateNaiss: json["dateNaiss"],
+    numeroCni: json["numeroCni"],
+    photo: json["photo"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -71,6 +80,9 @@ class Datum {
     "id_lavage": idLavage,
     "success": success,
     "message": message,
+    "dateNaiss": dateNaiss,
+    "numeroCni": numeroCni,
+    "photo": photo,
   };
 }
 

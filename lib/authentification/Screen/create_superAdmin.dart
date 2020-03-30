@@ -885,6 +885,7 @@ class _SuperAdminState extends State<SuperAdmin> {
 
     if(validateAndSave()) {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
+      var id = localStorage.getString('id_lavage');
       var id_user = localStorage.getInt('ID');
       var choix;
       switch(_mySelection2){
@@ -912,6 +913,7 @@ class _SuperAdminState extends State<SuperAdmin> {
         'execution': "Enregistrer",
         'id_user': id_user,
         'dateEnreg': date,
+        'id_lavage': id,
       };
 
       //print('$data');

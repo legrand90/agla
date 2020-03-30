@@ -43,6 +43,8 @@ class _EditAgentState extends State<EditAgent> {
   final TextEditingController _contactAgent = TextEditingController();
   final TextEditingController _domicilAgent = TextEditingController();
   final TextEditingController _contactUrgence = TextEditingController();
+  final TextEditingController dateCtl = TextEditingController();
+  final TextEditingController _numeroCNI = TextEditingController();
 
 
   String dateHeure = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
@@ -56,6 +58,8 @@ class _EditAgentState extends State<EditAgent> {
   bool _loadingVisible = false;
   bool loading = true;
   bool load = true;
+
+  var mydate1;
 
   var fenetre = 'MODIFICATION AGENT';
 
@@ -81,6 +85,8 @@ class _EditAgentState extends State<EditAgent> {
         'contactUrgence': _contactUrgence.text,
         'dateEnreg': dateHeure,
         'id_lavage': id,
+        'dateNaiss': mydate1,
+        'numero_cni': _numeroCNI.text,
         // 'id_lavage': id
       };
 
@@ -144,6 +150,8 @@ class _EditAgentState extends State<EditAgent> {
       _contactAgent.text = resBody['contact'];
       _contactUrgence.text = resBody['contactUrgence'];
       _domicilAgent.text = resBody['quartier'];
+      _numeroCNI.text = resBody['numero_cni'];
+      dateCtl.text = resBody['dateNaiss'];
       //dateEnreg = resBody['dateEnreg'];
       //idTari = resBody['id'];
     });
@@ -255,6 +263,61 @@ class _EditAgentState extends State<EditAgent> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Nom agent",
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                    child: TextFormField(
+                      controller: dateCtl,
+                      decoration: InputDecoration(
+                        labelText: "Date de Naissance",
+                        hintText: "DATE",),
+                      onTap: () async{
+                        DateTime date = DateTime(1900);
+                        FocusScope.of(context).requestFocus(new FocusNode());
+
+                        date = await showDatePicker(
+                            context: context,
+                            initialDate:DateTime.now(),
+                            firstDate:DateTime(1900),
+                            lastDate: DateTime(2100));
+
+                        dateCtl.text = DateFormat('yyyy-MM-dd').format(date);
+                        mydate1 = DateFormat('dd-MM-yyyy').format(date);
+
+                      },
+                    ),
+                  ),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.5),
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Expanded(
+                          child: TextFormField(
+                            textCapitalization: TextCapitalization.characters,
+                            keyboardType: TextInputType.text,
+                            autofocus: false,
+                            controller: _numeroCNI,
+                            validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
+                            //onSaved: (value) => nomAgent = value,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "N° CNI OU ATTESTATION D'IDENTITE",
                               hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),

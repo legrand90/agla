@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/fa_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -106,6 +107,32 @@ class _DetailsAgentState extends State<DetailsAgent> {
               child: Text("DATE ===> $dateEnreg"),
             ),
 
+            Padding(
+              padding: const EdgeInsets.only(top: 40.0),
+            ),
+
+            Container(
+              margin: EdgeInsets.only(left: 25.0),
+              child: Text("N° CNI ===> $numCni"),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(top: 40.0),
+            ),
+
+            Container(
+              margin: EdgeInsets.only(left: 25.0),
+              child: Text("DATE DE NAISSANCE ===> $dateNaiss"),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(top: 40.0),
+            ),
+
+              Image.network('http://192.168.43.223:8000/api/getPhoto/$urlPhoto',
+              repeat: ImageRepeat.noRepeat,
+                width: 100.0,
+              ),
 
           ],
         ) : Center(child: CircularProgressIndicator(),),
@@ -368,7 +395,19 @@ class _DetailsAgentState extends State<DetailsAgent> {
         ) : Center(child: CircularProgressIndicator(),),));
   }
 
+  var dateNaiss;
+  var numCni;
+  var urlPhoto;
 
+  Future<Map<String, dynamic>> getImage() async{
+    var res = await CallApi().getData('getPhoto/$urlPhoto');
+
+    return json.decode(res.body);
+
+
+    //print('la valeur de admin est : $admin');
+
+  }
 
   void getAgent() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -392,6 +431,9 @@ class _DetailsAgentState extends State<DetailsAgent> {
       contactUrgence = resBody['contactUrgence'];
       quartier = resBody['quartier'];
       dateEnreg = resBody['dateEnreg'];
+      dateNaiss = resBody['dateNaiss'];
+      numCni = resBody['numero_cni'];
+      urlPhoto = resBody['photo'];
       //idTari = resBody['id'];
     });
 

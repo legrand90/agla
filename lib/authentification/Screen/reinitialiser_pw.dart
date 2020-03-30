@@ -666,6 +666,7 @@ class _ResetPasswordState extends State<ResetPassword> {
 
   Future <String> UpdatePassword() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
     var id_user = localStorage.getInt('ID');
 
     var data = {
@@ -679,6 +680,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       'execution': "Enregistrer",
       'id_user': id_user,
       'dateEnreg': date,
+      'id_lavage': id,
     };
 
     //print('$data');

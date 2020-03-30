@@ -289,12 +289,12 @@ class _TransactionState extends State<Transaction> {
   void initState(){
     super.initState();
     this.getAgent();
-    //this.getClients();
+    this.getClients();
     this.getUserName();
     //this.getClient();
     this.getPrestation();
     this.getStatut();
-    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => this.getClients());
+    //timer = Timer.periodic(Duration(seconds: 5), (Timer t) => this.getClients());
     //this.getLastCommission();
   }
 

@@ -58,6 +58,7 @@ class _EditLavageState extends State<EditLavage> {
 
   void UpdateLavage() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
     var id_user = localStorage.getInt('ID');
 
     //try {
@@ -73,6 +74,7 @@ class _EditLavageState extends State<EditLavage> {
       'execution': "Update",
       'id_user': id_user,
       'dateEnreg': date,
+      'id_lavage': id,
     };
 
 

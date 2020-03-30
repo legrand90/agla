@@ -28,13 +28,19 @@ dependencies:
   autocomplete_textfield:
   json_table:
   flutter_datetime_picker:
+    git:
+      url: https://github.com/derohimat/flutter_datetime_picker.git
   flutter_html: ^0.11.1
   font_awesome_flutter: ^8.7.0
   url_launcher: ^5.4.2
-
+  image_picker: ^0.6.3+4
+  flutter_plugin_android_lifecycle:
+  mime:
+  toast:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+  flutter_svg: ^0.17.3+1
 
 dev_dependencies:
   flutter_test:

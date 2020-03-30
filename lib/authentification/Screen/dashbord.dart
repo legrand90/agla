@@ -306,6 +306,65 @@ class _DashbordScreenState extends State<DashbordScreen> {
                 ),
               ) : Center(child: CircularProgressIndicator(),),
 
+            bottomNavigationBar: BottomNavigationBar(
+              //backgroundColor: Color(0xff0200F4),
+              //currentIndex: 0, // this will be set when a new tab is tapped
+              items: [
+                BottomNavigationBarItem(
+                  //backgroundColor: Color(0xff0200F4),
+                  icon: new IconButton(
+                    color: Color(0xff0200F4),
+                    icon: Icon(Icons.settings),
+                    onPressed: (){
+                      Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return Register();
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+                ),
+                BottomNavigationBarItem(
+                  icon: new IconButton(
+                    color: Color(0xff0200F4),
+                    icon: Icon(Icons.mode_edit),
+                    onPressed: (){
+                      Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return Transaction();
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+                ),
+                BottomNavigationBarItem(
+                    icon: IconButton(
+                      color: Color(0xff0200F4),
+                      icon: Icon(Icons.search),
+                      onPressed: (){
+                        Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return ClientPage();
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+                )
+              ],
+            ),
+
             drawer: load ? Drawer(
               // Add a ListView to the drawer. This ensures the user can scroll
               // through the options in the drawer if there isn't enough vertical

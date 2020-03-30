@@ -654,6 +654,7 @@ class _MarqueState extends State<Marque> {
         'execution': "Enregistrer",
         'id_user': id_user,
         'dateEnreg': date,
+        'id_lavage': id,
       };
 
 

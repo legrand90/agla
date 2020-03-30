@@ -683,6 +683,7 @@ class _LavageState extends State<Lavage> {
 
   void _setLavage() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
     var id_user = localStorage.getInt('ID');
 
     if (validateAndSave()) {
@@ -699,6 +700,7 @@ class _LavageState extends State<Lavage> {
         'execution': "Enregistrer",
         'id_user': id_user,
         'dateEnreg': date,
+        'id_lavage': id,
       };
 
 
