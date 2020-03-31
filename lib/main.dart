@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Color(0xff0200F4),
       ),
-      title: 'Flutter Demo',
+      title: 'AGLA',
       debugShowCheckedModeBanner: false,
       home: SlideSplashScreen(),
       routes: <String, WidgetBuilder>{

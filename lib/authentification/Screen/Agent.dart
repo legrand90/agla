@@ -96,7 +96,7 @@ class _AgentState extends State<Agent> {
   File _imageFile;
   // To track the file uploading state
   bool _isUploading = false;
-  String baseUrl = 'http://192.168.43.223:8000/api/savePhoto';
+  String baseUrl = 'http://54.37.68.114:81/api/savePhoto';
 
 
   // Listagents listagents = Listagents ()  ;
@@ -905,6 +905,9 @@ class _AgentState extends State<Agent> {
           _contactAgent.text = '';
           _domicilAgent.text = '';
           _contactUrgence.text = '';
+          _imageFile = null;
+          dateCtl.text = '';
+          _numeroCNI.text = '';
         });
 
         _showMsg("Donnees enregistrees avec succes");
@@ -1123,13 +1126,6 @@ class _AgentState extends State<Agent> {
           if (urlPhoto != '') {
             _sendDataAgent();
 
-            await Navigator.push(
-                context,
-                new MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return Agent();
-                  },
-                ));
           }
         }
 
