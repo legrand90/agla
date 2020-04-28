@@ -1058,12 +1058,17 @@ class _UserState extends State<User> {
 
   void checkContact()async{
     var resContact = await CallApi().getData('checkContactUser/${_contactUser.text}');
-    var contactbody = json.decode(resContact.body)['data'];
+    var contactbody = json.decode(resContact.body);
 
-    if(contactbody != null){
+    if((contactbody['success'])){
+
+      // print('donnee 1 $matriculebody');
+      //print('donnee 2 $contactbody');
       _showMsg("Ce numéro existe deja !");
     }else{
+      //_showMsg("existe pas!!!");
       _sendDataUser();
+
     }
   }
 

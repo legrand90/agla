@@ -377,6 +377,9 @@ FlatButton okButton(BuildContext context){
             var bodyAbon = json.decode(resAbon.body);
 
             if(bodyAbon['success']){
+
+              localStorage.setString('dateFinAbonn', bodyAbon['date']);
+
               await Navigator.push(context,
                 new MaterialPageRoute(
                     builder: (BuildContext context) {

@@ -752,16 +752,14 @@ class _LavageState extends State<Lavage> {
   void checkLavage()async{
 
     var resLavage = await CallApi().getData('checkLavage/${_nomLavage.text}');
-    var Body = json.decode(resLavage.body)['data'];
+    var Body = json.decode(resLavage.body);
 
-    if((Body != null)){
+    if((Body['success'])){
 
       // print('donnee 1 $matriculebody');
       //print('donnee 2 $contactbody');
       _showMsg("Ce lavage existe deja !!!");
-    }
-
-    else{
+    }else{
       //_showMsg("existe pas!!!");
       _setLavage();
 

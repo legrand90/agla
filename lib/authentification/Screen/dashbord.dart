@@ -302,6 +302,18 @@ class _DashbordScreenState extends State<DashbordScreen> {
                       ),
                     ),
 
+                    SizedBox(height: 100.0,),
+
+                    affichDateFinAbonn ? Container(
+                      child: Center(
+                        child: Text("Votre souscription prendra fin le $dateFinAbon",
+                          style: TextStyle(
+                              color: Colors.red,
+                            fontSize: 13.0,
+                          ),),),
+
+                    ) : Text("")
+
                   ],
                 ),
               ) : Center(child: CircularProgressIndicator(),),
@@ -700,6 +712,8 @@ class _DashbordScreenState extends State<DashbordScreen> {
   var adm;
   var statu;
   var libLavage;
+  bool affichDateFinAbonn = false;
+  var dateFinAbon;
 
   Future <void> getStatut()async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -714,9 +728,10 @@ class _DashbordScreenState extends State<DashbordScreen> {
       if(resBody['success']){
 
         setState((){
+          dateFinAbon = localStorage.getString('dateFinAbonn');
           statu = resBody['status'];
           libLavage = resBody['nomLavage'];
-
+          affichDateFinAbonn = true;
         });
       }
 
