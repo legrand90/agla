@@ -867,6 +867,7 @@ class _AgentState extends State<Agent> {
     }
     return false;
   }
+
   void _sendDataAgent () async{
 
     if(validateAndSave()) {
@@ -892,6 +893,7 @@ class _AgentState extends State<Agent> {
         'id_user': id_user,
         'dateEnreg': dateHeure,
         'id_lavage': id,
+        'type_user': statu,
       };
 
       var res = await CallApi().postDataAgent(data, 'create_agent');
@@ -1108,8 +1110,6 @@ class _AgentState extends State<Agent> {
 
   void _startUploading() async {
 
-    print('imageFile: $mydate1');
-
     if(validateAndSave()) {
       if((_imageFile != null) && (mydate1 != null)) {
         final Map<String, dynamic> response = await _uploadImage(_imageFile);
@@ -1122,6 +1122,8 @@ class _AgentState extends State<Agent> {
           setState(() {
             urlPhoto = response['nomImage'];
           });
+
+          print('imageFile: $urlPhoto');
 
           if (urlPhoto != '') {
             _sendDataAgent();

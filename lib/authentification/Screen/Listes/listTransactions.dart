@@ -154,7 +154,7 @@ class _ListTransactionState extends State<ListTransaction> {
                   SizedBox(height: 40.0,),
 
                   Container(
-                      height: 500.0,
+                      height: 360.0,
                       child:
 
                       ListView.builder(
@@ -177,7 +177,7 @@ class _ListTransactionState extends State<ListTransaction> {
                                     children: <Widget>[
                                       Text('AGENT : '),
                                       SizedBox(width: 20.0,),
-                                      Text('${listtransa.data [index].agent}'),
+                                      Expanded(child: Text('${listtransa.data [index].agent}'),)
                                     ],
                                   ),
                                   SizedBox(height: 10.0,),
@@ -185,7 +185,7 @@ class _ListTransactionState extends State<ListTransaction> {
                                     children: <Widget>[
                                       Text('CLIENT : '),
                                       SizedBox(width: 20.0,),
-                                      Text('${listtransa.data [index].client}'),
+                                      Expanded(child: Text('${listtransa.data [index].client}'),)
                                     ],
                                   ),
                                   SizedBox(height: 10.0,),
@@ -193,7 +193,8 @@ class _ListTransactionState extends State<ListTransaction> {
                                     children: <Widget>[
                                       Text('PLAQUE D\'IMMATRICULATION : '),
                                       SizedBox(width: 20.0,),
-                                      Text('${listtransa.data [index].plaqueImmatriculation}'),
+                                      Expanded(child: Text('${listtransa.data [index].plaqueImmatriculation}'),)
+
                                     ],
                                   ),
                                   SizedBox(height: 10.0,),
@@ -209,7 +210,7 @@ class _ListTransactionState extends State<ListTransaction> {
                                     children: <Widget>[
                                       Text('TARIFICATION : '),
                                       SizedBox(width: 20.0,),
-                                      Text('${listtransa.data [index].tarification}'),
+                                      Text('${listtransa.data [index].tarification} FCFA'),
                                     ],
                                   ),
                                   SizedBox(height: 10.0,),
@@ -217,7 +218,7 @@ class _ListTransactionState extends State<ListTransaction> {
                                     children: <Widget>[
                                       Text('COMMISSION : '),
                                       SizedBox(width: 20.0,),
-                                      Text('${listtransa.data [index].commission}'),
+                                      Text('${listtransa.data [index].commission} FCFA'),
                                     ],
                                   ),
                                   // SizedBox(height: 20.0,),

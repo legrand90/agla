@@ -33,6 +33,7 @@ class Datum {
   String idLavage;
   DateTime dateEnreg;
   bool success;
+  String typeUser;
 
   Datum({
     this.id,
@@ -43,6 +44,7 @@ class Datum {
     this.idLavage,
     this.dateEnreg,
     this.success,
+    this.typeUser,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -54,6 +56,7 @@ class Datum {
     idLavage: json["idLavage"],
     dateEnreg: DateTime.parse(json["dateEnreg"]),
     success: json["success"],
+    typeUser: json["typeUser"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -65,5 +68,6 @@ class Datum {
     "idLavage": idLavage,
     "dateEnreg": dateEnreg.toIso8601String(),
     "success": success,
+    "typeUser": typeUser,
   };
 }

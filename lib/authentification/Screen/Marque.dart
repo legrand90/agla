@@ -655,6 +655,7 @@ class _MarqueState extends State<Marque> {
         'id_user': id_user,
         'dateEnreg': date,
         'id_lavage': id,
+        'type_user': statu,
       };
 
 

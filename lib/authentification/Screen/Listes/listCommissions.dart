@@ -90,7 +90,7 @@ class _CommissionListState extends State<CommissionList> {
              await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => DetailsCommissions(idagent : listagents.data[index].id),
+                    builder: (context) => DetailsCommissions(idagent : listagents.data[index].id, nomAgent : listagents.data [index] .nom),
                   ));
              setState(() {
                load = true;

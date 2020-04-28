@@ -63,7 +63,6 @@ class _DetailsAgentState extends State<DetailsAgent> {
         ),
         body: load ? ListView(
           children: <Widget>[
-
             SizedBox(
               height: 40.0,
             ),

@@ -974,6 +974,7 @@ class _TransactionState extends State<Transaction> {
         'id_client': searchVal,
         'id_commission': id_commission,
         'id_tarification': idTari,
+        'tarification': data4,
         'id_matricule_vehicule': idmatricule,
 
       };
@@ -985,6 +986,15 @@ class _TransactionState extends State<Transaction> {
         'id_user': id_user,
         'dateEnreg': date,
         'id_lavage': idlavage,
+        'type_user': statu,
+      };
+
+      var dataSolde = {
+        'montant': '$commission',
+        'id_agent': _mySelection,
+        'id_user': id_user,
+        'dateEnreg': date,
+        'id_lavage': idlavage,
       };
 
       var res = await CallApi().postAppData(data, 'create_transaction');
@@ -992,6 +1002,7 @@ class _TransactionState extends State<Transaction> {
 
       if(res.statusCode == 200){
         var resLog = await CallApi().postData(dataLog, 'create_log');
+        var resSolde = await CallApi().postData(dataSolde, 'create_solde');
 
         setState(() {
           _mySelection = null;

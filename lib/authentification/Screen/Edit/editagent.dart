@@ -97,6 +97,7 @@ class _EditAgentState extends State<EditAgent> {
       'id_user': id_user,
       'dateEnreg': dateHeure,
       'id_lavage': id,
+      'type_user': statu,
     };
 
 

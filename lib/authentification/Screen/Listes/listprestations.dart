@@ -174,54 +174,6 @@ class _ListPrestationsState extends State<ListPrestations> {
                       },
                     ),
 
-                  SizedBox(width: 30.0,),
-                  IconButton(
-                      color: Colors.red,
-                      icon: Icon(
-                          Icons.delete),
-                      onPressed: ()async{
-                        Future<bool> _sureToDelete(){
-                          return showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text("Voulez-vous vraiment supprimer la prestation " + " \"${listprestations.data[index].libellePrestation}\"" + "  de la liste des prestations ?"),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    child: Text("Non"),
-                                    onPressed: () => Navigator.pop(context, false),
-                                  ),
-                                  FlatButton(
-                                    child: Text("Oui"),
-                                    onPressed: () {
-                                      DeletePrestation();
-                                      setState(() {
-                                        listprestations.data.removeAt(index);
-                                        //  indexItem;
-                                      });
-                                      Navigator.pop(context, false);
-                                    }
-                                    ,
-                                  )
-                                ],
-                              )
-                          );
-                        }
-
-                        setState(() {
-                          idpresta = listprestations.data [index] .id;
-                        });
-                        //deleteItem();
-                        if((admin == '2') || (admin == '3')){
-                          _sureToDelete();
-
-                        }else{
-                          _showMsg('Vous ne pouvez pas effectuer cette action !!!');
-                        }
-
-                        //Navigator.of(context).pop();
-                      },
-                    ),
-
                 ],
               ),
 

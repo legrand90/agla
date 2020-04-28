@@ -143,30 +143,6 @@ class _ListClientLavageState extends State<ListClientLavage>{
                   ),
                 ),
 
-                Expanded(
-                  child: IconButton(
-                    color: Colors.red,
-                    icon: Icon(
-                        Icons.delete),
-                    onPressed: (){
-                      setState(() {
-                        idtrans = listtransac.data [index] .id;
-                      });
-                      //deleteItem();
-                      if(admin == '1'){
-                        DeleteTransaction();
-                        setState(() {
-                          listtransac.data.removeAt(index);
-                          //  indexItem;
-                        });
-                      }else if(admin == '0'){
-                        _showMsg('Vous ne pouvez pas effectuer cette action !!!');
-                      }
-
-                      //Navigator.of(context).pop();
-                    },
-                  ),
-                )
               ],
             )
 

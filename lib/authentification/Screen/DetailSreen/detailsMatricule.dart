@@ -1,7 +1,4 @@
 
-
-
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -27,17 +24,19 @@ import 'package:http/http.dart' as http;
 class DetailsMatricule extends StatefulWidget {
 
   int idclient ;
+  var nomClient ;
 
-  DetailsMatricule({Key key, @required this.idclient}) : super(key: key);
+  DetailsMatricule({Key key, @required this.idclient, this.nomClient}) : super(key: key);
 
   @override
-  _DetailsMatriculeState createState() => _DetailsMatriculeState(this.idclient);
+  _DetailsMatriculeState createState() => _DetailsMatriculeState(this.idclient, this.nomClient);
 }
 
 class _DetailsMatriculeState extends State<DetailsMatricule> {
   int idclient ;
+  var nomClient ;
   Listmatricule listmatri = Listmatricule();
-  _DetailsMatriculeState(this.idclient);
+  _DetailsMatriculeState(this.idclient, this.nomClient);
 
   var admin;
   var idmatri;
@@ -48,7 +47,7 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
     var id = localStorage.getString('id_lavage');
     //String url = "http://192.168.43.217:8000/api/matricule/$id/$idclient";
 
-    var res = await CallApi().getData('matricule/$id/$idclient');
+    var res = await CallApi().getData('getInfosVehicule/$idclient/$id');
    // final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
     // var resBody = json.decode(res.body)['data'];
     // final response = await http.get('$url');
@@ -139,7 +138,13 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
         appBar: AppBar(
           title: Text('LISTE DES MATRICULES'),
         ),
-        body: load ? ListView.separated(
+        body: load ? ListView(
+          children: <Widget>[
+            SizedBox(height: 20.0,),
+            Container(child: Center(child: Text('CLIENT : ' + ' $nomClient', style: TextStyle(fontSize: 15.0),),),),
+            SizedBox(height: 15.0,),
+        ListView.separated(
+          shrinkWrap: true,
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;
@@ -148,10 +153,13 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
           },
           itemCount: (listmatri == null || listmatri.data == null || listmatri.data.length == 0 )? 0 : listmatri.data.length,
           itemBuilder: (_,int index)=>ListTile(
-              title: Row(
+              title: Column(
                 children: <Widget>[
                   //SizedBox(height: 100.0,),
-                  Expanded(child: Text(listmatri.data [index] .matricule),),
+                  Row(children: <Widget>[
+                    Expanded(child: Text('MATRICULE : ${listmatri.data [index] .matricule}'),),
+
+
                   //SizedBox(width: 170,),
                  IconButton(
                       icon: Icon(
@@ -168,6 +176,7 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
                                   idcouleur: listmatri.data [index] .idCouleur,
                                   idmarque: listmatri.data [index] .idMarque,
                                   idcli: listmatri.data [index] .idClient,
+                                  nomCli: nomClient,
 
                                 ),
                               ));
@@ -177,61 +186,25 @@ class _DetailsMatriculeState extends State<DetailsMatricule> {
                         }
 
                       },
-                    ),
+                    )],),
+
+                  Row(children: <Widget>[
+                    Expanded(child: Text('COULEUR : ${listmatri.data [index] .idCouleur}'),),
+                  ],),
+
+                  SizedBox(height: 10.0,),
+
+                  Row(children: <Widget>[
+                    Expanded(child: Text('MARQUE : ${listmatri.data [index] .idMarque}'),),
+                  ],),
+
 
                   SizedBox(width: 30.0,),
-
-                IconButton(
-                      color: Colors.red,
-                      icon: Icon(
-                          Icons.delete),
-                      onPressed: ()async{
-                        Future<bool> _sureToDelete(){
-                          return showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text("Voulez-vous vraiment supprimer le matricule" + " \"${listmatri.data[index].matricule}\"" + "  de la liste des matricules ?"),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    child: Text("Non"),
-                                    onPressed: () => Navigator.pop(context, false),
-                                  ),
-                                  FlatButton(
-                                    child: Text("Oui"),
-                                    onPressed: () {
-                                      DeleteMatricule();
-                                      setState(() {
-                                        listmatri.data.removeAt(index);
-                                        //  indexItem;
-                                      });
-                                      Navigator.pop(context, false);
-                                    }
-                                    ,
-                                  )
-                                ],
-                              )
-                          );
-                        }
-
-                        setState(() {
-                          idmatri = listmatri.data [index] .id;
-                        });
-                        //deleteItem();
-                        if((admin == '2') || (admin == '3')){
-                          _sureToDelete();
-
-                        }else{
-                          _showMsg('Vous ne pouvez pas effectuer cette action !!!');
-                        }
-
-                        //Navigator.of(context).pop();
-                      },
-                    ),
 
                 ],
               )
           ),
-        ) : Center(child: CircularProgressIndicator(),),
+        )],) : Center(child: CircularProgressIndicator(),),
 
         bottomNavigationBar: BottomNavigationBar(
           //backgroundColor: Color(0xff0200F4),

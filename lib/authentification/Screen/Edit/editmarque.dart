@@ -77,6 +77,7 @@ class _EditMarqueState extends State<EditMarque> {
       'id_user': id_user,
       'dateEnreg': date,
       'id_lavage': id,
+      'type_user': statu,
     };
 
 
@@ -152,6 +153,7 @@ class _EditMarqueState extends State<EditMarque> {
     super.initState();
     this.getMarque();
     this.getUserName();
+    this.getStatut();
 
   }
   Widget build(BuildContext context) {
@@ -771,6 +773,43 @@ class _EditMarqueState extends State<EditMarque> {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  var adm;
+  var statu;
+  var libLav;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          //libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
   }
 
 }

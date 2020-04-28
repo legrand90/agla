@@ -11,35 +11,38 @@ import 'package:http/http.dart' as http;
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Models/Logs.dart';
 import 'package:lavage/authentification/Models/Transaction.dart';
+import 'package:lavage/authentification/Models/solde.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
+import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../Transaction.dart';
-import '../dashbord.dart';
-import '../historique.dart';
-import '../login_page.dart';
-import '../register.dart';
+import 'Transaction.dart';
+import 'dashbord.dart';
+import 'historique.dart';
+import 'login_page.dart';
 
-class ListLogs extends StatefulWidget {
+
+
+class ListSolde extends StatefulWidget {
   @override
-  _ListLogsState createState() => _ListLogsState();
+  _ListSoldeState createState() => _ListSoldeState();
 }
 
-class _ListLogsState extends State<ListLogs> {
+class _ListSoldeState extends State<ListSolde> {
 
   var json2 ;
   bool toggle = false;
   var affiche = false;
   bool load = true;
 
-  Listlogs logs = Listlogs();
+  Listsoldes soldes = Listsoldes();
 
-  void getLogs() async {
+  void getSoldes() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
     //final String urlTrans = "http://192.168.43.217:8000/api/Transaction/$id";
-    var res = await CallApi().getData('Log');
+    var res = await CallApi().getData('solde/$id');
     //final res = await http.get(Uri.encodeFull(urlTrans), headers: {"Accept": "application/json","Content-type" : "application/json",});
 //    final res2 = await http.get(Uri.encodeFull(urlTrans), headers: {
 //      "Accept": "application/json",
@@ -51,7 +54,7 @@ class _ListLogsState extends State<ListLogs> {
       var resBody = json.decode(res.body)['data'];
 
       setState(() {
-        logs = listlogsFromJson(res.body);
+        soldes = listsoldesFromJson(res.body);
         toggle = true;
         affiche = true;
 
@@ -59,7 +62,7 @@ class _ListLogsState extends State<ListLogs> {
     }
 
 
-    print('donnees json : ${logs.data.length}');
+    //print('donnees json : ${logs.data.length}');
 
   }
 
@@ -88,7 +91,7 @@ class _ListLogsState extends State<ListLogs> {
   void initState(){
     super.initState();
     this.getUserName();
-    this.getLogs();
+    this.getSoldes();
     this.getStatut();
   }
   Widget build(BuildContext context){
@@ -107,7 +110,7 @@ class _ListLogsState extends State<ListLogs> {
             return <Widget>[
               new SliverAppBar(
                 pinned: true,
-                title: new Text('LOGS'),
+                title: new Text('SOLDES'),
               ),
             ];
           },
@@ -118,19 +121,19 @@ class _ListLogsState extends State<ListLogs> {
                 SizedBox(height: 40.0,),
                 Container(
                   margin: EdgeInsets.only(left: 20.0,),
-                  child: Text("LISTE DES LOGS", style: TextStyle(fontSize: 18.0), textAlign: TextAlign.center),
+                  child: Text("LISTE DES SOLDES", style: TextStyle(fontSize: 18.0), textAlign: TextAlign.center),
                 ),
 
                 SizedBox(height: 40.0,),
 
                 Container(
-                    height: 450.0,
+                    height: 800.0,
                     child:
 
                     ListView.builder(
                       // shrinkWrap: true,
                       //  physics: ClampingScrollPhysics(),
-                      itemCount: (logs == null || logs.data == null || logs.data.length == 0 )? 0 : logs.data.length,
+                      itemCount: (soldes == null || soldes.data == null || soldes.data.length == 0 )? 0 : soldes.data.length,
                       itemBuilder: (_,int index)=>Container(
                           child : Card(child :ListTile(
                             title: Column(
@@ -139,59 +142,35 @@ class _ListLogsState extends State<ListLogs> {
                                   children: <Widget>[
                                     Text('DATE : '),
                                     SizedBox(width: 20.0,),
-                                    Text('${logs.data [index].dateEnreg}'),
+                                    Text('${soldes.data [index].dateEnreg}', textAlign: TextAlign.center),
                                   ],
                                 ),
                                 SizedBox(height: 10.0,),
                                 Row(
                                   children: <Widget>[
-                                    Text('FENETRE : '),
+                                    Text('AGENT : '),
                                     SizedBox(width: 20.0,),
-                                    Expanded(child: Text('${logs.data [index].fenetre}'),),
+                                    Expanded(child: Text('${soldes.data [index].idAgent}'),)
 
                                   ],
                                 ),
                                 SizedBox(height: 10.0,),
                                 Row(
                                   children: <Widget>[
-                                    Text('TACHE : '),
+                                    Text('USER : '),
                                     SizedBox(width: 20.0,),
-                                    Expanded(child: Text('${logs.data [index].tache}'),),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('EXECUTION : '),
-                                    SizedBox(width: 20.0,),
-                                    Text('${logs.data [index].execution}'),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('NOM : '),
-                                    SizedBox(width: 20.0,),
-                                    Text('${logs.data [index].idUser}'),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('TYPE USER : '),
-                                    SizedBox(width: 20.0,),
-                                    Expanded(child: Text('${logs.data [index].typeUser}'),),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('LAVAGE : '),
-                                    SizedBox(width: 20.0,),
-                                    Text('${logs.data [index].idLavage}'),
-                                  ],
-                                ),
+                                    Expanded(child: Text('${soldes.data [index].idUser}'),)
 
+                                  ],
+                                ),
+                                SizedBox(height: 10.0,),
+                                Row(
+                                  children: <Widget>[
+                                    Text('MONTANT : '),
+                                    SizedBox(width: 20.0,),
+                                    Text('${soldes.data [index].montant} FCFA'),
+                                  ],
+                                ),
                                 // SizedBox(height: 20.0,),
                                 // Divider(color: Colors.white, height: 10.0,),
                               ],

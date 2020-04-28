@@ -92,6 +92,7 @@ class _ListMatriculesState extends State<ListMatricules>{
                   MaterialPageRoute(
                     builder: (context) => DetailsMatricule(
                       idclient : listclients.data[index].id,
+                      nomClient : listclients.data [index].nom
                     ),
                   ));
               setState(() {

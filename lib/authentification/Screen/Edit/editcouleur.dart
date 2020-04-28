@@ -65,6 +65,7 @@ class _EditCouleurState extends State<EditCouleur> {
       'id_user': id_user,
       'dateEnreg': date,
       'id_lavage': id,
+      'type_user': statu,
     };
 
 

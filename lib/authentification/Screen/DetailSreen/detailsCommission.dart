@@ -23,22 +23,24 @@ import 'package:http/http.dart' as http;
 class DetailsCommissions extends StatefulWidget {
 
   int idagent ;
+  var nomAgent;
 
 
-  DetailsCommissions({Key key, @required this.idagent}) : super(key: key);
+  DetailsCommissions({Key key, @required this.idagent, this.nomAgent}) : super(key: key);
 
 
   @override
-  _DetailsCommissionsState createState() => _DetailsCommissionsState(idagent);
+  _DetailsCommissionsState createState() => _DetailsCommissionsState(idagent, nomAgent);
 }
 
 class _DetailsCommissionsState extends State<DetailsCommissions> {
 
   int idagent ;
+  var nomAgent;
 
   ListCommissions listcommi = ListCommissions();
 
-  _DetailsCommissionsState(this.idagent);
+  _DetailsCommissionsState(this.idagent, this.nomAgent);
 
   var admin ;
   var idcommi;
@@ -123,7 +125,13 @@ class _DetailsCommissionsState extends State<DetailsCommissions> {
         appBar: AppBar(
           title: Text('LISTE DES COMMISSIONS'),
         ),
-        body: load ? ListView.separated(
+        body: load ? ListView(
+            children: <Widget>[
+              SizedBox(height: 20.0,),
+        Container(child: Center(child: Text('AGENT : ' + ' $nomAgent', style: TextStyle(fontSize: 15.0),),),),
+              SizedBox(height: 15.0,),
+        ListView.separated(
+          shrinkWrap: true,
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;
@@ -148,7 +156,7 @@ class _DetailsCommissionsState extends State<DetailsCommissions> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => EditCommission(
-                                  idcommission: listcommi.data [index] .id,
+                                  idcommission: listcommi.data [index].id,
                                   idagent: listcommi.data [index] .idAgent,
                                   prestaEtMontant: listcommi.data [index] .prestationMontant,
                                   idtarif: listcommi.data [index] .idTarification,
@@ -163,59 +171,10 @@ class _DetailsCommissionsState extends State<DetailsCommissions> {
                       },
                     ),
 
-                    // SizedBox(width: 30.0,),
-
-                     IconButton(
-                      color: Colors.red,
-                      icon: Icon(
-                          Icons.delete),
-                      onPressed: ()async{
-                        Future<bool> _sureToDelete(){
-                          return showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text("Voulez-vous vraiment supprimer " + " \"${listcommi.data[index].gainAgent}\"" + "  de la liste des commissions ?"),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    child: Text("Non"),
-                                    onPressed: () => Navigator.pop(context, false),
-                                  ),
-                                  FlatButton(
-                                    child: Text("Oui"),
-                                    onPressed: () {
-                                      DeleteCommission();
-                                      setState(() {
-                                        listcommi.data.removeAt(index);
-                                        //  indexItem;
-                                      });
-                                      Navigator.pop(context, false);
-                                    }
-                                    ,
-                                  )
-                                ],
-                              )
-                          );
-                        }
-
-                        setState(() {
-                          idcommi = listcommi.data [index] .id;
-                        });
-                        //deleteItem();
-                        if((admin == '2') || (admin == '3')){
-                          _sureToDelete();
-
-                        }else{
-                          _showMsg('Vous ne pouvez pas effectuer cette action !!!');
-                        }
-
-                        //Navigator.of(context).pop();
-                      },
-                    ),
-
                 ],
               )
           ),
-        ) : Center(child: CircularProgressIndicator(),),
+        )]) : Center(child: CircularProgressIndicator(),),
 
         bottomNavigationBar: BottomNavigationBar(
           //backgroundColor: Color(0xff0200F4),

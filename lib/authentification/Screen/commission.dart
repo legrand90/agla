@@ -281,7 +281,7 @@ class _CommissionState extends State<Commission> {
                                     loading = false;
                                   });
 
-                                  await _sendDataCommission();
+                                  await checkCommission();
 
                                   setState(() {
                                     loading = true;
@@ -676,6 +676,7 @@ class _CommissionState extends State<Commission> {
         'id_user': id_user,
         'dateEnreg': date,
         'id_lavage': id,
+        'type_user': statu,
       };
 
       var res = await CallApi().postAppData(data, 'create_commission');
@@ -811,6 +812,30 @@ class _CommissionState extends State<Commission> {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  void checkCommission()async{
+
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+
+
+    var resCommi = await CallApi().getData('checkAgentCommission/$id/$_mySelection2/$_mySelection');
+    var resCommiBody = json.decode(resCommi.body);
+
+    if((resCommiBody['success'])){
+
+      // print('donnee 1 $matriculebody');
+      //print('donnee 2 $contactbody');
+      _showMsg("Cet agent dispose déja une commission pour cette tarification !!!");
+    }
+
+    else{
+      //_showMsg("existe pas!!!");
+      _sendDataCommission();
+
+    }
+
   }
 
 

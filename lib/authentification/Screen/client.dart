@@ -844,6 +844,7 @@ class _ClientState extends State<Client> {
         'id_user': id_user,
         'dateEnreg': date,
         'id_lavage': id,
+        'type_user': statu,
       };
 
       var res = await CallApi().postAppData(data, 'create_client');
@@ -854,6 +855,10 @@ class _ClientState extends State<Client> {
        // success = true;
         idClient = body[0]['id'];
       });
+
+      if(res.statusCode == 200){
+        _sendDataMatricule();
+      }
 
     }
 
@@ -885,10 +890,10 @@ class _ClientState extends State<Client> {
 
     if(validateAndSave()) {
 
-      _sendDataClient();
+      //_sendDataClient();
 
       var data = {
-        'id_client': idClient+1,
+        'id_client': idClient,
         'libelle_matricule': _matricule.text,
         'dateEnreg': date,
         'id_lavage': idlavage,
@@ -940,7 +945,7 @@ class _ClientState extends State<Client> {
 
     else{
       //_showMsg("existe pas!!!");
-      _sendDataMatricule();
+      _sendDataClient();
 
     }
 

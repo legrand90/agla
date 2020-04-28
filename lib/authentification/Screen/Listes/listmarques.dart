@@ -176,55 +176,6 @@ class _ListMarqueState extends State<ListMarque> {
                     },
                   ),
 
-                SizedBox(width: 30.0,),
-
-               IconButton(
-                    color: Colors.red,
-                    icon: Icon(
-                        Icons.delete),
-                    onPressed: ()async{
-                      Future<bool> _sureToDelete(){
-                        return showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text("Voulez-vous vraiment supprimer la marque " + " \"${listmarq.data[index].marque}\"" + "  de la liste des marques ?"),
-                              actions: <Widget>[
-                                FlatButton(
-                                  child: Text("Non"),
-                                  onPressed: () => Navigator.pop(context, false),
-                                ),
-                                FlatButton(
-                                  child: Text("Oui"),
-                                  onPressed: () {
-                                    DeleteMarque();
-                                    setState(() {
-                                      listmarq.data.removeAt(index);
-                                      //  indexItem;
-                                    });
-                                    Navigator.pop(context, false);
-                                  }
-                                  ,
-                                )
-                              ],
-                            )
-                        );
-                      }
-
-                      setState(() {
-                        idmark = listmarq.data [index] .id;
-                      });
-                      //deleteItem();
-                      if((admin == '1') || (admin == '2')){
-                        _sureToDelete();
-                      }else if(admin == '0'){
-                        print('desole');
-                        _showMsg('Vous ne pouvez pas effectuer cette action !!!');
-                      }
-
-                      //Navigator.of(context).pop();
-                    },
-                  ),
-
               ],
             )
         ),

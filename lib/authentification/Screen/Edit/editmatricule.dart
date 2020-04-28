@@ -33,10 +33,11 @@ class EditMatricule extends StatefulWidget {
   var idcouleur;
   var idmarque;
   var idcli;
-  EditMatricule({Key key, @required this.idmatricule, this.idcouleur, this.idmarque, this.idcli}) : super(key: key);
+  var nomCli;
+  EditMatricule({Key key, @required this.idmatricule, this.idcouleur, this.idmarque, this.idcli, this.nomCli}) : super(key: key);
 
   @override
-  _EditMatriculeState createState() => new _EditMatriculeState(idmatricule, idcouleur, idmarque, idcli);
+  _EditMatriculeState createState() => new _EditMatriculeState(idmatricule, idcouleur, idmarque, idcli, nomCli);
 }
 
 class _EditMatriculeState extends State<EditMatricule> {
@@ -44,7 +45,8 @@ class _EditMatriculeState extends State<EditMatricule> {
   var idcouleur;
   var idmarque;
   var idcli;
-  _EditMatriculeState(this.idmatricule, this.idcouleur, this.idmarque, this.idcli);
+  var nomCli;
+  _EditMatriculeState(this.idmatricule, this.idcouleur, this.idmarque, this.idcli, this.nomCli);
 
   AutoCompleteTextField searchTextField;
   GlobalKey <AutoCompleteTextFieldState<Datu>> key = GlobalKey();
@@ -142,8 +144,8 @@ class _EditMatriculeState extends State<EditMatricule> {
         'libelle_matricule': _matricule.text,
         'dateEnreg': date,
         'id_lavage': id,
-        'id_couleur': defaultColor ? _mySelection : idcouleur,
-        'id_marque': defaultMarque ? _mySelection2 : idmarque,
+        'id_couleur': defaultColor ? _mySelection : CouleurId,
+        'id_marque': defaultMarque ? _mySelection2 : marqueId,
 
       };
 
@@ -154,6 +156,7 @@ class _EditMatriculeState extends State<EditMatricule> {
       'id_user': id_user,
       'dateEnreg': date,
       'id_lavage': id,
+      'type_user': statu,
     };
 
 
@@ -183,7 +186,7 @@ class _EditMatriculeState extends State<EditMatricule> {
           context,
           new MaterialPageRoute(
             builder: (BuildContext context) {
-              return DetailsMatricule(idclient: int.parse(defaultClient ? searchVal : idcli));
+              return DetailsMatricule(idclient: int.parse(defaultClient ? searchVal : idcli), nomClient: nomCli,);
             },
           ),
         );
@@ -233,6 +236,7 @@ class _EditMatriculeState extends State<EditMatricule> {
 
     var res = await CallApi().getData('getMatriculeEdit/$idmatricule/$idlavage');
 
+
 //    final res = await http.get(Uri.encodeFull(url), headers: {
 //      "Accept": "application/json",
 //      "Content-type": "application/json",
@@ -262,6 +266,7 @@ class _EditMatriculeState extends State<EditMatricule> {
     this.getNomCouleur_NomMarque_NomClient();
     super.initState();
     this.getUserName();
+    this.getStatut();
 
 
   }
@@ -392,7 +397,7 @@ class _EditMatriculeState extends State<EditMatricule> {
                             },
                             value: _mySelection2,
                             isExpanded: true,
-                            hint: Text('$libmarque', style: TextStyle(fontSize: 18.0)),
+                            hint: Text('$idmarque', style: TextStyle(fontSize: 18.0)),
                             style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
                           ))
                     ],
@@ -425,7 +430,7 @@ class _EditMatriculeState extends State<EditMatricule> {
                             },
                             value:  _mySelection ,
                             isExpanded: true,
-                            hint: Text('$libCouleur', style: TextStyle(fontSize: 18.0)),
+                            hint: Text('$idcouleur', style: TextStyle(fontSize: 18.0)),
                             style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
                           ))
                     ],
@@ -933,16 +938,16 @@ class _EditMatriculeState extends State<EditMatricule> {
     return "Success";
   }
 
-  var libCouleur ;
-  var libmarque ;
+  var CouleurId ;
+  var marqueId ;
 
   Future<String> getNomCouleur_NomMarque_NomClient() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
 
 
-    var res = await CallApi().getData('getCouleur/$idcouleur');
-    var res2 = await CallApi().getData('getMarqueVehicule/$idmarque');
+    var res = await CallApi().getData('checkCouleur/$idcouleur');
+    var res2 = await CallApi().getData('checkMarque/$idmarque');
     var res3 = await CallApi().getData('getClientEdit/$idcli/$id');
     //final res = await http.get(Uri.encodeFull(urlCouleur), headers: {"Accept": "application/json","Content-type" : "application/json",});
     var resBody = json.decode(res.body)['data'];
@@ -950,8 +955,8 @@ class _EditMatriculeState extends State<EditMatricule> {
     var resBody3 = json.decode(res3.body)['data'];
 
     setState(() {
-      libCouleur = resBody['couleur'];
-      libmarque = resBody2['marque'];
+      CouleurId = resBody['id'];
+      marqueId = resBody2['id'];
       searchTextField.textField.controller.text = resBody3['nom'];
       //_mySelection = libCouleur;
     });
@@ -1010,6 +1015,43 @@ class _EditMatriculeState extends State<EditMatricule> {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  var adm;
+  var statu;
+  var libLav;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+          //libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
   }
 }
 

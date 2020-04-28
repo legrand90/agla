@@ -820,6 +820,7 @@ class _EditSuperAdminState extends State<EditSuperAdmin> {
       'id_user': id_user,
       'dateEnreg': date,
       'id_lavage': id,
+      'type_user': statu,
     };
 
     //print('$data');

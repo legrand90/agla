@@ -660,6 +660,7 @@ class _CouleurState extends State<Couleur> {
         'id_user': id_user,
         'dateEnreg': dateHeure,
         'id_lavage': id,
+        'type_user': statu,
       };
 
 

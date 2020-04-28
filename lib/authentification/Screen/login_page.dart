@@ -343,19 +343,20 @@ FlatButton okButton(BuildContext context){
     return false;
   }
 
+  var idLav;
+
   Future <void>  _login () async{
 
     if(validateAndSave()) {
       //try {
-        var data =  {
+        var data = {
           'numero': _identifiant.text,
           'password': _password.text,
         };
 
-
         var res = await CallApi().postData(data, 'login');
         var body = json.decode(res.body);
-        print(body);
+        //print(body);
         if(body['success']){
           SharedPreferences localStorage = await SharedPreferences.getInstance();
           localStorage.setString('token', body['token']);
@@ -367,17 +368,34 @@ FlatButton okButton(BuildContext context){
 
           setState(() {
             nomUser = localStorage.getString("nom");
+            idLav = localStorage.getString("id_lavage");
           });
-          //print("le nom est $nomUser");
-          //print("ID : ${localStorage.getInt('ID')}");
 
-          await Navigator.push(context,
-            new MaterialPageRoute(
-                builder: (BuildContext context){
-                  return new DashbordScreen();
-                }
-            ),
-          );
+          if(localStorage.getString("Admin") == '0' || localStorage.getString("Admin") == '1'){
+
+            var resAbon = await CallApi().getData('isActive/$idLav');
+            var bodyAbon = json.decode(resAbon.body);
+
+            if(bodyAbon['success']){
+              await Navigator.push(context,
+                new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return new DashbordScreen();
+                    }
+                ),
+              );
+            }else{
+              _showMsg('Désolé...Vous n\'avez pas d\'abonnement actif !');
+            }
+          }else{
+            await Navigator.push(context,
+              new MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return new DashbordScreen();
+                  }
+              ),
+            );
+          }
 
         }else{
           _showMsg(body['message']);

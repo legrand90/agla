@@ -914,6 +914,7 @@ class _SuperAdminState extends State<SuperAdmin> {
         'id_user': id_user,
         'dateEnreg': date,
         'id_lavage': id,
+        'type_user': statu,
       };
 
       //print('$data');

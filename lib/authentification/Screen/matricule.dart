@@ -773,6 +773,7 @@ class _MatriculeState extends State<Matricule> {
         'execution': "Enregistrer",
         'id_user': id_user,
         'dateEnreg': date,
+        'type_user': statu,
       };
 
       var res = await CallApi().postAppData(data, 'create_matricule');

@@ -679,6 +679,7 @@ class _PrestationState extends State<Prestation> {
         'id_user': id_user,
         'dateEnreg': dateHeure,
         'id_lavage': id,
+        'type_user': statu,
       };
 
       var res = await CallApi().postDataPrestation(data, 'create_prestation');
@@ -695,12 +696,10 @@ class _PrestationState extends State<Prestation> {
         _sendDataTarification();
       }
 
-
-
     }
 
-    print(' le type ${idPresta.runtimeType}');
-    print(' le type val ${idPresta}');
+    //print(' le type ${idPresta.runtimeType}');
+   // print(' le type val ${idPresta}');
   }
 
   void _logout() async{
