@@ -96,7 +96,7 @@ class _AgentState extends State<Agent> {
   File _imageFile;
   // To track the file uploading state
   bool _isUploading = false;
-  String baseUrl = 'http://54.37.68.114:81/api/savePhoto';
+  String baseUrl = 'https://service.agla.app/api/savePhoto';
 
 
   // Listagents listagents = Listagents ()  ;
@@ -427,43 +427,7 @@ class _AgentState extends State<Agent> {
                         ),
                       ),
 
-                      ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                      Container(
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(top: 40.0, left: 10.0, right: 10.0),
-                              child: OutlineButton(
-                                onPressed: () => _openImagePickerModal(context),
-                                borderSide:
-                                BorderSide(color: Theme.of(context).accentColor, width: 1.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(Icons.camera_alt),
-                                    SizedBox(
-                                      width: 5.0,
-                                    ),
-                                    Text('Ajouter Photo'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            _imageFile == null
-                                ? Text('Prenez une photo')
-                                : Image.file(
-                              _imageFile,
-                              fit: BoxFit.cover,
-                              height: 300.0,
-                              alignment: Alignment.topCenter,
-                              width: MediaQuery.of(context).size.width,
-                            ),
-                           // _buildUploadBtn(),
-                          ],
-                        ),
-
-                      ),
+                      ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
                       Row(
                         children : <Widget>[
@@ -483,7 +447,7 @@ class _AgentState extends State<Agent> {
                                     loading = false;
                                   });
 
-                                 await  _startUploading();
+                                 await  _sendDataAgent();
 
                                   setState(() {
                                     loading = true;
@@ -868,7 +832,7 @@ class _AgentState extends State<Agent> {
     return false;
   }
 
-  void _sendDataAgent () async{
+  void _sendDataAgent() async{
 
     if(validateAndSave()) {
       SharedPreferences localStorage = await SharedPreferences.getInstance();

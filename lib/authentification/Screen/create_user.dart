@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/fa_icon.dart';
+//import 'package:font_awesome_flutter/fa_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
@@ -967,11 +967,18 @@ class _UserState extends State<User> {
       if((_password.text == _confirmPassword.text)) {
         var res = await CallApi().postData(data, 'register');
         var body = json.decode(res.body);
+        var resAbonActif = await CallApi().getData('isActive/$searchVal');
+        var bodyAbonActif = json.decode(resAbonActif.body);
 
 
         //print('la valeur $body');
         if (body['success']) {
           var res = await CallApi().postData(dataLog, 'create_log');
+
+          if(_mySelection2 == 1 && !bodyAbonActif['success']){
+            var resAbon = await CallApi().getData('souscrirePlan/$searchVal');
+            //var bodyAbon = json.decode(resAbon.body);
+          }
 
           setState(() {
             _nomUser.text = '';

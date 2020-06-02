@@ -1,45 +1,84 @@
 import 'dart:async';
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
-import 'package:lavage/authentification/Screen/Listes/listmarques.dart';
+import 'package:lavage/authentification/Models/Listlavages.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'dart:convert';
-
 import 'package:lavage/authentification/widgets/loading.dart';
-
 import 'package:lavage/authentification/Screen/dashbord.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'Listes/listcouleurs.dart';
 import 'Tabs/clientPage.dart';
 import 'Transaction.dart';
 import 'historique.dart';
 import 'login_page.dart';
 
-class Marque extends StatefulWidget {
+class GestionAbonnement extends StatefulWidget {
+  var idcouleur ;
+  GestionAbonnement({Key key, @required this.idcouleur}) : super(key: key);
+
   @override
-  _MarqueState createState() => new _MarqueState();
+  _GestionAbonnementState createState() => new _GestionAbonnementState(this.idcouleur);
 }
-
-class _MarqueState extends State<Marque> {
+class _GestionAbonnementState extends State<GestionAbonnement> {
+  var idcouleur ;
+  _GestionAbonnementState(this.idcouleur);
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _nomMarque = TextEditingController();
+  TextEditingController _nomCouleur = TextEditingController();
 
-  String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
+  AutoCompleteTextField searchTextField;
+  GlobalKey <AutoCompleteTextFieldState<Datux>> keys = GlobalKey();
+  static List <Datux> listlavages = List <Datux>()  ;
 
-  String nomMarque;
+  var searchVal ;
+
+  Listlavages lavages = Listlavages()  ;
+
+  String nomCouleur;
+
+  String dateHeure = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
 
 
   bool _autoValidate = false;
   bool _loadingVisible = false;
   bool loading = true;
+  bool loading2 = true;
   bool load = true;
+  int selectedRadio ;
 
   var body;
-  var fenetre = 'CREER MARQUE';
+  var fenetre = 'Gestion Abonnement';
+
+  static List <Datux> loadLavages(String jsonString){
+    final parsed = json.decode(jsonString)['data'].cast<Map<String, dynamic>>();
+    return parsed.map<Datux>((json)=>Datux.fromJson(json)).toList();
+  }
+
+
+  void getLavages() async {
+
+    var res = await CallApi().getData('getLavageOrderByName');
+
+    if(res.statusCode == 200){
+
+      listlavages = loadLavages(res.body);
+
+      setState(() {
+        loading2  = false ;
+      });
+
+      print('les lavages $listlavages');
+
+    }else{
+      _showMsg('Liste vide');
+    }
+
+  }
 
   Future <void> _changeLoadingVisible() async {
     setState(() {
@@ -62,10 +101,29 @@ class _MarqueState extends State<Marque> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
+  setSelectRadio(int valeur){
+
+    setState(() {
+      selectedRadio = valeur;
+    });
+  }
+
+  Widget row(Datux ag){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(ag.libelleLavage, style: TextStyle(fontSize: 20.0),)
+      ],
+    );
+  }
+
   @override
   void initState(){
     super.initState();
     this.getUserName();
+    this.getStatut();
+    this.getLavages();
+    selectedRadio = 0;
   }
   Widget build(BuildContext context) {
     final logo = Hero(
@@ -90,252 +148,151 @@ class _MarqueState extends State<Marque> {
       appBar: AppBar(
         title: Text('$fenetre'),
       ),
-      body: load ? LoadingScreen(
-          child: Form(
-            key: _formKey,
-            autovalidate: _autoValidate,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      logo,
-                      SizedBox(height: 40.0),
-                      Text("Creer marque",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold
-                          )
-                      ),
-                      SizedBox(height: 50.0),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 40.0),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey.withOpacity(0.5),
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 20.0),
-                        child: Row(
-                          children: <Widget>[
-                            new Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10.0, horizontal: 15.0),
-                              child: Icon(
-                                Icons.home,
-                                color: Colors.red,
-                              ),
-                            ),
-                            new Expanded(
-                              child: TextFormField(
-                                textCapitalization: TextCapitalization.characters,
-                                keyboardType: TextInputType.text,
-                                autofocus: false,
-                                controller: _nomMarque,
-                                validator: (value) =>value.isEmpty ? 'Ce champ est requis' : null,
-                                onSaved: (value) => nomMarque = value,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Nom de la marque",
-                                  hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
+      body: load ?  Form(
+              key: _formKey,
+              //  autovalidate: _autoValidate,
+              child: ListView(
+                children: <Widget>[
 
-
-                      ////////////////////////////////////////////////////////////////////////////
-                      Padding(
-                        padding: const EdgeInsets.only(left: 40.0),
-                      ),
-
-                      ////////////////////////////////////////////////////////////////
-                      Container(
-                        margin: const EdgeInsets.only(top: 20.0),
-                       // padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                        child: Row(
-                          children: <Widget>[
-                            new Expanded(
-                              child: loading ? FlatButton(
-                                shape: new RoundedRectangleBorder(
-                                    borderRadius: new BorderRadius.circular(
-                                        30.0)
-                                ),
-                                color: Color(0xff0200F4),
-                                onPressed: () async{
-                                  setState(() {
-                                    loading = false;
-                                  });
-                                  await checkMarque();
-
-                                  setState(() {
-                                    loading = true;
-                                  });
-                                },
-                                child: new Container(
-                                  margin: const EdgeInsets.symmetric(
-                                    vertical: 14.0,
-                                    horizontal: 14.0,
-                                  ),
-                                  child: new Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      new Expanded(
-                                        child: Text(
-                                          "ENREGISTRER",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            //fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ) : Center(child: CircularProgressIndicator(),),
-                            ),
-
-                            Container(
-                              width: 10.0,
-                            ),
-
-                            new Expanded(
-                              child: FlatButton(
-                                shape: new RoundedRectangleBorder(
-                                    borderRadius: new BorderRadius.circular(
-                                        30.0)
-                                ),
-                                color: Color(0xff0200F4),
-                                onPressed: () async{
-                                  setState(() {
-                                    load = false;
-                                  });
-                                 await Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return ListMarque();
-                                      },
-                                    ),
-                                  );
-
-                                 setState(() {
-                                   load = true;
-                                 });
-                                },
-                                child: new Container(
-                                  margin: const EdgeInsets.symmetric(
-                                    vertical: 14.0,
-                                    horizontal: 14.0,
-                                  ),
-                                  child: new Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      new Expanded(
-                                        child: Text(
-                                          "AFFICHER",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            //fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                          ],
-                        ),
-                      ),
-
-                      //////////////////////////////////////////////////////////
-
-
-                      //////////////////////////////////////////////////////////
-
-                    ],
+                  SizedBox(
+                    height: 30.2,
                   ),
-                ),
-              ),
-            ),
-          ),
-          inAsyncCall: _loadingVisible) : Center(child: CircularProgressIndicator(),),
 
-      bottomNavigationBar: BottomNavigationBar(
-        //backgroundColor: Color(0xff0200F4),
-        //currentIndex: 0, // this will be set when a new tab is tapped
-        items: [
-          BottomNavigationBarItem(
-            //backgroundColor: Color(0xff0200F4),
-            icon: new IconButton(
-              color: Color(0xff0200F4),
-              icon: Icon(Icons.settings),
-              onPressed: (){
-                Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return Register();
-                    },
-                  ),
-                );
-              },
-            ),
-            title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
-          ),
-          BottomNavigationBarItem(
-            icon: new IconButton(
-              color: Color(0xff0200F4),
-              icon: Icon(Icons.mode_edit),
-              onPressed: (){
-                Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return Transaction();
-                    },
-                  ),
-                );
-              },
-            ),
-            title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
-          ),
-          BottomNavigationBarItem(
-              icon: IconButton(
-                color: Color(0xff0200F4),
-                icon: Icon(Icons.search),
-                onPressed: (){
-                  Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return ClientPage();
-                      },
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                    child: ButtonBar(
+                      //alignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Radio(
+                          value: 1,
+                          groupValue: selectedRadio,
+                          // title: Text("Nom"),
+                          activeColor: Colors.black,
+                          onChanged: (val){
+                            setSelectRadio(val);
+                            setState(() {
+
+                            });
+                            //visible = false ;
+                          },
+                        ),
+
+                        Text("Renouveller"),
+                        Radio(
+                          value: 2,
+                          groupValue: selectedRadio,
+                          // title: Text("Matri"),
+                          activeColor: Colors.black,
+                          onChanged: (val){
+                            setSelectRadio(val);
+                            setState(() {
+
+                            });
+                          },
+                        ),
+
+                        Text("Annuler"),
+
+                        SizedBox(
+                          height: 30.2,
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
-              title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
-          )
-        ],
-      ),
+                  ),
+
+                  Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: loading2 ? Center(child: CircularProgressIndicator()) : searchTextField = AutoCompleteTextField<Datux>(
+                              key: keys,
+                              clearOnSubmit: false,
+                              suggestions: listlavages,
+                              style: TextStyle(color: Colors.black, fontSize: 16.0),
+                              decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
+                                  hintText: "Saisir le lavage",
+                                  hintStyle: TextStyle(color: Colors.black)
+                              ),
+                              itemFilter: (item, query){
+                                return item.libelleLavage.toLowerCase().startsWith(query.toLowerCase());
+                              },
+                              itemSorter: (a, b){
+                                return a.libelleLavage.compareTo(b.libelleLavage);
+                              },
+                              itemSubmitted: (item){
+                                setState(() {
+                                  searchTextField.textField.controller.text = item.libelleLavage;
+                                  searchVal = item.id ;
+                                });
+                              },
+                              itemBuilder: (context, item){
+                                return row(item);
+                              },
+
+                            ),
+
+
+                          ),
+
+                        ],
+                      )
+                  ),
+
+                  SizedBox(
+                    height: 30.2,
+                  ),
+
+                  Container(
+                    margin: const EdgeInsets.only(top: 20.0),
+                    padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Expanded(
+                          child: loading ? FlatButton(
+                            shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0)
+                            ),
+                            color: Color(0xff0200F4),
+                            onPressed: ()async{
+                              setState(() {
+                                loading = false;
+                              });
+                              await _setOpera();
+                              setState(() {
+                                loading = true;
+                              });
+                            },
+                            child: new Container(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 14.0,
+                                horizontal: 14.0,
+                              ),
+                              child: new Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text(
+                                      "Valider",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        //fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ) : Center(child: CircularProgressIndicator(),),
+                        )
+                      ],
+                    ),
+                  ),
+
+          ]),
+    ) :  Center(child: CircularProgressIndicator()),
 
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
@@ -347,7 +304,7 @@ class _MarqueState extends State<Marque> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text('$nameUser'),
-              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
+              accountEmail: Text(''),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
               ),
@@ -634,49 +591,48 @@ class _MarqueState extends State<Marque> {
     return false;
   }
 
-  void _setMarque() async {
+  void _setCouleur() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
     var id_user = localStorage.getInt('ID');
     if (validateAndSave()) {
       //try {
       var data = {
-        'libelle_marque': _nomMarque.text.toUpperCase(),
+        'libelle_couleur': _nomCouleur.text.toUpperCase(),
         'id_lavage': id
       };
 
       var dataLog = {
         'fenetre': '$fenetre',
-        'tache': "Enregistrement d'une Marque",
+        'tache': "Ajout d'une Couleur",
         'execution': "Enregistrer",
         'id_user': id_user,
-        'dateEnreg': date,
+        'dateEnreg': dateHeure,
         'id_lavage': id,
         'type_user': statu,
       };
 
 
-      var res = await CallApi().postDataMarque(data, 'create_marque');
+      var res = await CallApi().postDataCouleur(data, 'create_couleur');
       var body = json.decode(res.body)['data'];
-      //print(body);
-
+      // print(body);
 
       if (res.statusCode == 200) {
         var res = await CallApi().postData(dataLog, 'create_log');
 
         setState(() {
-          _nomMarque.text = '';
+          _nomCouleur.text = '';
         });
 
-        _showMsg("Donnees enregiostrees avec succes");
+
+        _showMsg("Donnees enregistrees avec succes ");
 
       }else{
-
-        _showMsg("Erreur d'enregistrement");
-
+        _showMsg("Erreur d'enregistrement ");
       }
 
     }
+
   }
 
   void _logout() async{
@@ -699,25 +655,26 @@ class _MarqueState extends State<Marque> {
 
   }
 
-  void checkMarque()async{
+  void checkCouleur()async{
 
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    var resMarque = await CallApi().getData('checkMarque/${_nomMarque.text}');
-    var marqueBody = json.decode(resMarque.body);
+    var resCouleur = await CallApi().getData('checkCouleur/${_nomCouleur.text}');
+    var couleurBody = json.decode(resCouleur.body);
 
-    if((marqueBody['success'])){
-      _showMsg("Cette marque existe deja !!!");
+    if((couleurBody['success'])){
+
+      // print('donnee 1 $matriculebody');
+      //print('donnee 2 $contactbody');
+      _showMsg("Cette couleur existe deja !!!");
     }else{
       //_showMsg("existe pas!!!");
-      _setMarque();
+      _setCouleur();
 
     }
 
   }
 
   var nameUser;
-  var admin;
+  var admin ;
 
   void getUserName() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -787,6 +744,7 @@ class _MarqueState extends State<Marque> {
       }
     }
 
+
   }
 
   _launchFacebookURL() async {
@@ -807,5 +765,48 @@ class _MarqueState extends State<Marque> {
     }
   }
 
+  void _setOpera() async {
+    if (searchVal != null) {
+      if (selectedRadio == 1) {
+        var resAbon = await CallApi().getData('isActive/$searchVal');
+        var bodyAbon = json.decode(resAbon.body);
+
+        if (!bodyAbon['success']) {
+          renouvellerAbonnement();
+        } else {
+          _showMsg("Désolé l'abonnement ne peut pas etre renouvelé");
+        }
+      } else if (selectedRadio == 2) {
+        Annulerbonnement();
+      } else {
+        _showMsg("Désolé ! Aucun des boutons renouveller et annuler n'est sélectionné ");
+      }
+    }else{
+      _showMsg("Sélectionnez le lavage !");
+    }
+  }
+
+  void renouvellerAbonnement()async{
+
+      var res = await CallApi().getData('renouvellerAbonnement/$searchVal');
+      var resBody = json.decode(res.body)['data'];
+
+      if (resBody['success']) {
+        _showMsg("Abonnement renouvelé avec succes");
+      } else {
+        _showMsg("Erreur");
+      }
+
+  }
+
+  void Annulerbonnement()async{
+    var res = await CallApi().getData('annulerAbonnement/$searchVal');
+    var resBody = json.decode(res.body);
+    if(resBody['success']){
+      _showMsg("Abonnement annuler avec succes");
+    }else{
+      _showMsg("Erreur");
+    }
+  }
 }
 

@@ -99,9 +99,10 @@ class _DashbordScreenState extends State<DashbordScreen> {
               title: Text('TABLEAU DE BOARD'),
             ),
             body: load ? new Container(
-                child: new Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: new ListView(
+                  //mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    SizedBox(height: 100.0,),
 //                    Padding(
 //                      padding : EdgeInsets.only(left: 100.0, top: 100.0),
 //                      child : Row(
@@ -302,9 +303,10 @@ class _DashbordScreenState extends State<DashbordScreen> {
                       ),
                     ),
 
-                    SizedBox(height: 100.0,),
+                    SizedBox(height: 90.0,),
 
                     affichDateFinAbonn ? Container(
+                     // padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                       child: Center(
                         child: Text("Votre souscription prendra fin le $dateFinAbon",
                           style: TextStyle(

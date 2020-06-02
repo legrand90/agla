@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/fa_icon.dart';
+//import 'package:font_awesome_flutter/fa_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Screen/Agent.dart';
@@ -30,6 +30,7 @@ import 'TabsTransactionPaiement/paiementTab.dart';
 import 'Transaction.dart';
 import 'create_superAdmin.dart';
 import 'dashbord.dart';
+import 'gestionAbonnement.dart';
 import 'historique.dart';
 import 'login_page.dart';
 
@@ -790,6 +791,52 @@ class _RegisterState extends State<Register> {
                                       });
                                     },
                                     child: Text('LOG', textAlign: TextAlign.center,style: TextStyle(color: Colors.white)),
+                                  )),
+                            ),
+                            /*
+                        new Stack(
+                          children: <Widget>[
+                            new Image.asset(
+                              'assets/mobile1.png',
+                              width: 200.0,
+                              height: 120.0,
+                            ),
+                          ],
+                        ),
+                        */
+                            //   onTap{("")}
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(
+                        width: 150.0,
+                        height: 140.0,
+                        child: new Card(
+                          child: Container(
+                            child: Center(
+                              child: Container(
+                                  width: 150.0,
+                                  height: 140.0,
+                                  child : FlatButton(
+                                    color: Color(0xff0200F4),
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                          builder: (BuildContext context) {
+                                            return GestionAbonnement();
+                                          },
+                                        ),
+                                      );
+                                      setState(() {
+                                        load = true;
+                                      });
+                                    },
+                                    child: Text('Gestion Abonnement', textAlign: TextAlign.center,style: TextStyle(color: Colors.white)),
                                   )),
                             ),
                             /*

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/fa_icon.dart';
+//import 'package:font_awesome_flutter/fa_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
@@ -128,11 +128,6 @@ class _DetailsAgentState extends State<DetailsAgent> {
               padding: const EdgeInsets.only(top: 40.0),
             ),
 
-              Image.network('http://54.37.68.114:81/api/getPhoto/$urlPhoto',
-              repeat: ImageRepeat.noRepeat,
-                width: 100.0,
-              ),
-
           ],
         ) : Center(child: CircularProgressIndicator(),),
 
@@ -166,7 +161,7 @@ class _DetailsAgentState extends State<DetailsAgent> {
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
-                      builder: (BuildContext context) {
+                      builder: (BuildContext context){
                         return Transaction();
                       },
                     ),

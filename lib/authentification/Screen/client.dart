@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/fa_icon.dart';
+//import 'package:font_awesome_flutter/fa_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
@@ -929,21 +929,18 @@ class _ClientState extends State<Client> {
 
 
     var resContact = await CallApi().getData('checkContact/$id/${_contactClient.text}');
-    var contactbody = json.decode(resContact.body)['data'];
+    var contactbody = json.decode(resContact.body);
 
 
     var resMatricule = await CallApi().getData('checkMatricule/$id/${_matricule.text}');
-    var matriculebody = json.decode(resMatricule.body)['data'];
+    var matriculebody = json.decode(resMatricule.body);
 
+    if((matriculebody['success']) || (contactbody['success'])){
 
-    if((matriculebody != null) || (contactbody != null)){
-
-     // print('donnee 1 $matriculebody');
+      // print('donnee 1 $matriculebody');
       //print('donnee 2 $contactbody');
-     _showMsg("Ce matricule ou ce contact existe deja !!!");
-    }
-
-    else{
+      _showMsg("Ce matricule ou ce contact existe deja !!!");
+    }else{
       //_showMsg("existe pas!!!");
       _sendDataClient();
 

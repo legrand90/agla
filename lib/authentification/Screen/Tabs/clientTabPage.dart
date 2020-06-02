@@ -625,6 +625,7 @@ class _ClientTabPageState extends State<ClientTabPage> {
 
     }
   }
+
   void _logout() async{
     var res = await CallApi().getData('logout');
     var body = json.decode(res.body);

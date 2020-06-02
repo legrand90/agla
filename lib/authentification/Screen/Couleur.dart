@@ -709,14 +709,14 @@ class _CouleurState extends State<Couleur> {
   void checkCouleur()async{
 
     var resCouleur = await CallApi().getData('checkCouleur/${_nomCouleur.text}');
-    var couleurBody = json.decode(resCouleur.body)['data'];
+    var couleurBody = json.decode(resCouleur.body);
 
-    if((couleurBody != null)){
+    if((couleurBody['success'])){
 
       // print('donnee 1 $matriculebody');
       //print('donnee 2 $contactbody');
       _showMsg("Cette couleur existe deja !!!");
-    } else{
+    }else{
       //_showMsg("existe pas!!!");
       _setCouleur();
 

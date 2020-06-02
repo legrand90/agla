@@ -729,19 +729,16 @@ class _PrestationState extends State<Prestation> {
 
 
     var resPrestation = await CallApi().getData('checkPrestation/$id/${_nomPrestation.text}');
-    var prestationBody = json.decode(resPrestation.body)['data'];
+    var prestationBody = json.decode(resPrestation.body);
 
-    if((prestationBody != null)){
+    if((prestationBody['success'])){
 
       // print('donnee 1 $matriculebody');
       //print('donnee 2 $contactbody');
       _showMsg("Cette prestation existe deja !!!");
-    }
-
-    else{
+    }else{
       //_showMsg("existe pas!!!");
       _sendDataPrestation();
-
     }
 
   }

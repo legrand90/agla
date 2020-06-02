@@ -37,13 +37,13 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
   _showMsg(msg){
     final snackBar = SnackBar(
-      content: Text(msg),
-      action : SnackBarAction(
-        label: 'Fermer',
-        onPressed: (){
+        content: Text(msg),
+        action : SnackBarAction(
+          label: 'Fermer',
+          onPressed: (){
 
-        },
-      )
+          },
+        )
     );
     _scaffoldKey.currentState.showSnackBar(snackBar);
 
@@ -105,216 +105,216 @@ class _LoginPageState extends State<LoginPage> {
     return WillPopScope(
         onWillPop:() =>_onBackPressed(),
         child : Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Colors.white,
-      body: loading ? LoadingScreen(
-          child: Form(
-            key: _formKey,
-            autovalidate: _autoValidate,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      LogoAgla(),
-                      //SizedBox(height: 5.0),
-                      Text("CONNEXION",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold
-                          )
-                      ),
-                      SizedBox(height: 20.0),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 40.0),
-                      ),
+          key: _scaffoldKey,
+          backgroundColor: Colors.white,
+          body: loading ? LoadingScreen(
+              child: Form(
+                key: _formKey,
+                autovalidate: _autoValidate,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          LogoAgla(),
+                          //SizedBox(height: 5.0),
+                          Text("CONNEXION",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold
+                              )
+                          ),
+                          SizedBox(height: 20.0),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 40.0),
+                          ),
 
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey.withOpacity(0.5),
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                        child: Row(
-                          children: <Widget>[
-                            new Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-                              child: Icon(
-                                Icons.phone,
-                                color: Colors.red,
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.grey.withOpacity(0.5),
+                                width: 1.0,
                               ),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
-                            new Expanded(
-                              child: TextFormField(
-                                keyboardType: TextInputType.phone,
-                                autofocus: false,
-                                controller: _identifiant,
-                                validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
-                                onSaved: (value) => identifiant = value,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Entrez votre numéro",
-                                  hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
+                            margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                            child: Row(
+                              children: <Widget>[
+                                new Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                                  child: Icon(
+                                    Icons.phone,
+                                    color: Colors.red,
+                                  ),
                                 ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      ////////////////////////////////////////////////////////////////////////////
-                      Padding(
-                        padding: const EdgeInsets.only(left: 40.0),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey.withOpacity(0.5),
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                        child: Row(
-                          children: <Widget>[
-                            new Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
-                              child: Icon(
-                                Icons.lock_open,
-                                color: Colors.red,
-                              ),
-                            ),
-                            new Expanded(
-                              child: TextFormField(
-                                keyboardType: TextInputType.text,
-                                obscureText: true,
-                                autofocus: false,
-                                controller: _password,
-                                validator: (value) => value.isEmpty ? 'invalide password' : null,
-                                onSaved: (value) => password = value,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Entrez votre mot de passe",
-                                  hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      ////////////////////////////////////////////////////////////////
-                      Container(
-                        margin: const EdgeInsets.only(top: 20.0),
-                        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                        child: Row(
-                          children: <Widget>[
-                            new Expanded(
-                              child: FlatButton(
-                                shape: new RoundedRectangleBorder(
-                                    borderRadius: new BorderRadius.circular(30.0)
-                                ),
-                                color: Color(0xff0200F4),
-                                  onPressed: ()async{
-                                  setState(() {
-                                    loading = false;
-                                  });
-                                     await _login();
-                                  setState(() {
-                                    loading = true;
-                                  });
-                                  },
-                                  child: new Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 14.0,
-                                      horizontal: 14.0,
+                                new Expanded(
+                                  child: TextFormField(
+                                    keyboardType: TextInputType.phone,
+                                    autofocus: false,
+                                    controller: _identifiant,
+                                    validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
+                                    onSaved: (value) => identifiant = value,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: "Entrez votre numéro",
+                                      hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                                     ),
-                                    child: new Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        new Expanded(
-                                          child: Text(
-                                            "Se connecter",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              //fontWeight: FontWeight.bold
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          ////////////////////////////////////////////////////////////////////////////
+                          Padding(
+                            padding: const EdgeInsets.only(left: 40.0),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.grey.withOpacity(0.5),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                            child: Row(
+                              children: <Widget>[
+                                new Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
+                                  child: Icon(
+                                    Icons.lock_open,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                new Expanded(
+                                  child: TextFormField(
+                                    keyboardType: TextInputType.text,
+                                    obscureText: true,
+                                    autofocus: false,
+                                    controller: _password,
+                                    validator: (value) => value.isEmpty ? 'invalide password' : null,
+                                    onSaved: (value) => password = value,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: "Entrez votre mot de passe",
+                                      hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          ////////////////////////////////////////////////////////////////
+                          Container(
+                            margin: const EdgeInsets.only(top: 20.0),
+                            padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                            child: Row(
+                              children: <Widget>[
+                                new Expanded(
+                                  child: FlatButton(
+                                    shape: new RoundedRectangleBorder(
+                                        borderRadius: new BorderRadius.circular(30.0)
+                                    ),
+                                    color: Color(0xff0200F4),
+                                    onPressed: ()async{
+                                      setState(() {
+                                        loading = false;
+                                      });
+                                      await _login();
+                                      setState(() {
+                                        loading = true;
+                                      });
+                                    },
+                                    child: new Container(
+                                      margin: const EdgeInsets.symmetric(
+                                        vertical: 14.0,
+                                        horizontal: 14.0,
+                                      ),
+                                      child: new Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          new Expanded(
+                                            child: Text(
+                                              "Se connecter",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                //fontWeight: FontWeight.bold
+                                              ),
                                             ),
                                           ),
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
+                                )
+                              ],
+                            ),
+                          ),
 
-                      //////////////////////////////////////////////////////////
-                      Container(
-                        margin: const EdgeInsets.only(top: 20.0),
-                        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                        child: Row(
-                          children: <Widget>[
-                            new Expanded(
-                              child: FlatButton(
-                                shape: new RoundedRectangleBorder(
-                                    borderRadius: new BorderRadius.circular(30.0)
-                                ),
-                                color: Color(0xff0200F4),
-                                onPressed: (){
-                                  _passwordForgot();
-                                },
-                                child: new Container(
-                                  margin: const EdgeInsets.symmetric(
-                                    vertical: 14.0,
-                                    horizontal: 14.0,
-                                  ),
-                                  child: new Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      new Expanded(
-                                        child: Text(
-                                          "Mot de passe oublie",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            //fontWeight: FontWeight.bold
+                          //////////////////////////////////////////////////////////
+                          Container(
+                            margin: const EdgeInsets.only(top: 20.0),
+                            padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                            child: Row(
+                              children: <Widget>[
+                                new Expanded(
+                                  child: FlatButton(
+                                    shape: new RoundedRectangleBorder(
+                                        borderRadius: new BorderRadius.circular(30.0)
+                                    ),
+                                    color: Color(0xff0200F4),
+                                    onPressed: (){
+                                      _passwordForgot();
+                                    },
+                                    child: new Container(
+                                      margin: const EdgeInsets.symmetric(
+                                        vertical: 14.0,
+                                        horizontal: 14.0,
+                                      ),
+                                      child: new Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          new Expanded(
+                                            child: Text(
+                                              "Mot de passe oublie",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                //fontWeight: FontWeight.bold
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                                )
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 50.0,),
+
+                          //////////////////////////////////////////////////////////
+
+                          Container(child: Center(child: Text("Un produit de MAXOM", style: TextStyle(color: Colors.red),),),),
+
+                        ],
                       ),
-
-                      SizedBox(height: 50.0,),
-
-                      //////////////////////////////////////////////////////////
-
-                      Container(child: Center(child: Text("Un produit de MAXOM", style: TextStyle(color: Colors.red),),),),
-
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          inAsyncCall: _loadingVisible) : Center(child: CircularProgressIndicator(),),
-    )
+              inAsyncCall: _loadingVisible) : Center(child: CircularProgressIndicator(),),
+        )
     );
   }
 
@@ -322,17 +322,17 @@ class _LoginPageState extends State<LoginPage> {
     Text titre = new Text("Error:");
     Text soustitre = new Text(error);
     return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext buildContext){
-        return new AlertDialog(title: titre, content: soustitre, actions: <Widget>[okButton(buildContext)],);
-      }
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext buildContext){
+          return new AlertDialog(title: titre, content: soustitre, actions: <Widget>[okButton(buildContext)],);
+        }
     );
-}
+  }
 
-FlatButton okButton(BuildContext context){
+  FlatButton okButton(BuildContext context){
     return new FlatButton(onPressed: ()=> Navigator.of(context).pop(), child: new Text("ok"));
-}
+  }
   //methode pour se connecter
   bool validateAndSave(){
     final form = _formKey.currentState;
@@ -349,48 +349,37 @@ FlatButton okButton(BuildContext context){
 
     if(validateAndSave()) {
       //try {
-        var data = {
-          'numero': _identifiant.text,
-          'password': _password.text,
-        };
+      var data = {
+        'numero': _identifiant.text,
+        'password': _password.text,
+      };
 
-        var res = await CallApi().postData(data, 'login');
-        var body = json.decode(res.body);
-        //print(body);
-        if(body['success']){
-          SharedPreferences localStorage = await SharedPreferences.getInstance();
-          localStorage.setString('token', body['token']);
-          localStorage.setString('user', body['token']);
-          localStorage.setString('id_lavage', body['user']['id_lavage']);
-          localStorage.setString('nom', body['user']['name']);
-          localStorage.setString('Admin', body['user']['admin']);
-          localStorage.setInt('ID', body['user']['id']);
+      var res = await CallApi().postData(data, 'login');
+      var body = json.decode(res.body);
+      //print(body);
+      if(body['success']){
+        SharedPreferences localStorage = await SharedPreferences.getInstance();
+        localStorage.setString('token', body['token']);
+        localStorage.setString('user', body['token']);
+        localStorage.setString('id_lavage', body['user']['id_lavage']);
+        localStorage.setString('nom', body['user']['name']);
+        localStorage.setString('Admin', body['user']['admin']);
+        localStorage.setInt('ID', body['user']['id']);
 
-          setState(() {
-            nomUser = localStorage.getString("nom");
-            idLav = localStorage.getString("id_lavage");
-          });
+        setState(() {
+          nomUser = localStorage.getString("nom");
+          idLav = localStorage.getString("id_lavage");
+        });
 
-          if(localStorage.getString("Admin") == '0' || localStorage.getString("Admin") == '1'){
+        if(localStorage.getString("Admin") == '0' || localStorage.getString("Admin") == '1'){
 
-            var resAbon = await CallApi().getData('isActive/$idLav');
-            var bodyAbon = json.decode(resAbon.body);
+          var resAbon = await CallApi().getData('isActive/$idLav');
+          var bodyAbon = json.decode(resAbon.body);
 
-            if(bodyAbon['success']){
+          if(bodyAbon['success']){
 
-              localStorage.setString('dateFinAbonn', bodyAbon['date']);
+            localStorage.setString('dateFinAbonn', bodyAbon['date']);
 
-              await Navigator.push(context,
-                new MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return new DashbordScreen();
-                    }
-                ),
-              );
-            }else{
-              _showMsg('Désolé...Vous n\'avez pas d\'abonnement actif !');
-            }
-          }else{
             await Navigator.push(context,
               new MaterialPageRoute(
                   builder: (BuildContext context) {
@@ -398,15 +387,26 @@ FlatButton okButton(BuildContext context){
                   }
               ),
             );
+          }else{
+            _showMsg('Désolé...Vous n\'avez pas d\'abonnement actif !');
           }
-
         }else{
-          _showMsg(body['message']);
+          await Navigator.push(context,
+            new MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return new DashbordScreen();
+                }
+            ),
+          );
+        }
+
+      }else{
+        _showMsg(body['message']);
 //          setState(() {
 //            loading = true;
 //          });
 
-        }
+      }
 
     }
 
@@ -416,7 +416,7 @@ FlatButton okButton(BuildContext context){
 
 class LogoAgla extends StatelessWidget{
 
-@override
+  @override
   Widget build(BuildContext context) {
     // TODO: implement build
     AssetImage assetImage = AssetImage('assets/images/logoAgla.png');

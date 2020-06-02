@@ -31,7 +31,7 @@ dependencies:
     git:
       url: https://github.com/derohimat/flutter_datetime_picker.git
   flutter_html: ^0.11.1
-  font_awesome_flutter: ^8.7.0
+  font_awesome_flutter:  ^8.7.0
   url_launcher: ^5.4.2
   image_picker: ^0.6.3+4
   flutter_plugin_android_lifecycle:
