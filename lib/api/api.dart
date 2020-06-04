@@ -7,8 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class CallApi{
   //var test = 50;
-  final String url = 'http://192.168.43.223:8000/api/';
-  //final String urlAgent = 'http://192.168.43.223:8000/api/..http://service.agla.app/api/';
+  final String url = 'https://service.agla.app/api/';
+  //final String urlAgent = 'http://192.168.43.223:8000/api/..https://service.agla.app/api/';
      postData(data, apiUrl) async {
     var fullUrl = url + apiUrl + await _getToken();
     return await http.post(

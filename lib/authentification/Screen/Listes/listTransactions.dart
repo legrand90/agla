@@ -77,8 +77,8 @@ class _ListTransactionState extends State<ListTransaction> {
     // final response = await http.get('$url');
 
     setState(() {
-      recette = resBody['recette'];
-      commissions = resBody['commissions'];
+      recette = (resBody['recette'] == null) ? 0 : resBody['recette'];
+      commissions = (resBody['commissions'] == null) ? 0 : resBody['commissions'];
       totalTarif = recette + commissions;
     });
 

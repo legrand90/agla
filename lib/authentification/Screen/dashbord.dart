@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ class DashbordScreen extends StatefulWidget {
 }
 
 class _DashbordScreenState extends State<DashbordScreen> {
+  Timer timer;
 
   int Counter = 0 ;
   var name ;
@@ -76,7 +78,29 @@ class _DashbordScreenState extends State<DashbordScreen> {
     );
   }
 
-  String date = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
+
+  var recette, commissions, totalTarif, nbOpera;
+
+  void getRecette() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+    // String url = "http://192.168.43.217:8000/api/getCommissionsAndRecette/$date/$id";
+    var res = await CallApi().getData('getCommissionsAndRecette/$date/$id');
+    //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
+    var resBody = json.decode(res.body);
+    // final response = await http.get('$url');
+
+    setState(() {
+      recette = (resBody['recette'] == null) ? 0 : resBody['recette'] ;
+      commissions = (resBody['commissions'] == null) ? 0 : resBody['commissions'] ;
+      totalTarif = recette + commissions;
+      nbOpera = (resBody['nbOpera'] == null) ? 0 : resBody['nbOpera'] ;
+    });
+
+    //print("la recette est  : ${recette['recette']}");
+
+  }
 
 
 
@@ -86,8 +110,10 @@ class _DashbordScreenState extends State<DashbordScreen> {
     super.initState();
     this.getUserName();
     this.getStatut();
+    this.getRecette();
     //this.nombreCarWashed();
 
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) => getRecette());
   }
 
   Widget build(BuildContext context){
@@ -102,7 +128,104 @@ class _DashbordScreenState extends State<DashbordScreen> {
                 child: new ListView(
                   //mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(height: 100.0,),
+                    SizedBox(height: 50.0,),
+
+                    (admin == '0' || admin == '1') ? Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(left: 10.0, right: 10.0),),
+                        Container(
+                          margin: const EdgeInsets.only(
+                            left: 10.0,
+                          ),
+                          width: 150.0,
+                          height: 140.0,
+                          child: new Card(
+                            child: Container(
+                                    width: 150.0,
+                                    height: 140.0,
+                                    child : FlatButton(
+                                      color: Color(0xff0200F4),
+                                      onPressed: ()async{
+                                      },
+                                      child: Text('Chiffres d\'affaires journaliers :  \n\n $totalTarif FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
+                                    ),
+                              //   onTap{("")}
+                            ),
+                          ),
+                        ),
+
+                        Container(
+                          margin: const EdgeInsets.only(
+                            right: 10.0,
+                          ),
+                          width: 150.0,
+                          height: 140.0,
+                          child: new Card(
+                                child: Container(
+                                    width: 150.0,
+                                    height: 140.0,
+                                    child : FlatButton(
+                                      color: Color(0xff0200F4),
+                                      onPressed: () async{
+                                      },
+                                      child: Text('Nombre d\'opérations :  \n\n $nbOpera', textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+                                    ),
+                              //   onTap{("")}
+                            ),
+                          ),
+                        ),
+                      ],
+                    ) : Text(''),
+
+                    (admin == '0' || admin == '1') ? Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(left: 10.0, right: 10.0),),
+                        Container(
+                          margin: const EdgeInsets.only(
+                            left: 10.0,
+                          ),
+                          width: 150.0,
+                          height: 140.0,
+                          child: new Card(
+                                child: Container(
+                                    width: 150.0,
+                                    height: 140.0,
+                                    child : FlatButton(
+                                      color: Color(0xff0200F4),
+                                      onPressed: ()async{
+                                      },
+                                      child: Text('Total Commissions :  \n\n $commissions FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
+                                    ),
+                              //   onTap{("")}
+                            ),
+                          ),
+                        ),
+
+                        Container(
+                          margin: const EdgeInsets.only(
+                            right: 10.0,
+                          ),
+                          width: 150.0,
+                          height: 140.0,
+                          child: new Card(
+                                child: Container(
+                                    width: 150.0,
+                                    height: 140.0,
+                                    child : FlatButton(
+                                      color: Color(0xff0200F4),
+                                      onPressed: () async{
+                                      },
+                                      child: Text('Recette :  \n\n $recette FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+                                    ),
+                              //   onTap{("")}
+                            ),
+                          ),
+                        ),
+                      ],
+                    ) : Text(''),
+
 //                    Padding(
 //                      padding : EdgeInsets.only(left: 100.0, top: 100.0),
 //                      child : Row(

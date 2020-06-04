@@ -6,6 +6,7 @@ import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Screen/dashbord.dart';
 import 'package:lavage/authentification/widgets/loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -149,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                                 new Padding(
                                   padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                                   child: Icon(
-                                    Icons.phone,
+                                    Icons.perm_identity,
                                     color: Colors.red,
                                   ),
                                 ),
@@ -162,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                                     onSaved: (value) => identifiant = value,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
-                                      hintText: "Entrez votre numéro",
+                                      hintText: "Identifiant",
                                       hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                                     ),
                                   ),
@@ -203,7 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                                     onSaved: (value) => password = value,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
-                                      hintText: "Entrez votre mot de passe",
+                                      hintText: "Mot de passe",
                                       hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                                     ),
                                   ),
@@ -305,8 +306,14 @@ class _LoginPageState extends State<LoginPage> {
 
                           //////////////////////////////////////////////////////////
 
-                          Container(child: Center(child: Text("Un produit de MAXOM", style: TextStyle(color: Colors.red),),),),
-
+                          Container(
+                            color: Colors.white,
+                            child: Center(
+                              child: FlatButton(
+                                onPressed: ()async{
+                                  _launchMaxomURL();
+                                },
+                                child :Text("Un produit de MAXOM", style: TextStyle(color: Colors.red),),),),)
                         ],
                       ),
                     ),
@@ -410,6 +417,15 @@ class _LoginPageState extends State<LoginPage> {
 
     }
 
+  }
+
+  _launchMaxomURL() async {
+    const url = 'https://maxom.ci';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
 }
