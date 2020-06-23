@@ -36,6 +36,7 @@ class _CommissionListState extends State<CommissionList> {
   _CommissionListState(this.listagents);
 
   bool load = true;
+  bool chargement = false;
 
 
   //String url = "http://192.168.43.217:8000/api/agent";
@@ -52,6 +53,7 @@ class _CommissionListState extends State<CommissionList> {
 
     setState(() {
       listagents = listagentsFromJson(res.body);
+      chargement = true;
     });
     return listagents;
   }
@@ -73,7 +75,7 @@ class _CommissionListState extends State<CommissionList> {
         appBar: AppBar(
           title: Text('LISTE DES AGENTS'),
         ),
-        body: load ? ListView.separated(
+        body: chargement ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;

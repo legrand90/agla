@@ -46,6 +46,7 @@ class _ListCouleurState extends State<ListCouleur> {
   var indexItem;
   var admin;
   bool load = true;
+  bool chargement = false;
 
 
   //String url = "http://192.168.43.217:8000/api/couleur";
@@ -63,6 +64,7 @@ class _ListCouleurState extends State<ListCouleur> {
 
     setState(() {
       listcolor = listCouleursFromJson(res.body);
+      chargement = true;
     });
     return listcolor;
   }
@@ -140,7 +142,7 @@ class _ListCouleurState extends State<ListCouleur> {
         appBar: AppBar(
           title: Text('LISTE DES COULEURS'),
         ),
-        body: load ? ListView.separated(
+        body: chargement ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
               //indexItem = index;

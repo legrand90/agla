@@ -38,6 +38,7 @@ class _UsersListState extends State<UsersList> {
   var admin ;
   var iduser ;
   bool load = true;
+  bool chargement = false;
 
 
   Future<dynamic> getUsers() async{
@@ -52,6 +53,7 @@ class _UsersListState extends State<UsersList> {
 
     setState(() {
       listusers =  listusersFromJson(res.body);
+      chargement = true;
     });
     return listusers;
   }
@@ -132,7 +134,7 @@ class _UsersListState extends State<UsersList> {
           ],
         ),
 
-        body: load ? ListView.separated(
+        body: chargement ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;

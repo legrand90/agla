@@ -46,6 +46,7 @@ class _ListMarqueState extends State<ListMarque> {
   var admin ;
 
   bool load = true;
+  bool chargement = false;
 
   String url = "http://192.168.43.217:8000/api/marque";
 
@@ -61,6 +62,7 @@ class _ListMarqueState extends State<ListMarque> {
 
     setState(() {
       listmarq = listMarquesFromJson(res.body);
+      chargement = true;
     });
     return listmarq;
   }
@@ -145,7 +147,7 @@ class _ListMarqueState extends State<ListMarque> {
         appBar: AppBar(
           title: Text('LISTE DES MARQUES'),
         ),
-        body: load ? ListView.separated(
+        body: chargement ? ListView.separated(
         separatorBuilder: (BuildContext context, int index) {
 
           //indexItem = index;

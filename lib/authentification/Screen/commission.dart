@@ -350,7 +350,6 @@ class _CommissionState extends State<Commission> {
                                       },
                                     ),
                                   );
-
                                  setState(() {
                                    load = true;
                                  });
@@ -417,7 +416,7 @@ class _CommissionState extends State<Commission> {
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
-                      builder: (BuildContext context) {
+                      builder: (BuildContext context){
                         return ClientPage();
                       },
                     ),
@@ -428,7 +427,6 @@ class _CommissionState extends State<Commission> {
           )
         ],
       ),
-
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
@@ -679,27 +677,33 @@ class _CommissionState extends State<Commission> {
         'type_user': statu,
       };
 
-      var res = await CallApi().postAppData(data, 'create_commission');
+      var resTarif = await CallApi().getData('getTarification/$_mySelection2/$idlavage');
 
-     // print('les donnees de commission: $body');
+      var resBodyTarif = json.decode(resTarif.body)['data'];
 
-      if(res.statusCode == 200){
+      if (int.parse(resBodyTarif['montant']) > int.parse(_gainAgent.text)){
+        var res = await CallApi().postAppData(data, 'create_commission');
+
+      // print('les donnees de commission: $body');
+
+      if (res.statusCode == 200) {
         var res = await CallApi().postData(dataLog, 'create_log');
         var body = json.decode(res.body)['data'];
 
 
-          setState(() {
-            _gainAgent.text = '';
-            _mySelection = null;
-            _mySelection2 = null;
-          });
+        setState(() {
+          _gainAgent.text = '';
+          _mySelection = null;
+          _mySelection2 = null;
+        });
 
 
-          _showMsg('Donnees enregistrees avec succes');
-
-
-      }else{
+        _showMsg('Donnees enregistrees avec succes');
+      } else {
         _showMsg("Erreur d' enregistrement");
+      }
+    }else{
+        _showMsg("Désolé ! la commission ne peut pas être supérieur à la tarification !");
       }
 
     }

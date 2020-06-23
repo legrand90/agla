@@ -61,13 +61,16 @@ class _RegisterState extends State<Register> {
           ),
           body: load ? Center(
             child: new Container(
-              margin: EdgeInsets.only(top: 110.0, left: 30.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              margin: EdgeInsets.only(top: 110.0),
               child: new ListView(
                // mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   //CARD1
                   (admin == '0' || admin == '1') ? Row(
                     children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -167,6 +170,8 @@ class _RegisterState extends State<Register> {
 
                   (admin == '0' || admin == '1') ? Row(
                     children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -267,6 +272,8 @@ class _RegisterState extends State<Register> {
 
                   (admin == '0' || admin == '1') ? Row(
                     children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -365,6 +372,8 @@ class _RegisterState extends State<Register> {
 
                   (admin == '0' || admin == '1') ? Row(
                     children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -465,6 +474,8 @@ class _RegisterState extends State<Register> {
 
                   (admin == '2' || admin == '3' || admin == '4') ? Row(
                     children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -565,6 +576,8 @@ class _RegisterState extends State<Register> {
 
                   (admin == '2' || admin == '3' || admin == '4') ? Row(
                     children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -658,13 +671,13 @@ class _RegisterState extends State<Register> {
                           ),
                         ),
                       ),
-
-
                     ],
                   ) : Text(''),
 
                   (admin == '2' || admin == '3' || admin == '4') ? Row(
                     children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -763,6 +776,8 @@ class _RegisterState extends State<Register> {
 
                   (admin == '2' || admin == '3' || admin == '4') ? Row(
                     children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,

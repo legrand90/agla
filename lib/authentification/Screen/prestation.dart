@@ -722,24 +722,25 @@ class _PrestationState extends State<Prestation> {
 
   }
 
-  void checkPrestation()async{
-
+  void checkPrestation()async {
+    if(validateAndSave()) {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
 
 
-    var resPrestation = await CallApi().getData('checkPrestation/$id/${_nomPrestation.text}');
+    var resPrestation = await CallApi().getData(
+        'checkPrestation/$id/${_nomPrestation.text}');
     var prestationBody = json.decode(resPrestation.body);
 
-    if((prestationBody['success'])){
-
+    if ((prestationBody['success'])) {
       // print('donnee 1 $matriculebody');
       //print('donnee 2 $contactbody');
       _showMsg("Cette prestation existe deja !!!");
-    }else{
+    } else {
       //_showMsg("existe pas!!!");
       _sendDataPrestation();
     }
+  }
 
   }
 

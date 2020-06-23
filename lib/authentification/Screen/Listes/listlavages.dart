@@ -36,6 +36,7 @@ class _ListLavagesState extends State<ListLavages> {
   var admin;
   var idlavag;
   bool load = true;
+  bool chargement = false;
 
   final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
 
@@ -93,6 +94,7 @@ class _ListLavagesState extends State<ListLavages> {
 
     setState(() {
       lavages = listlavagesFromJson(res.body);
+      chargement = true;
     });
     return lavages;
   }
@@ -116,7 +118,7 @@ class _ListLavagesState extends State<ListLavages> {
         appBar: AppBar(
           title: Text('LISTE DES LAVAGES'),
         ),
-        body: load ? ListView.separated(
+        body: chargement ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;

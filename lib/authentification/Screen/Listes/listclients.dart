@@ -42,6 +42,7 @@ class _ListClientState extends State<ListClient>{
   var admin;
   var idcli;
   bool load = true;
+  bool chargement = false;
 
   var fenetre = 'LISTE DES CLIENTS';
 
@@ -60,6 +61,7 @@ class _ListClientState extends State<ListClient>{
 
     setState(() {
       listclients = listclientsFromJson(res.body);
+      chargement = true;
     });
     return listclients;
   }
@@ -136,7 +138,7 @@ class _ListClientState extends State<ListClient>{
         appBar: AppBar(
           title: Text('LISTE DES CLIENTS'),
         ),
-        body: load ? ListView.separated(
+        body: chargement ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;

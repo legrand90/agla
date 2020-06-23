@@ -1009,15 +1009,18 @@ class _SuperAdminState extends State<SuperAdmin> {
     );
   }
 
-  void checkContact()async{
-    var resContact = await CallApi().getData('checkContactUser/${_contactUser.text}');
+  void checkContact()async {
+    if(validateAndSave()) {
+    var resContact = await CallApi().getData(
+        'checkContactUser/${_contactUser.text}');
     var contactbody = json.decode(resContact.body)['data'];
 
-    if(contactbody != null){
+    if (contactbody != null) {
       _showMsg("Ce numéro existe deja !");
-    }else{
+    } else {
       _sendDataUser();
     }
+  }
   }
 
   var adm;

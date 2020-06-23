@@ -699,21 +699,20 @@ class _MarqueState extends State<Marque> {
 
   }
 
-  void checkMarque()async{
-
+  void checkMarque()async {
+    if(validateAndSave()) {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
     var resMarque = await CallApi().getData('checkMarque/${_nomMarque.text}');
     var marqueBody = json.decode(resMarque.body);
 
-    if((marqueBody['success'])){
+    if ((marqueBody['success'])) {
       _showMsg("Cette marque existe deja !!!");
-    }else{
+    } else {
       //_showMsg("existe pas!!!");
       _setMarque();
-
     }
-
+  }
   }
 
   var nameUser;

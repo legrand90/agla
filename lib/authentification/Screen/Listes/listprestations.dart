@@ -44,6 +44,7 @@ class _ListPrestationsState extends State<ListPrestations> {
   var admin;
   var idpresta;
   bool load = true;
+  bool chargement = false;
 
   final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
 
@@ -112,6 +113,7 @@ class _ListPrestationsState extends State<ListPrestations> {
 
     setState(() {
       listprestations = listprestationsFromJson(res.body);
+      chargement = true;
     });
     return listprestations;
   }
@@ -135,7 +137,7 @@ class _ListPrestationsState extends State<ListPrestations> {
         appBar: AppBar(
           title: Text('LISTE DES PRESTATIONS'),
         ),
-        body: load ? ListView.separated(
+        body: chargement ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;

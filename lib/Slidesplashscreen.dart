@@ -11,7 +11,7 @@ class SlideSplashScreen extends StatefulWidget{
   _SlideSplashScreenState createState() => _SlideSplashScreenState();
 }
 
-class _SlideSplashScreenState extends State<SlideSplashScreen>  {
+class _SlideSplashScreenState extends State<SlideSplashScreen> {
 
   List<Slide> slides = new List();
 
@@ -42,51 +42,6 @@ class _SlideSplashScreenState extends State<SlideSplashScreen>  {
         maxLineTextDescription: 3,
       ),
 
-    );
-    slides.add(
-      new Slide(
-        title: "MAXOM 2",
-        styleTitle: TextStyle(
-            color: Color(0xffD02090),
-            fontSize: 30.0,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'RobotoMono'),
-        description:
-        "Ye indulgence unreserved connection alteration appearance",
-        styleDescription: TextStyle(
-            color: Color(0xffD02090),
-            fontSize: 20.0,
-            fontStyle: FontStyle.italic,
-            fontFamily: 'Raleway'),
-        pathImage: "assets/images/logoAgla.png",
-        colorBegin: Color(0xffFFFACD),
-        colorEnd: Color(0xffFF6347),
-        directionColorBegin: Alignment.topRight,
-        directionColorEnd: Alignment.bottomLeft,
-      ),
-    );
-    slides.add(
-      new Slide(
-        title: "MAXOM 3",
-        styleTitle: TextStyle(
-            color: Color(0xffD02090),
-            fontSize: 30.0,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'RobotoMono'),
-        description:
-        "Much evil soon high in hope do view. Out may few northward believing attempted. ",
-        styleDescription: TextStyle(
-            color: Color(0xffD02090),
-            fontSize: 20.0,
-            fontStyle: FontStyle.italic,
-            fontFamily: 'Raleway'),
-        pathImage: "assets/images/logoAgla.png",
-        colorBegin: Color(0xffFFA500),
-        colorEnd: Color(0xff7FFFD4),
-        directionColorBegin: Alignment.topCenter,
-        directionColorEnd: Alignment.bottomCenter,
-        maxLineTextDescription: 3,
-      ),
     );
   }
 
@@ -130,15 +85,6 @@ class _SlideSplashScreenState extends State<SlideSplashScreen>  {
     return new IntroSlider(
       // List slides
       slides: this.slides,
-
-      // Skip button
-      renderSkipBtn: this.renderSkipBtn(),
-      colorSkipBtn: Color(0x33000000),
-      highlightColorSkipBtn: Color(0xff000000),
-
-      // Next button
-      renderNextBtn: this.renderNextBtn(),
-
       // Done button
       renderDoneBtn: this.renderDoneBtn(),
       onDonePress: this.onDonePress,

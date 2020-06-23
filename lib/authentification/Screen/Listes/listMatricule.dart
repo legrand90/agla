@@ -36,6 +36,7 @@ class _ListMatriculesState extends State<ListMatricules>{
   _ListMatriculesState(this.listclients);
 
   bool load = true;
+  bool chargement = false;
 
   //String url = "http://192.168.43.217:8000/api/client/";
 
@@ -52,6 +53,7 @@ class _ListMatriculesState extends State<ListMatricules>{
 
     setState(() {
       listclients = listclientsFromJson(res.body);
+      chargement = true;
     });
     return listclients;
   }
@@ -73,7 +75,7 @@ class _ListMatriculesState extends State<ListMatricules>{
         appBar: AppBar(
           title: Text('LISTES DES CLIENTS'),
         ),
-        body: load ? ListView.separated(
+        body: chargement ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;

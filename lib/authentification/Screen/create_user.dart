@@ -1063,20 +1063,21 @@ class _UserState extends State<User> {
   }
 
 
-  void checkContact()async{
-    var resContact = await CallApi().getData('checkContactUser/${_contactUser.text}');
+  void checkContact()async {
+    if(validateAndSave()) {
+    var resContact = await CallApi().getData(
+        'checkContactUser/${_contactUser.text}');
     var contactbody = json.decode(resContact.body);
 
-    if((contactbody['success'])){
-
+    if ((contactbody['success'])) {
       // print('donnee 1 $matriculebody');
       //print('donnee 2 $contactbody');
       _showMsg("Ce numéro existe deja !");
-    }else{
+    } else {
       //_showMsg("existe pas!!!");
       _sendDataUser();
-
     }
+  }
   }
 
   var adm;
@@ -1133,7 +1134,6 @@ class _UserState extends State<User> {
       throw 'Could not launch $url';
     }
   }
-
 }
 
 

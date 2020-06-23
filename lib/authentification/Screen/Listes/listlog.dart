@@ -32,6 +32,7 @@ class _ListLogsState extends State<ListLogs> {
   bool toggle = false;
   var affiche = false;
   bool load = true;
+  bool chargement = false;
 
   Listlogs logs = Listlogs();
 
@@ -54,6 +55,7 @@ class _ListLogsState extends State<ListLogs> {
         logs = listlogsFromJson(res.body);
         toggle = true;
         affiche = true;
+        chargement = true;
 
       });
     }
@@ -127,7 +129,7 @@ class _ListLogsState extends State<ListLogs> {
                     height: 450.0,
                     child:
 
-                    ListView.builder(
+                    chargement ? ListView.builder(
                       // shrinkWrap: true,
                       //  physics: ClampingScrollPhysics(),
                       itemCount: (logs == null || logs.data == null || logs.data.length == 0 )? 0 : logs.data.length,
@@ -208,7 +210,7 @@ class _ListLogsState extends State<ListLogs> {
 //                },
                           ), color: Color(0xff11b719),)
                       ),
-                    ))
+                    ) : Center(child: CircularProgressIndicator(),))
 
               ])
       ) ,

@@ -18,7 +18,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'Agent.dart';
 import 'Listes/listclientlavage.dart';
 import 'Listes/listclients.dart';
-import 'Listes/text.dart';
 import 'Tabs/clientPage.dart';
 import 'client.dart';
 import 'historique.dart';
@@ -259,8 +258,6 @@ class _TransactionState extends State<Transaction> {
       listmatri = resBody;
     });
 
-    print('les matriccules : $listmatri');
-
   }
 
 //  var recette;
@@ -378,10 +375,11 @@ class _TransactionState extends State<Transaction> {
                           },
                           itemSubmitted: (item){
                             setState(() {
+                              idmatricule = null;
                               searchTextField.textField.controller.text = item.nom;
                               searchVal = item.id ;
                               idclient = searchVal;
-                              getMatriculeVehicule();
+                              getMatriculeVehicule() ;
                             });
                           },
                           itemBuilder: (context, item){
@@ -417,7 +415,6 @@ class _TransactionState extends State<Transaction> {
                       child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-
                       SizedBox(width: 5.0,),
                       Expanded(
                           child : DropdownButton(
@@ -435,7 +432,7 @@ class _TransactionState extends State<Transaction> {
 
 
                             },
-                            value: idmatricule,
+                            value: (idmatricule != null) ? idmatricule : null,
                             isExpanded: true,
                             hint: Text('MATRICULE', style: TextStyle(fontSize: 18.0),),
                             style: TextStyle(color: Color(0xff11b719)),

@@ -41,6 +41,7 @@ class _SuperAdminListState extends State<SuperAdminList> {
   var admin ;
   var iduser ;
   bool load = true;
+  bool chargement = false;
 
 
   Future<dynamic> getUsers() async{
@@ -55,6 +56,7 @@ class _SuperAdminListState extends State<SuperAdminList> {
 
     setState(() {
       listusers =  listusersFromJson(res.body);
+      chargement = true;
     });
     return listusers;
   }
@@ -135,7 +137,7 @@ class _SuperAdminListState extends State<SuperAdminList> {
           ],
         ),
 
-        body: load ? ListView.separated(
+        body: chargement ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;

@@ -39,6 +39,7 @@ class _ListAgentState extends State<ListAgent> {
   var admin ;
 var idagen ;
 bool load = true;
+bool chargement = false;
 
 var fenetre = 'LISTE DES AGENTS';
 
@@ -55,6 +56,7 @@ var fenetre = 'LISTE DES AGENTS';
 
     setState(() {
       listagents = listagentsFromJson(res.body);
+      chargement = true;
     });
     return listagents;
   }
@@ -134,7 +136,7 @@ var fenetre = 'LISTE DES AGENTS';
         appBar: AppBar(
           title: Text('LISTE DES AGENTS'),
         ),
-        body: load ? ListView.separated(
+        body: chargement ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;

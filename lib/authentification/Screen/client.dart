@@ -922,29 +922,30 @@ class _ClientState extends State<Client> {
     }
   }
 
-  void checkMatriculeAndContact()async{
-
+  void checkMatriculeAndContact()async {
+    if(validateAndSave()) {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
 
 
-    var resContact = await CallApi().getData('checkContact/$id/${_contactClient.text}');
+    var resContact = await CallApi().getData(
+        'checkContact/$id/${_contactClient.text}');
     var contactbody = json.decode(resContact.body);
 
 
-    var resMatricule = await CallApi().getData('checkMatricule/$id/${_matricule.text}');
+    var resMatricule = await CallApi().getData(
+        'checkMatricule/$id/${_matricule.text}');
     var matriculebody = json.decode(resMatricule.body);
 
-    if((matriculebody['success']) || (contactbody['success'])){
-
+    if ((matriculebody['success']) || (contactbody['success'])) {
       // print('donnee 1 $matriculebody');
       //print('donnee 2 $contactbody');
       _showMsg("Ce matricule ou ce contact existe deja !!!");
-    }else{
+    } else {
       //_showMsg("existe pas!!!");
       _sendDataClient();
-
     }
+  }
 
   }
 

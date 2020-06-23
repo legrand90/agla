@@ -29,8 +29,9 @@ class _ListTransactionState extends State<ListTransaction> {
 
   var json2 ;
   bool toggle = false;
-  var affiche = false;
+  bool affiche = false;
   bool load = true;
+  bool chargement = false;
 
   Listtransactions listtransa = Listtransactions();
 
@@ -46,20 +47,14 @@ class _ListTransactionState extends State<ListTransaction> {
 //    });
 
     if(res.statusCode == 200){
-
       var resBody = json.decode(res.body)['data'];
-
       setState(() {
         listtransa = listtransactionsFromJson(res.body);
         toggle = true;
         affiche = true;
-
+        chargement = true;
       });
     }
-
-
-    print('donnees json : $listtransa');
-
   }
 
   String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
@@ -153,7 +148,7 @@ class _ListTransactionState extends State<ListTransaction> {
 
                   SizedBox(height: 40.0,),
 
-                  Container(
+                  chargement ? Container(
                       height: 360.0,
                       child:
 
@@ -237,7 +232,7 @@ class _ListTransactionState extends State<ListTransaction> {
 //                },
                             ), color: Color(0xff11b719),)
                         ),
-                      ))
+                      )) : Center(child: CircularProgressIndicator(),)
 
                 ])
         ) ,

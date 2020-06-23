@@ -35,6 +35,7 @@ class _ListSoldeState extends State<ListSolde> {
   bool toggle = false;
   var affiche = false;
   bool load = true;
+  bool chargement = false;
 
   Listsoldes soldes = Listsoldes();
 
@@ -57,6 +58,7 @@ class _ListSoldeState extends State<ListSolde> {
         soldes = listsoldesFromJson(res.body);
         toggle = true;
         affiche = true;
+        chargement = true;
 
       });
     }
@@ -126,7 +128,7 @@ class _ListSoldeState extends State<ListSolde> {
 
                 SizedBox(height: 40.0,),
 
-                Container(
+                chargement ? Container(
                     height: 800.0,
                     child:
 
@@ -187,7 +189,7 @@ class _ListSoldeState extends State<ListSolde> {
 //                },
                           ), color: Color(0xff11b719),)
                       ),
-                    ))
+                    )) : Center(child: CircularProgressIndicator(),)
 
               ])
       ) ,

@@ -41,6 +41,7 @@ class _TarificationListState extends State<TarificationList> {
   var idtarif;
   var admin;
   bool load = true;
+  bool chargement = false;
 
 
   Future<dynamic> getPost() async{
@@ -55,6 +56,7 @@ class _TarificationListState extends State<TarificationList> {
 
     setState(() {
       listtari = listTarificationsFromJson(res.body);
+      chargement = true;
     });
     return listtari;
   }
@@ -130,7 +132,7 @@ class _TarificationListState extends State<TarificationList> {
         appBar: AppBar(
           title: Text('LISTE DES TARIFICATIONS'),
         ),
-        body: load ? ListView.separated(
+        body: chargement ? ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
 
             //indexItem = index;

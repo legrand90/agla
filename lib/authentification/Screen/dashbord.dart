@@ -53,7 +53,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
               child: Text("Oui"),
               onPressed: () => _logout(),
             )
-          ],
+          ]
         )
     );
   }
@@ -125,6 +125,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
               title: Text('TABLEAU DE BOARD'),
             ),
             body: load ? new Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
                 child: new ListView(
                   //mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -133,11 +134,8 @@ class _DashbordScreenState extends State<DashbordScreen> {
                     (admin == '0' || admin == '1') ? Row(
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.only(left: 10.0, right: 10.0),),
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),),
                         Container(
-                          margin: const EdgeInsets.only(
-                            left: 10.0,
-                          ),
                           width: 150.0,
                           height: 140.0,
                           child: new Card(
@@ -156,9 +154,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                         ),
 
                         Container(
-                          margin: const EdgeInsets.only(
-                            right: 10.0,
-                          ),
+
                           width: 150.0,
                           height: 140.0,
                           child: new Card(
@@ -181,11 +177,9 @@ class _DashbordScreenState extends State<DashbordScreen> {
                     (admin == '0' || admin == '1') ? Row(
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.only(left: 10.0, right: 10.0),),
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),),
                         Container(
-                          margin: const EdgeInsets.only(
-                            left: 10.0,
-                          ),
+
                           width: 150.0,
                           height: 140.0,
                           child: new Card(
@@ -204,9 +198,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                         ),
 
                         Container(
-                          margin: const EdgeInsets.only(
-                            right: 10.0,
-                          ),
+
                           width: 150.0,
                           height: 140.0,
                           child: new Card(
