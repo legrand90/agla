@@ -29,6 +29,7 @@ class DashbordScreen extends StatefulWidget {
 
 class _DashbordScreenState extends State<DashbordScreen> {
   Timer timer;
+  Timer timer2;
 
   int Counter = 0 ;
   var name ;
@@ -63,7 +64,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
     return showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text("Vous voulez vraiment vous deconnecter ?"),
+          title: Text("Vous serez débité de XXX FCFA. Cliquez sur Oui pour effectuer votre paiement !"),
           actions: <Widget>[
             FlatButton(
               child: Text("Non"),
@@ -71,7 +72,14 @@ class _DashbordScreenState extends State<DashbordScreen> {
             ),
             FlatButton(
               child: Text("Oui"),
-              onPressed: () => _logout(),
+              onPressed: () => Navigator.push(
+                context,
+                new MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return ClientPage();
+                  },
+                ),
+              ),
             )
           ],
         )
@@ -114,13 +122,14 @@ class _DashbordScreenState extends State<DashbordScreen> {
     //this.nombreCarWashed();
 
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => getRecette());
+    timer2 = Timer.periodic(Duration(seconds: 1), (Timer t) => setState((){}));
   }
 
   Widget build(BuildContext context){
       return  WillPopScope(
             onWillPop: () async => _onBackPressed(),
           child:  Scaffold(
-            backgroundColor: Colors.grey[200],
+            backgroundColor: Colors.white,
             appBar: AppBar(
               title: Text('TABLEAU DE BOARD'),
             ),
@@ -129,8 +138,8 @@ class _DashbordScreenState extends State<DashbordScreen> {
                 child: new ListView(
                   //mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    LogoAgla(),
                     SizedBox(height: 50.0,),
-
                     (admin == '0' || admin == '1') ? Row(
                       children: <Widget>[
                         Padding(
@@ -886,9 +895,20 @@ class _DashbordScreenState extends State<DashbordScreen> {
     }
   }
 
-
-
   }
+
+class LogoAgla extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/TableauDeBord.jpg');
+    Image image = Image(image: assetImage, width: 250.0,);
+
+    return Container(child: image,);
+  }
+
+}
 
 
 

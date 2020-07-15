@@ -10,6 +10,7 @@ import 'package:lavage/authentification/Screen/Couleur.dart';
 import 'package:lavage/authentification/Screen/Listes/listlog.dart';
 import 'package:lavage/authentification/Screen/Listes/listusers_pw.dart';
 import 'package:lavage/authentification/Screen/Marque.dart';
+import 'package:lavage/authentification/Screen/cinetpayPage.dart';
 import 'package:lavage/authentification/Screen/client.dart';
 import 'package:lavage/authentification/Screen/commission.dart';
 import 'package:lavage/authentification/Screen/create_user.dart';
@@ -26,6 +27,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'Listes/listtarification.dart';
 import 'Tabs/clientPage.dart';
+import 'TabsCinetpay/cinetpayTabs.dart';
 import 'TabsTransactionPaiement/paiementTab.dart';
 import 'Transaction.dart';
 import 'create_superAdmin.dart';
@@ -452,6 +454,60 @@ class _RegisterState extends State<Register> {
                                       });
                                     },
                                     child: Text('Transaction Paiement',style: TextStyle(color: Colors.white)),
+                                  )),
+                            ),
+                            /*
+                        new Stack(
+                          children: <Widget>[
+                            new Image.asset(
+                              'assets/mobile1.png',
+                              width: 200.0,
+                              height: 120.0,
+                            ),
+                          ],
+                        ),
+                        */
+                            //   onTap{("")}
+                          ),
+                        ),
+                      ),
+                    ],
+                  ) : Text(''),
+
+
+                  (admin == '0' || admin == '1') ? Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
+                      SizedBox(
+                        width: 150.0,
+                        height: 140.0,
+                        child: new Card(
+                          child: Container(
+                            child: Center(
+                              child: Container(
+                                  width: 150.0,
+                                  height: 140.0,
+                                  child : FlatButton(
+                                    color: Color(0xff0200F4),
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                          builder: (BuildContext context) {
+                                            return CinetpayTab();
+                                          },
+                                        ),
+                                      );
+
+                                      setState(() {
+                                        load = true;
+                                      });
+                                    },
+                                    child: Text('Services Cinetpay',style: TextStyle(color: Colors.white)),
                                   )),
                             ),
                             /*

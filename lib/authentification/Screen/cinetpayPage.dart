@@ -1,82 +1,54 @@
+import 'dart:async';
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-//import 'package:font_awesome_flutter/fa_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:json_table/json_table.dart';
-import 'package:http/http.dart' as http;
 import 'package:lavage/api/api.dart';
-import 'package:lavage/authentification/Models/Transaction.dart';
-import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
+import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-import '../Transaction.dart';
-import '../dashbord.dart';
-import '../historique.dart';
-import '../login_page.dart';
-import '../register.dart';
+import 'Listes/listprestations.dart';
+import 'Tabs/clientPage.dart';
+import 'Transaction.dart';
+import 'dashbord.dart';
+import 'historique.dart';
+import 'login_page.dart';
 
-class ListTransaction extends StatefulWidget {
+class CinetpayPage extends StatefulWidget {
   @override
-  _ListTransactionState createState() => _ListTransactionState();
+  _CinetpayPageState createState() => new _CinetpayPageState();
 }
 
-class _ListTransactionState extends State<ListTransaction> {
+class _CinetpayPageState extends State<CinetpayPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _nomPrestation = TextEditingController();
+  final TextEditingController _descripPrestation = TextEditingController();
+  final TextEditingController _montant = TextEditingController();
 
-  var json2 ;
-  bool toggle = false;
-  bool affiche = false;
+  String nomPrestation;
+  String descripPrestation;
+
+  bool _autoValidate = false;
+  bool _loadingVisible = false;
+  String montant;
+  var idPresta = 0;
+  bool loading = true;
   bool load = true;
-  bool chargement = false;
 
-  Listtransactions listtransa = Listtransactions();
+  var fenetre = 'CINETPAY';
 
-  void getTransactions() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    //final String urlTrans = "http://192.168.43.217:8000/api/Transaction/$id";
-    var res = await CallApi().getData('getLast10Transactions/$id');
-
-    if(res.statusCode == 200){
-      var resBody = json.decode(res.body)['data'];
-      setState(() {
-        listtransa = listtransactionsFromJson(res.body);
-        toggle = true;
-        affiche = true;
-        chargement = true;
-      });
-    }
-  }
-
-  String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
-
-  var recette;
-  var commissions;
-  var totalTarif;
-  void getRecette() async{
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    // String url = "http://192.168.43.217:8000/api/getCommissionsAndRecette/$date/$id";
-    var res = await CallApi().getData('getCommissionsAndRecette/$date/$id');
-    //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
-    var resBody = json.decode(res.body);
-    // final response = await http.get('$url');
-
+  Future <void> _changeLoadingVisible() async {
     setState(() {
-      recette = (resBody['recette'] == null) ? 0 : resBody['recette'];
-      commissions = (resBody['commissions'] == null) ? 0 : resBody['commissions'];
-      totalTarif = recette + commissions;
+      _loadingVisible = !_loadingVisible;
     });
-
-    //print("la recette est  : ${recette['recette']}");
-
   }
+
 
   final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
+
+  String dateHeure = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
 
   _showMsg(msg) {
     final snackBar = SnackBar(
@@ -91,146 +63,43 @@ class _ListTransactionState extends State<ListTransaction> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
+
   @override
   void initState(){
     super.initState();
-    this.getRecette();
     this.getUserName();
-    this.getTransactions();
     this.getStatut();
   }
   Widget build(BuildContext context){
-    var json = json2;
+    final logo = Hero(
+      tag: 'logo',
+      child: CircleAvatar(
+          backgroundColor: Colors.transparent,
+          radius: 60.0,
+          child: ClipOval(
+            child: Image.asset(
+              'assets/images/logo_rouge.png',
+              fit: BoxFit.cover,
+              width: 60.0,
+              height: 60.0,
+            ),
+          )),
+    );
 
-    //SystemChrome.setPreferredOrientations([
-    // DeviceOrientation.landscapeLeft,
-    // DeviceOrientation.landscapeRight
-    //]);
-
+    // TODO: implement build
     return Scaffold(
-        key: _scaffoldKey,
-        //ackgroundColor: Color(0xFFDADADA),
-        body: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                new SliverAppBar(
-                  pinned: true,
-                  title: new Text('TRANSACTIONS JOURNALIERES'),
-                ),
-              ];
-            },
-            body: ListView(
-              //shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                children: <Widget>[
-                  SizedBox(height: 40.0,),
-                  Container(
-                    margin: EdgeInsets.only(left: 20.0,),
-                    child: Text("TOTAL TARIFICATIONS : $totalTarif FCFA", style: TextStyle(fontSize: 18.0)),
-                  ),
-
-                  SizedBox(height: 40.0,),
-                  Container(
-                    margin: EdgeInsets.only(left: 15.0,),
-                    child: Text("TOTAL COMMISSIONS : $commissions FCFA", style: TextStyle(fontSize: 18.0)),
-                  ),
-
-                  SizedBox(height: 40.0,),
-                  Container(
-                    margin: EdgeInsets.only(left: 15.0,),
-                    child: Text("RECETTE : $recette FCFA", style: TextStyle(fontSize: 18.0)),
-                  ),
-
-                  SizedBox(height: 40.0,),
-
-                  chargement ? Container(
-                      height: 360.0,
-                      child:
-
-                      ListView.builder(
-                        // shrinkWrap: true,
-                        //  physics: ClampingScrollPhysics(),
-                        itemCount: (listtransa == null || listtransa.data == null || listtransa.data.length == 0 )? 0 : listtransa.data.length,
-                        itemBuilder: (_,int index)=>Container(
-                            child : Card(child :ListTile(
-                              title: Column(
-                                children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      Text('DATE : '),
-                                      SizedBox(width: 20.0,),
-                                      Text('${listtransa.data [index].date}'),
-                                    ],
-                                  ),
-                                  SizedBox(height: 10.0,),
-                                  Row(
-                                    children: <Widget>[
-                                      Text('AGENT : '),
-                                      SizedBox(width: 20.0,),
-                                      Expanded(child: Text('${listtransa.data [index].agent}'),)
-                                    ],
-                                  ),
-                                  SizedBox(height: 10.0,),
-                                  Row(
-                                    children: <Widget>[
-                                      Text('CLIENT : '),
-                                      SizedBox(width: 20.0,),
-                                      Expanded(child: Text('${listtransa.data [index].client}'),)
-                                    ],
-                                  ),
-                                  SizedBox(height: 10.0,),
-                                  Row(
-                                    children: <Widget>[
-                                      Text('PLAQUE D\'IMMATRICULATION : '),
-                                      SizedBox(width: 20.0,),
-                                      Expanded(child: Text('${listtransa.data [index].plaqueImmatriculation}'),)
-
-                                    ],
-                                  ),
-                                  SizedBox(height: 10.0,),
-                                  Row(
-                                    children: <Widget>[
-                                      Text('PRESTATION : '),
-                                      SizedBox(width: 20.0,),
-                                      Text('${listtransa.data [index].prestation}'),
-                                    ],
-                                  ),
-                                  SizedBox(height: 10.0,),
-                                  Row(
-                                    children: <Widget>[
-                                      Text('TARIFICATION : '),
-                                      SizedBox(width: 20.0,),
-                                      Text('${listtransa.data [index].tarification} FCFA'),
-                                    ],
-                                  ),
-                                  SizedBox(height: 10.0,),
-                                  Row(
-                                    children: <Widget>[
-                                      Text('COMMISSION : '),
-                                      SizedBox(width: 20.0,),
-                                      Text('${listtransa.data [index].commission} FCFA'),
-                                    ],
-                                  ),
-                                  // SizedBox(height: 20.0,),
-                                  // Divider(color: Colors.white, height: 10.0,),
-                                ],
-                              ),
-
-
-
-//                onTap: (){
-////                  Navigator.push(
-////                      context,
-////                      MaterialPageRoute(
-////                        builder: (context) => DetailsPrestation(idpresta: listprestations.data[index].id),
-////                      ));
-//                },
-                            ), color: Color(0xff11b719),)
-                        ),
-                      )) : Center(child: CircularProgressIndicator(),)
-
-                ])
-        ) ,
+      key: _scaffoldKey,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text('$fenetre'),
+      ),
+      body: WebView(
+        initialUrl: display ? UrlWeb : '',
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebViewCreated: (WebViewController webViewController) {
+          controller = webViewController;
+        },
+      ),
 
       bottomNavigationBar: BottomNavigationBar(
         //backgroundColor: Color(0xff0200F4),
@@ -290,6 +159,7 @@ class _ListTransactionState extends State<ListTransaction> {
           )
         ],
       ),
+
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
@@ -477,7 +347,7 @@ class _ListTransactionState extends State<ListTransaction> {
                     icon: FaIcon(FontAwesomeIcons.chrome),
                     onPressed: ()async{
 
-                      await _launchMaxomURL();
+                      _launchMaxomURL();
                     },
                   ),
                 ],
@@ -487,8 +357,75 @@ class _ListTransactionState extends State<ListTransaction> {
 
           ],
         ),
-      ) : Center(child: CircularProgressIndicator(),),);
+      ) : Center(child: CircularProgressIndicator(),),
 
+    );
+  }
+
+  Future<void> smsError(String error) async{
+    Text titre = new Text("Error:");
+    Text soustitre = new Text(error);
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext buildContext){
+          return new AlertDialog(title: titre, content: soustitre, actions: <Widget>[okButton(buildContext)],);
+        }
+    );
+  }
+
+  FlatButton okButton(BuildContext context){
+    return new FlatButton(onPressed: ()=> Navigator.of(context).pop(), child: new Text("ok"));
+  }
+  //methode pour se connecter
+  bool validateAndSave(){
+    final form = _formKey.currentState;
+    if(form.validate()){
+      form.save();
+      return true;
+    }
+    return false;
+  }
+  void _sendDataPrestation ()async{
+    if(validateAndSave()) {
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+      var id = localStorage.getString('id_lavage');
+      var id_user = localStorage.getInt('ID');
+      //try {
+      var data = {
+        'libelle_prestation': _nomPrestation.text.toUpperCase(),
+        'descrip_prestation': _descripPrestation.text.toUpperCase(),
+        'id_lavage': id,
+      };
+
+      var dataLog = {
+        'fenetre': '$fenetre',
+        'tache': "Enregistrement des Prestations et Tarifications",
+        'execution': "Enregistrer",
+        'id_user': id_user,
+        'dateEnreg': dateHeure,
+        'id_lavage': id,
+        'type_user': statu,
+      };
+
+      var res = await CallApi().postDataPrestation(data, 'create_prestation');
+      var resLog = await CallApi().postData(dataLog, 'create_log');
+      var body = json.decode(res.body)['data'];
+      // print('les donnees de prestation: ${body}');
+
+      setState(() {
+        // success = true;
+        idPresta = body[0]['id'];
+      });
+
+      if(res.statusCode == 200){
+        _sendDataTarification();
+      }
+
+    }
+
+    //print(' le type ${idPresta.runtimeType}');
+    // print(' le type val ${idPresta}');
   }
 
   void _logout() async{
@@ -511,17 +448,91 @@ class _ListTransactionState extends State<ListTransaction> {
 
   }
 
+  void checkPrestation()async {
+    if(validateAndSave()) {
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+      var id = localStorage.getString('id_lavage');
+
+
+      var resPrestation = await CallApi().getData(
+          'checkPrestation/$id/${_nomPrestation.text}');
+      var prestationBody = json.decode(resPrestation.body);
+
+      if ((prestationBody['success'])) {
+        // print('donnee 1 $matriculebody');
+        //print('donnee 2 $contactbody');
+        _showMsg("Cette prestation existe deja !!!");
+      } else {
+        //_showMsg("existe pas!!!");
+        _sendDataPrestation();
+      }
+    }
+
+  }
+
   var nameUser;
+  var idLav;
+  var fulUrl;
+  String UrlWeb = 'https://service.agla.app/api/paymentPage/';
+  bool display = false;
 
   void getUserName() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var userName = localStorage.getString('nom');
+    var res = await CallApi().getData('paymentPage/$idLav');
+     idLav = localStorage.getString('id_lavage');
+    UrlWeb = (UrlWeb + idLav).toString();
 
     setState(() {
       nameUser = userName;
+      idLav = localStorage.getString('id_lavage');
+      controller.loadUrl(UrlWeb);
+     // controller.loadUrl(UrlWeb);
+      display = true;
     });
 
-    //print('la valeur de admin est : $admin');
+    print("la valeur de idlav est : $UrlWeb");
+
+  }
+
+
+  void _sendDataTarification() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+    if (validateAndSave()) {
+      //_sendDataPrestation();
+
+      var data = {
+        'id_prestation': idPresta,
+        'montant': _montant.text,
+        'id_lavage': id,
+
+      };
+
+      var res = await CallApi().postAppData(data, 'create_tarification');
+      var body = json.decode(res.body);
+      print('$body');
+
+      if (res.statusCode == 200) {
+        SharedPreferences localStorage = await SharedPreferences.getInstance();
+        localStorage.setString('idTarif', body['id'].toString());
+        localStorage.setString('presta_Montant', (body['prestation_montant']));
+        localStorage.setBool('valeur', true);
+        // print(localStorage.getString('idTarif'));
+        //  print(localStorage.getString('presta_Montant'));
+
+        setState(() {
+          _nomPrestation.text = '';
+          _descripPrestation.text = '';
+          _montant.text = '' ;
+        });
+
+        _showMsg("Donnees enregistrees avec succes ");
+
+      }else{
+        _showMsg("Erreur d'enregistrement ");
+      }
+    }
 
   }
 
@@ -548,6 +559,7 @@ class _ListTransactionState extends State<ListTransaction> {
   var adm;
   var statu;
   var libLavage;
+  WebViewController controller;
 
   Future <void> getStatut()async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -579,7 +591,6 @@ class _ListTransactionState extends State<ListTransaction> {
         });
       }
     }
-
   }
 
   _launchFacebookURL() async {
@@ -600,5 +611,8 @@ class _ListTransactionState extends State<ListTransaction> {
     }
   }
 
+
 }
+
+
 

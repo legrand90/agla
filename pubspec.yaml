@@ -42,6 +42,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   flutter_svg: ^0.17.3+1
+  webview_flutter: ^0.3.22+1
 
 dev_dependencies:
   flutter_test:
@@ -63,7 +64,10 @@ flutter:
   assets:
     - assets/images/photo_coffee_shop.png
     - assets/images/photo_museum.png
+    - assets/images/imgAc.jpg
     - assets/images/logoAgla.png
+    - assets/images/TableauDeBord.jpg
+    #- assets/images/acceuilImage.jpg
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
