@@ -222,7 +222,7 @@ class _LavageState extends State<Lavage> {
                                     borderRadius: new BorderRadius.circular(
                                         30.0)
                                 ),
-                                color: Color(0xff0200F4),
+                                color: Color(0xff003372),
                                 onPressed: ()async {
                                   setState(() {
                                     loader = false;
@@ -266,7 +266,7 @@ class _LavageState extends State<Lavage> {
                                     borderRadius: new BorderRadius.circular(
                                         30.0)
                                 ),
-                                color: Color(0xff0200F4),
+                                color: Color(0xff003372),
                                 onPressed: () async{
                                   setState(() {
                                     load = false;
@@ -399,7 +399,7 @@ class _LavageState extends State<Lavage> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(
@@ -525,7 +525,7 @@ class _LavageState extends State<Lavage> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(

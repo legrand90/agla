@@ -118,7 +118,7 @@ class _TarificationState extends State<Tarification> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  logo,
+                  LogoTarification(),
                   SizedBox(height: 40.0),
                   Text("TARIFICATION",
                       textAlign: TextAlign.center,
@@ -318,7 +318,7 @@ class _TarificationState extends State<Tarification> {
           BottomNavigationBarItem(
             //backgroundColor: Color(0xff0200F4),
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.settings),
               onPressed: (){
                 Navigator.push(
@@ -335,7 +335,7 @@ class _TarificationState extends State<Tarification> {
           ),
           BottomNavigationBarItem(
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.mode_edit),
               onPressed: (){
                 Navigator.push(
@@ -352,7 +352,7 @@ class _TarificationState extends State<Tarification> {
           ),
           BottomNavigationBarItem(
               icon: IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.search),
                 onPressed: (){
                   Navigator.push(
@@ -385,7 +385,7 @@ class _TarificationState extends State<Tarification> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(
@@ -747,5 +747,19 @@ class _TarificationState extends State<Tarification> {
     }
   }
 }
+
+ class LogoTarification extends StatelessWidget{
+
+   @override
+   Widget build(BuildContext context) {
+     // TODO: implement build
+     AssetImage assetImage = AssetImage('assets/images/Tarification.jpg');
+     Image image = Image(image: assetImage, width: 250.0,);
+
+     return Container(child: image,);
+   }
+
+ }
+
 
 

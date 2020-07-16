@@ -339,7 +339,7 @@ class _EditTarificationState extends State<EditTarification> {
                                     borderRadius: new BorderRadius.circular(
                                         30.0)
                                 ),
-                                color: Color(0xff0200F4),
+                                color: Color(0xff003372),
                                 onPressed: () async{
                                   setState(() {
                                     loading = false;
@@ -394,7 +394,7 @@ class _EditTarificationState extends State<EditTarification> {
           BottomNavigationBarItem(
             //backgroundColor: Color(0xff0200F4),
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.settings),
               onPressed: (){
                 Navigator.push(
@@ -411,7 +411,7 @@ class _EditTarificationState extends State<EditTarification> {
           ),
           BottomNavigationBarItem(
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.mode_edit),
               onPressed: (){
                 Navigator.push(
@@ -428,7 +428,7 @@ class _EditTarificationState extends State<EditTarification> {
           ),
           BottomNavigationBarItem(
               icon: IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.search),
                 onPressed: (){
                   Navigator.push(
@@ -461,7 +461,7 @@ class _EditTarificationState extends State<EditTarification> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(

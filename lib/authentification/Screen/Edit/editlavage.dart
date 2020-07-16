@@ -310,7 +310,7 @@ class _EditLavageState extends State<EditLavage> {
                                     borderRadius: new BorderRadius.circular(
                                         30.0)
                                 ),
-                                color: Color(0xff0200F4),
+                                color: Color(0xff003372),
                                 onPressed: () async{
                                   setState(() {
                                     loading = false;
@@ -436,7 +436,7 @@ class _EditLavageState extends State<EditLavage> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(
@@ -562,7 +562,7 @@ class _EditLavageState extends State<EditLavage> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(

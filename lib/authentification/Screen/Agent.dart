@@ -202,7 +202,7 @@ class _AgentState extends State<Agent> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      logo,
+                      LogoAgent(),
                       SizedBox(height: 40.0),
                       Text("Enregistrer un Agent",
                           textAlign: TextAlign.center,
@@ -441,7 +441,7 @@ class _AgentState extends State<Agent> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff0200F4),
+                                color: Color(0xff003372),
                                 onPressed: ()async{
                                   setState(() {
                                     loading = false;
@@ -490,7 +490,7 @@ class _AgentState extends State<Agent> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff0200F4),
+                                color: Color(0xff003372),
                                 onPressed: () async{
                                   setState(() {
                                     load = false;
@@ -553,7 +553,7 @@ class _AgentState extends State<Agent> {
           BottomNavigationBarItem(
             //backgroundColor: Color(0xff0200F4),
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.settings),
               onPressed: (){
                 Navigator.push(
@@ -570,7 +570,7 @@ class _AgentState extends State<Agent> {
           ),
           BottomNavigationBarItem(
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.mode_edit),
               onPressed: (){
                 Navigator.push(
@@ -587,7 +587,7 @@ class _AgentState extends State<Agent> {
           ),
           BottomNavigationBarItem(
               icon: IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.search),
                 onPressed: (){
                   Navigator.push(
@@ -620,7 +620,7 @@ class _AgentState extends State<Agent> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(
@@ -1101,6 +1101,21 @@ class _AgentState extends State<Agent> {
     }
   }
 }
+
+
+class LogoAgent extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/Agent.jpg');
+    Image image = Image(image: assetImage, width: 250.0,);
+
+    return Container(child: image,);
+  }
+
+}
+
 
 
 

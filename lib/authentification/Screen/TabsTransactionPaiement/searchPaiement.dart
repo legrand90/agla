@@ -222,11 +222,12 @@ class _SearchPaiementState extends State<SearchPaiement> {
         title: Text("INFOS PAIEMENT"),
       ),
 
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       body: Form(
           key: _formKey,
           child: ListView(
             children: <Widget>[
+              LogoRecherche(),
               SizedBox(
                 height: 30.2,
               ),
@@ -389,7 +390,7 @@ class _SearchPaiementState extends State<SearchPaiement> {
                         shape: new RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(30.0)
                         ),
-                        color: Color(0xff0200F4),
+                        color: Color(0xff003372),
                         onPressed: ()async{
                           setState(() {
                             loading = false;
@@ -796,6 +797,20 @@ class _SearchPaiementState extends State<SearchPaiement> {
     }
 
   }
+
+class LogoRecherche extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/Recherche.jpg');
+    Image image = Image(image: assetImage, width: 250.0,);
+
+    return Container(child: image,);
+  }
+
+}
+
 
 
 

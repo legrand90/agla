@@ -170,7 +170,7 @@ class _MatriculeState extends State<Matricule> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-
+                  LogoMatricule(),
                   Text("MATRICULE",
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -363,7 +363,7 @@ class _MatriculeState extends State<Matricule> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff0200F4),
+                                color: Color(0xff003372),
                                 onPressed: ()async{
                                   setState(() {
                                     loader = false;
@@ -406,7 +406,7 @@ class _MatriculeState extends State<Matricule> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff0200F4),
+                                color: Color(0xff003372),
                                 onPressed: () async{
                                   setState(() {
                                     load = false;
@@ -475,7 +475,7 @@ class _MatriculeState extends State<Matricule> {
           BottomNavigationBarItem(
             //backgroundColor: Color(0xff0200F4),
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.settings),
               onPressed: (){
                 Navigator.push(
@@ -492,7 +492,7 @@ class _MatriculeState extends State<Matricule> {
           ),
           BottomNavigationBarItem(
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.mode_edit),
               onPressed: (){
                 Navigator.push(
@@ -509,7 +509,7 @@ class _MatriculeState extends State<Matricule> {
           ),
           BottomNavigationBarItem(
               icon: IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.search),
                 onPressed: (){
                   Navigator.push(
@@ -542,7 +542,7 @@ class _MatriculeState extends State<Matricule> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(
@@ -945,6 +945,20 @@ class _MatriculeState extends State<Matricule> {
   }
 
 }
+
+class LogoMatricule extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/Matricule.jpg');
+    Image image = Image(image: assetImage, width: 250.0,);
+
+    return Container(child: image,);
+  }
+
+}
+
 
 
 

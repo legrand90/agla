@@ -130,11 +130,12 @@ class _ComptabiliteTabPageTabPageState extends State<ComptabiliteTabPage> {
       //height: 300.0,
       key: _scaffoldKey,
 
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       body: Form(
           key: _formKey,
           child: ListView(
             children: <Widget>[
+              LogoRecherche(),
               SizedBox(
                 height: 30.2,
               ),
@@ -340,4 +341,15 @@ class _ComptabiliteTabPageTabPageState extends State<ComptabiliteTabPage> {
 }
 
 
+class LogoRecherche extends StatelessWidget{
 
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/Recherche.jpg');
+    Image image = Image(image: assetImage, width: 250.0,);
+
+    return Container(child: image,);
+  }
+
+}

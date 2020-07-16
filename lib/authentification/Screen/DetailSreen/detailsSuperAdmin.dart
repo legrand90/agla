@@ -279,7 +279,7 @@ class _DetailsSuperAdminState extends State<DetailsSuperAdmin> {
                   backgroundColor: Colors.white,
                 ),
                 decoration: BoxDecoration(
-                  color: Color(0xff0200F4),
+                  color: Color(0xff003372),
                 ),
               ),
               ListTile(

@@ -128,7 +128,7 @@ class _PrestationState extends State<Prestation> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  logo,
+                  LogoPrestations(),
                   SizedBox(height: 40.0),
                   Text("PRESTATION",
                       textAlign: TextAlign.center,
@@ -281,7 +281,7 @@ class _PrestationState extends State<Prestation> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff0200F4),
+                                color: Color(0xff003372),
                                 onPressed: ()async{
                                   setState(() {
                                     loading = false;
@@ -329,7 +329,7 @@ class _PrestationState extends State<Prestation> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff0200F4),
+                                color: Color(0xff003372),
                                 child: new Container(
                                   //padding: const EdgeInsets.only(left: 20.0),
                                   alignment: Alignment.center,
@@ -382,7 +382,7 @@ class _PrestationState extends State<Prestation> {
           BottomNavigationBarItem(
             //backgroundColor: Color(0xff0200F4),
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.settings),
               onPressed: (){
                 Navigator.push(
@@ -399,7 +399,7 @@ class _PrestationState extends State<Prestation> {
           ),
           BottomNavigationBarItem(
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.mode_edit),
               onPressed: (){
                 Navigator.push(
@@ -416,7 +416,7 @@ class _PrestationState extends State<Prestation> {
           ),
           BottomNavigationBarItem(
               icon: IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.search),
                 onPressed: (){
                   Navigator.push(
@@ -449,7 +449,7 @@ class _PrestationState extends State<Prestation> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(
@@ -873,8 +873,22 @@ class _PrestationState extends State<Prestation> {
     }
   }
 
+}
+
+
+class LogoPrestations extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/Prestations.jpg');
+    Image image = Image(image: assetImage, width: 250.0,);
+
+    return Container(child: image,);
+  }
 
 }
+
 
 
 

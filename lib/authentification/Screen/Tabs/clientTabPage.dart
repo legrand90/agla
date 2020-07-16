@@ -278,13 +278,13 @@ class _ClientTabPageState extends State<ClientTabPage> {
   Widget build(BuildContext context){
     return  Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       body: Form(
           key: _formKey,
         //  autovalidate: _autoValidate,
         child: ListView(
           children: <Widget>[
-
+            LogoRecherche(),
             SizedBox(
               height: 30.2,
             ),
@@ -672,5 +672,16 @@ class _ClientTabPageState extends State<ClientTabPage> {
   }
 }
 
+class LogoRecherche extends StatelessWidget{
 
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/Recherche.jpg');
+    Image image = Image(image: assetImage, width: 250.0,);
+
+    return Container(child: image,);
+  }
+
+}
 

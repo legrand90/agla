@@ -100,7 +100,7 @@ class _ListSearchClientState extends State<ListSearchClient> {
                   backgroundColor: Colors.white,
                 ),
                 decoration: BoxDecoration(
-                  color: Color(0xff0200F4),
+                  color: Color(0xff003372),
                 ),
               ),
               ListTile(

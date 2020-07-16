@@ -1,54 +1,73 @@
 import 'dart:convert';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:font_awesome_flutter/fa_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Models/Agent.dart';
-import 'package:lavage/authentification/Models/Commission.dart';
-import 'package:lavage/authentification/Models/Tarifications.dart';
-import 'package:lavage/authentification/Screen/DetailSreen/detailsCommission.dart';
-import 'package:lavage/authentification/Screen/DetailSreen/detailsagent.dart';
-import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
-import 'package:lavage/authentification/Screen/Tabs/comptabiliteTabPage.dart';
-import 'package:lavage/authentification/Screen/Tabs/prestationTabPage.dart';
-import 'package:lavage/authentification/Screen/TabsSuperAdmin/lavageTabPage.dart';
-import 'package:lavage/authentification/Screen/TabsSuperAdmin/typeUserTabPage.dart';
-import 'package:lavage/authentification/Screen/TabsSuperAdmin/userTabPage.dart';
-import 'package:lavage/authentification/Screen/prestation.dart';
+import 'package:lavage/authentification/Models/Cinetpay.dart';
+import 'package:lavage/authentification/Models/Client.dart';
+import 'package:lavage/authentification/Models/Transaction.dart';
+import 'package:lavage/authentification/Screen/DetailSreen/detailsclient.dart';
+import 'package:lavage/authentification/Screen/Edit/editclient.dart';
+import 'package:lavage/authentification/Screen/Edit/edtitransaction.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../Transaction.dart';
-import '../dashbord.dart';
-import '../historique.dart';
-import '../login_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
+//import '../Transaction.dart';
+//import '../login_page.dart';
+//import 'package:http/http.dart' as http;
 
+import 'Tabs/clientPage.dart';
+import 'Transaction.dart';
+import 'dashbord.dart';
+import 'historique.dart';
+import 'login_page.dart';
 
-class SuperAdminPage extends StatefulWidget {
+class HistoriqueCinetpayTrans extends StatefulWidget {
 
-  final Widget child ;
+  Listclients listclients = Listclients () ;
 
-  SuperAdminPage({Key key, @required this.child}) : super(key: key);
+  HistoriqueCinetpayTrans({Key key, @required this.listclients}) : super(key: key);
 
   @override
-  _SuperAdminPageState createState() => _SuperAdminPageState();
+  _HistoriqueCinetpayTransState createState() => _HistoriqueCinetpayTransState(listclients);
 }
 
-Color PrimaryColor = Color(0xff0200F4) ;
+class _HistoriqueCinetpayTransState extends State<HistoriqueCinetpayTrans>{
 
-Color boxDeco = Color(0xff0200F4) ;
+  Listtransactions listtransac = Listtransactions();
 
-class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProviderStateMixin{
+  Listclients listclients = Listclients();
 
-  TabController _tabController ;
+  _HistoriqueCinetpayTransState(this.listclients);
+
+  var admin;
+  var idcli;
+  var idtrans;
+  bool load = true;
+
+  ListcinetpayTrans listcynetpay = ListcinetpayTrans();
+
+  void getCynetpayTransactions() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+    //final String urlTrans = "http://192.168.43.217:8000/api/Transaction/$id";
+    var res = await CallApi().getData('getCinetpayTransAdmin');
+
+    if(res.statusCode == 200){
+      var resBody = json.decode(res.body)['data'];
+      setState(() {
+        listcynetpay = listcinetpayTransFromJson(res.body);
+
+      });
+    }
+  }
 
   final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
-
-  bool load = true;
 
   _showMsg(msg) {
     final snackBar = SnackBar(
@@ -63,97 +82,156 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
+
   @override
 
   void initState(){
-    this.getUserName();
-    this.getStatut();
     super.initState();
-    _tabController = new TabController(vsync: this, length: 3);
+    this.getUserName();
+    this.getCynetpayTransactions();
+    this.getStatut();
   }
 
-  @override
-
   Widget build(BuildContext context){
-    return  DefaultTabController(
-        length: 3,
-        child: Scaffold(
-            key: _scaffoldKey,
-            backgroundColor: Color(0xFFDADADA),
-            body: NestedScrollView(
-              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                return <Widget>[
-                  new SliverAppBar(
-                    pinned: true,
-                    bottom: TabBar(
-                      controller: _tabController,
-                      isScrollable: true,
-                      indicatorColor: Colors.white,
-                      indicatorWeight: 6.0,
-                      onTap: (index){
-                        setState(() {
-                          switch(index){
-                            case 0:
-                              PrimaryColor = Color(0xff0200F4);
-                              boxDeco = Color(0xff0200F4);
-                              break;
-                            case 1:
-                              PrimaryColor = Color(0xff0200F4);
-                              boxDeco = Color(0xff0200F4);
-                              break;
-                            default:
-                          }
-                        });
-
-                      },
-
-                      tabs: <Widget>[
-                        Tab(
-                          child: Container(
-                              child: Text(
-                                'USER',
-                                style: TextStyle(color: Colors.white, fontSize: 18.0),
-                              )
-                          ) ,
-                        ),
-
-                        Tab(
-                          child: Container(
-                              child: Text(
-                                'TYPE USER',
-                                style: TextStyle(color: Colors.white, fontSize: 18.0),
-                              )
-                          ) ,
-                        ),
-
-                        Tab(
-                          child: Container(
-                              child: Text(
-                                'LAVAGE',
-                                style: TextStyle(color: Colors.white, fontSize: 18.0),
-                              )
-                          ) ,
-                        ),
-
-                      ],
-                    ),
-                  ),
-                ];
-              },
-              // backgroundColor: PrimaryColor,
-              //  title: Text(''),
-              body: TabBarView(
-                controller: _tabController,
+    return  WillPopScope(
+      // onWillPop: _onBackPressed,
+        child:Scaffold(
+          key: _scaffoldKey,
+          // backgroundColor: Colors.grey[200],
+          body: NestedScrollView(
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                new SliverAppBar(
+                  pinned: true,
+                  title: new Text('HISTORIQUE'),
+                ),
+              ];
+            },
+            //title: Text('HISTORIQUE'),
+            body: ListView(
+              //shrinkWrap: true,
+                scrollDirection: Axis.vertical,
                 children: <Widget>[
-                  UserSearch(),
-                  TypeUserSearch(),
-                  LavageSearch(),
-                  //  PrestationTabPage(),
-                  // PeriodeTabPage(),
-                ],
-              ),
+                  SizedBox(height: 40.0,),
+                  Center(
+                    //margin: EdgeInsets.only(left: 20.0,),
+                    child: Text("INFOS TRANSACTIONS CINETPAY", style: TextStyle(fontSize: 18.0)),
+                  ),
 
-            ),
+                  SizedBox(height: 40.0,),
+
+                  Container(
+                      height: 470.0,
+                      child:
+
+                      ListView.builder(
+                        // shrinkWrap: true,
+                        //  physics: ClampingScrollPhysics(),
+                        itemCount: (listcynetpay == null || listcynetpay.data == null || listcynetpay.data.length == 0 )? 0 : listcynetpay.data.length,
+                        itemBuilder: (_,int index)=>Container(
+                            child : Card(child :ListTile(
+                              title: Column(
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      Text('DATE : '),
+                                      SizedBox(width: 20.0,),
+                                      Text('${listcynetpay.data [index].dateEnreg}'),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Row(
+                                    children: <Widget>[
+                                      Text('LAVAGE : '),
+                                      SizedBox(width: 20.0,),
+                                      Expanded(child: Text('${listcynetpay.data [index].lavage}'),)
+                                    ],
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Row(
+                                    children: <Widget>[
+                                      Text('NUMERO : '),
+                                      SizedBox(width: 20.0,),
+                                      Expanded(child: Text('${listcynetpay.data [index].tel}'),)
+                                    ],
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Row(
+                                    children: <Widget>[
+                                      Text('ID TRANSACTION : '),
+                                      SizedBox(width: 20.0,),
+                                      Expanded(child: Text('${listcynetpay.data [index].idTransaction}'),)
+
+                                    ],
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Row(
+                                    children: <Widget>[
+                                      Text('MOYEN DE PAIEMENT : '),
+                                      SizedBox(width: 20.0,),
+                                      Text('${listcynetpay.data [index].moyenPaiement}'),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Row(
+                                    children: <Widget>[
+                                      Text('NOMBRE JOUR(S) AVANT : '),
+                                      SizedBox(width: 20.0,),
+                                      Text('${listcynetpay.data [index].jourAvant} '),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Row(
+                                    children: <Widget>[
+                                      Text('NOMBRE JOUR(S) APRES : '),
+                                      SizedBox(width: 20.0,),
+                                      Text('${listcynetpay.data [index].jourApres}'),
+                                    ],
+                                  ),
+                                  // SizedBox(height: 20.0,),
+                                  // Divider(color: Colors.white, height: 10.0,),
+                                ],
+                              ),
+
+
+
+//                onTap: (){
+////                  Navigator.push(
+////                      context,
+////                      MaterialPageRoute(
+////                        builder: (context) => DetailsPrestation(idpresta: listprestations.data[index].id),
+////                      ));
+//                },
+                            ), color: Color(0xff11b719),)
+                        ),
+                      )) ,
+
+                ]),
+
+//        ListView.builder(
+//          itemCount: (listclients == null || listclients.data == null || listclients.data.length == 0 )? 0 : listclients.data.length,
+//          itemBuilder: (_,int index)=>ListTile(
+//            title: Text(listclients.data [index].nom),
+//            onTap: (){
+//              Navigator.push(
+//                  context,
+//                  MaterialPageRoute(
+//                    builder: (context) => DetailsClient(
+//                      idclient : listclients.data[index].id,
+//                      nom : listclients.data[index].nom,
+//                      contact : listclients.data[index].contact,
+//                      email : listclients.data[index].email,
+//                    // matricule : listclients.data[index].matricule,
+//                      idmarque : listclients.data[index].idMarque,
+//                      idcouleur : listclients.data[index].idCouleur,
+//                      dateEnreg : listclients.data[index].dateEnreg,
+//                    ),
+//                  ));
+//            },
+//          ),
+//        ),
+
+          ),
 
           bottomNavigationBar: BottomNavigationBar(
             //backgroundColor: Color(0xff0200F4),
@@ -162,7 +240,7 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
               BottomNavigationBarItem(
                 //backgroundColor: Color(0xff0200F4),
                 icon: new IconButton(
-                  color: Color(0xff0200F4),
+                  color: Color(0xfff80003),
                   icon: Icon(Icons.settings),
                   onPressed: (){
                     Navigator.push(
@@ -179,7 +257,7 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
               ),
               BottomNavigationBarItem(
                 icon: new IconButton(
-                  color: Color(0xff0200F4),
+                  color: Color(0xfff80003),
                   icon: Icon(Icons.mode_edit),
                   onPressed: (){
                     Navigator.push(
@@ -196,7 +274,7 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
               ),
               BottomNavigationBarItem(
                   icon: IconButton(
-                    color: Color(0xff0200F4),
+                    color: Color(0xfff80003),
                     icon: Icon(Icons.search),
                     onPressed: (){
                       Navigator.push(
@@ -213,7 +291,6 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
               )
             ],
           ),
-
           drawer: load ? Drawer(
             // Add a ListView to the drawer. This ensures the user can scroll
             // through the options in the drawer if there isn't enough vertical
@@ -224,7 +301,7 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
               children: <Widget>[
                 UserAccountsDrawerHeader(
                   accountName: Text('$nameUser'),
-                  accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
+                  accountEmail: Text(''),
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: Colors.white,
                   ),
@@ -355,7 +432,7 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
                     backgroundColor: Colors.white,
                   ),
                   decoration: BoxDecoration(
-                    color: Color(0xff0200F4),
+                    color: Color(0xff003372),
                   ),
                 ),
                 ListTile(
@@ -479,10 +556,8 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
               ],
             ),
           ) : Center(child: CircularProgressIndicator(),),
-        ));
-
-
-
+        )
+    );
   }
 
   void _logout() async{
@@ -506,8 +581,6 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
   }
 
   var nameUser;
-  var isadmin;
-  var admin;
 
   void getUserName() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -515,11 +588,9 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
 
     setState(() {
       nameUser = userName;
-      isadmin = localStorage.getString('Admin');
-      admin = localStorage.getString('Admin');
     });
 
-    print('la valeur de admin est : $isadmin');
+    //print('la valeur de admin est : $admin');
 
   }
 
@@ -577,6 +648,7 @@ class _SuperAdminPageState extends State<SuperAdminPage> with SingleTickerProvid
         });
       }
     }
+
 
   }
 

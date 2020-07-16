@@ -193,11 +193,12 @@ class _CreditAgentState extends State<CreditAgent> {
       //height: 300.0,
       key: _scaffoldKey,
 
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       body: Form(
           key: _formKey,
           child: ListView(
             children: <Widget>[
+              LogoTransactions(),
               SizedBox(
                 height: 30.2,
               ),
@@ -305,7 +306,7 @@ class _CreditAgentState extends State<CreditAgent> {
                         shape: new RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(30.0)
                         ),
-                        color: Color(0xff0200F4),
+                        color: Color(0xff003372),
                         onPressed: ()async{
                           setState(() {
                             loading = false;

@@ -120,6 +120,7 @@ class _ListSoldeState extends State<ListSolde> {
             //shrinkWrap: true,
               scrollDirection: Axis.vertical,
               children: <Widget>[
+                LogoSolde(),
                 SizedBox(height: 40.0,),
                 Container(
                   margin: EdgeInsets.only(left: 20.0,),
@@ -201,7 +202,7 @@ class _ListSoldeState extends State<ListSolde> {
           BottomNavigationBarItem(
             //backgroundColor: Color(0xff0200F4),
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.settings),
               onPressed: (){
                 Navigator.push(
@@ -218,7 +219,7 @@ class _ListSoldeState extends State<ListSolde> {
           ),
           BottomNavigationBarItem(
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.mode_edit),
               onPressed: (){
                 Navigator.push(
@@ -235,7 +236,7 @@ class _ListSoldeState extends State<ListSolde> {
           ),
           BottomNavigationBarItem(
               icon: IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.search),
                 onPressed: (){
                   Navigator.push(
@@ -267,7 +268,7 @@ class _ListSoldeState extends State<ListSolde> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(
@@ -563,4 +564,18 @@ class _ListSoldeState extends State<ListSolde> {
   }
 
 }
+
+class LogoSolde extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/Solde.jpg');
+    Image image = Image(image: assetImage, width: 250.0,);
+
+    return Container(child: image,);
+  }
+
+}
+
 

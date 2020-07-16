@@ -325,7 +325,7 @@ class _TransactionState extends State<Transaction> {
     // TODO: implement build
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFDADADA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
           title: Text('$fenetre')
       ),
@@ -340,7 +340,7 @@ class _TransactionState extends State<Transaction> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  logo,
+                  LogoTransactions(),
                   SizedBox(height: 40.0),
                   Text("TRANSACTION",
                       textAlign: TextAlign.center,
@@ -573,7 +573,7 @@ class _TransactionState extends State<Transaction> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff0200F4),
+                                color: Color(0xff003372),
                                 onPressed: ()async{
                                   setState(() {
                                     loader = false;
@@ -615,7 +615,7 @@ class _TransactionState extends State<Transaction> {
                               shape: new RoundedRectangleBorder(
                                   borderRadius: new BorderRadius.circular(30.0)
                               ),
-                              color: Color(0xff0200F4),
+                              color: Color(0xff003372),
                               onPressed: () async{
                                 setState(() {
                                   load = false;
@@ -680,7 +680,7 @@ class _TransactionState extends State<Transaction> {
           BottomNavigationBarItem(
             //backgroundColor: Color(0xff0200F4),
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.settings),
               onPressed: (){
                 Navigator.push(
@@ -697,7 +697,7 @@ class _TransactionState extends State<Transaction> {
           ),
           BottomNavigationBarItem(
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.mode_edit),
               onPressed: (){
                 Navigator.push(
@@ -714,7 +714,7 @@ class _TransactionState extends State<Transaction> {
           ),
           BottomNavigationBarItem(
               icon: IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.search),
                 onPressed: (){
                   Navigator.push(
@@ -747,7 +747,7 @@ class _TransactionState extends State<Transaction> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(
@@ -1180,8 +1180,22 @@ class _TransactionState extends State<Transaction> {
     }
   }
 
+}
+
+
+class LogoTransactions extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/Transactions.jpg');
+    Image image = Image(image: assetImage, width: 250.0,);
+
+    return Container(child: image,);
+  }
 
 }
+
 
 
 

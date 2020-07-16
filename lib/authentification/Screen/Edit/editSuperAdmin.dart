@@ -383,7 +383,7 @@ class _EditSuperAdminState extends State<EditSuperAdmin> {
                                 shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(30.0)
                                 ),
-                                color: Color(0xff0200F4),
+                                color: Color(0xff003372),
                                 onPressed: ()async{
                                   setState(() {
                                     loader = false;
@@ -507,7 +507,7 @@ class _EditSuperAdminState extends State<EditSuperAdmin> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(
@@ -633,7 +633,7 @@ class _EditSuperAdminState extends State<EditSuperAdmin> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(

@@ -34,6 +34,7 @@ import 'create_superAdmin.dart';
 import 'dashbord.dart';
 import 'gestionAbonnement.dart';
 import 'historique.dart';
+import 'historiqueCinetpay.dart';
 import 'login_page.dart';
 
 class Register extends StatefulWidget {
@@ -83,7 +84,7 @@ class _RegisterState extends State<Register> {
                                 width: 150.0,
                                 height: 140.0,
                                 child : FlatButton(
-                                  color: Color(0xff0200F4),
+                                  color: Color(0xff003372),
                                 onPressed: ()async{
                                     setState(() {
                                       load = false;
@@ -129,7 +130,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -184,7 +185,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -231,7 +232,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -286,7 +287,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -333,7 +334,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -386,7 +387,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -433,7 +434,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -489,7 +490,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -542,7 +543,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -589,7 +590,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -644,7 +645,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -691,7 +692,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -744,7 +745,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -790,7 +791,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -844,7 +845,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -890,7 +891,7 @@ class _RegisterState extends State<Register> {
                                   width: 150.0,
                                   height: 140.0,
                                   child : FlatButton(
-                                    color: Color(0xff0200F4),
+                                    color: Color(0xff003372),
                                     onPressed: () async{
                                       setState(() {
                                         load = false;
@@ -929,6 +930,60 @@ class _RegisterState extends State<Register> {
 
                     ],
                   ) : Text(''),
+
+
+                  (admin == '2' || admin == '3' || admin == '4') ? Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
+                      SizedBox(
+                        width: 150.0,
+                        height: 140.0,
+                        child: new Card(
+                          child: Container(
+                            child: Center(
+                              child: Container(
+                                  width: 150.0,
+                                  height: 140.0,
+                                  child : FlatButton(
+                                    color: Color(0xff003372),
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                          builder: (BuildContext context) {
+                                            return HistoriqueCinetpayTrans();
+                                          },
+                                        ),
+                                      );
+                                      setState(() {
+                                        load = true;
+                                      });
+                                    },
+                                    child: Text('Historique Cinetpay', textAlign: TextAlign.center,style: TextStyle(color: Colors.white)),
+                                  )),
+                            ),
+                            /*
+                        new Stack(
+                          children: <Widget>[
+                            new Image.asset(
+                              'assets/mobile1.png',
+                              width: 200.0,
+                              height: 120.0,
+                            ),
+                          ],
+                        ),
+                        */
+                            //   onTap{("")}
+                          ),
+                        ),
+                      ),
+
+                    ],
+                  ) : Text(''),
                 ],
               ),
             ),
@@ -941,7 +996,7 @@ class _RegisterState extends State<Register> {
           BottomNavigationBarItem(
             //backgroundColor: Color(0xff0200F4),
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.settings),
               onPressed: (){
                 Navigator.push(
@@ -958,7 +1013,7 @@ class _RegisterState extends State<Register> {
           ),
           BottomNavigationBarItem(
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.mode_edit),
               onPressed: (){
                 Navigator.push(
@@ -975,7 +1030,7 @@ class _RegisterState extends State<Register> {
           ),
           BottomNavigationBarItem(
               icon: IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.search),
                 onPressed: (){
                   Navigator.push(
@@ -1008,7 +1063,7 @@ class _RegisterState extends State<Register> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(

@@ -122,7 +122,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
     //this.nombreCarWashed();
 
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => getRecette());
-    timer2 = Timer.periodic(Duration(seconds: 1), (Timer t) => setState((){}));
+    timer2 = Timer.periodic(Duration(seconds: 1), (Timer t) => getStatut()) ;
   }
 
   Widget build(BuildContext context){
@@ -152,7 +152,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                                     width: 150.0,
                                     height: 140.0,
                                     child : FlatButton(
-                                      color: Color(0xff0200F4),
+                                      color: Color(0xff003372),
                                       onPressed: ()async{
                                       },
                                       child: Text('Chiffres d\'affaires journaliers :  \n\n $totalTarif FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
@@ -171,7 +171,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                                     width: 150.0,
                                     height: 140.0,
                                     child : FlatButton(
-                                      color: Color(0xff0200F4),
+                                      color: Color(0xff003372),
                                       onPressed: () async{
                                       },
                                       child: Text('Nombre d\'opérations :  \n\n $nbOpera', textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
@@ -196,7 +196,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                                     width: 150.0,
                                     height: 140.0,
                                     child : FlatButton(
-                                      color: Color(0xff0200F4),
+                                      color: Color(0xff003372),
                                       onPressed: ()async{
                                       },
                                       child: Text('Total Commissions :  \n\n $commissions FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
@@ -207,7 +207,6 @@ class _DashbordScreenState extends State<DashbordScreen> {
                         ),
 
                         Container(
-
                           width: 150.0,
                           height: 140.0,
                           child: new Card(
@@ -215,7 +214,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                                     width: 150.0,
                                     height: 140.0,
                                     child : FlatButton(
-                                      color: Color(0xff0200F4),
+                                      color: Color(0xff003372),
                                       onPressed: () async{
                                       },
                                       child: Text('Recette :  \n\n $recette FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
@@ -290,7 +289,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                               shape: new RoundedRectangleBorder(
                                   borderRadius: new BorderRadius.circular(30.0)
                               ),
-                              color: Color(0xff0200F4),
+                              color: Color(0xff003372),
                               onPressed: (){
                                     Navigator.push(
                                   context,
@@ -339,7 +338,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                               shape: new RoundedRectangleBorder(
                                   borderRadius: new BorderRadius.circular(30.0)
                               ),
-                              color: Color(0xff0200F4),
+                              color: Color(0xff003372),
                               onPressed: (){
                                 Navigator.push(
                                   context,
@@ -388,7 +387,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                               shape: new RoundedRectangleBorder(
                                   borderRadius: new BorderRadius.circular(30.0)
                               ),
-                              color: Color(0xff0200F4),
+                              color: Color(0xff003372),
                               onPressed: (){
                                 Navigator.push(
                                   context,
@@ -451,7 +450,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                 BottomNavigationBarItem(
                   //backgroundColor: Color(0xff0200F4),
                   icon: new IconButton(
-                    color: Color(0xff0200F4),
+                    color: Color(0xfff80003),
                     icon: Icon(Icons.settings),
                     onPressed: (){
                       Navigator.push(
@@ -468,7 +467,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                 ),
                 BottomNavigationBarItem(
                   icon: new IconButton(
-                    color: Color(0xff0200F4),
+                    color: Color(0xfff80003),
                     icon: Icon(Icons.mode_edit),
                     onPressed: (){
                       Navigator.push(
@@ -485,7 +484,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                 ),
                 BottomNavigationBarItem(
                     icon: IconButton(
-                      color: Color(0xff0200F4),
+                      color: Color(0xfff80003),
                       icon: Icon(Icons.search),
                       onPressed: (){
                         Navigator.push(
@@ -518,7 +517,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                       backgroundColor: Colors.white,
                     ),
                     decoration: BoxDecoration(
-                      color: Color(0xff0200F4),
+                      color: Color(0xff003372),
                     ),
                   ),
                   ListTile(
@@ -689,7 +688,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                       backgroundColor: Colors.white,
                     ),
                     decoration: BoxDecoration(
-                      color: Color(0xff0200F4),
+                      color: Color(0xff003372),
                     ),
                   ),
 
@@ -809,6 +808,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
       localStorage.remove('user');
       localStorage.remove('id_lavage');
       localStorage.remove('Admin');
+      localStorage.remove('dateFinAbonn');
       await Navigator.push(context,
           new MaterialPageRoute(
               builder: (BuildContext context){
@@ -832,7 +832,6 @@ class _DashbordScreenState extends State<DashbordScreen> {
     });
 
     print(localStorage.getString('token'));
-
   }
 
   var adm;
@@ -845,16 +844,19 @@ class _DashbordScreenState extends State<DashbordScreen> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var idUser = localStorage.getInt('ID');
     adm = localStorage.getString('Admin');
+    var idlav = localStorage.getString('id_lavage');
 
     if(adm == '0' || adm == '1'){
       var res = await CallApi().getData('getUser/$idUser');
-      print('le corps $res');
+      var resAbon = await CallApi().getData('isActive/$idlav');
+      var resBodyAbon = json.decode(resAbon.body);
+      //print('le corps $res');
       var resBody = json.decode(res.body)['data'];
 
       if(resBody['success']){
 
         setState((){
-          dateFinAbon = localStorage.getString('dateFinAbonn');
+          dateFinAbon = resBodyAbon['date'];
           statu = resBody['status'];
           libLavage = resBody['nomLavage'];
           affichDateFinAbonn = true;

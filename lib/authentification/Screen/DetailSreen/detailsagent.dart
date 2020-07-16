@@ -138,7 +138,7 @@ class _DetailsAgentState extends State<DetailsAgent> {
             BottomNavigationBarItem(
               //backgroundColor: Color(0xff0200F4),
               icon: new IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.settings),
                 onPressed: (){
                   Navigator.push(
@@ -155,13 +155,13 @@ class _DetailsAgentState extends State<DetailsAgent> {
             ),
             BottomNavigationBarItem(
               icon: new IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.mode_edit),
                 onPressed: (){
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
-                      builder: (BuildContext context){
+                      builder: (BuildContext context) {
                         return Transaction();
                       },
                     ),
@@ -172,7 +172,7 @@ class _DetailsAgentState extends State<DetailsAgent> {
             ),
             BottomNavigationBarItem(
                 icon: IconButton(
-                  color: Color(0xff0200F4),
+                  color: Color(0xfff80003),
                   icon: Icon(Icons.search),
                   onPressed: (){
                     Navigator.push(
@@ -205,7 +205,7 @@ class _DetailsAgentState extends State<DetailsAgent> {
                   backgroundColor: Colors.white,
                 ),
                 decoration: BoxDecoration(
-                  color: Color(0xff0200F4),
+                  color: Color(0xff003372),
                 ),
               ),
               ListTile(

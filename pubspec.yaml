@@ -67,6 +67,15 @@ flutter:
     - assets/images/imgAc.jpg
     - assets/images/logoAgla.png
     - assets/images/TableauDeBord.jpg
+    - assets/images/Agent.jpg
+    - assets/images/Client.jpg
+    - assets/images/Commission.jpg
+    - assets/images/Matricule.jpg
+    - assets/images/Prestations.jpg
+    - assets/images/Recherche.jpg
+    - assets/images/Solde.jpg
+    - assets/images/Tarification.jpg
+    - assets/images/Transactions.jpg
     #- assets/images/acceuilImage.jpg
   #  - images/a_dot_ham.jpeg
 

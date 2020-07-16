@@ -296,7 +296,7 @@ class _DetailsUsersState extends State<DetailsUsers> {
                     backgroundColor: Colors.white,
                   ),
                   decoration: BoxDecoration(
-                    color: Color(0xff0200F4),
+                    color: Color(0xff003372),
                   ),
                 ),
                 ListTile(
@@ -422,7 +422,7 @@ class _DetailsUsersState extends State<DetailsUsers> {
                     backgroundColor: Colors.white,
                   ),
                   decoration: BoxDecoration(
-                    color: Color(0xff0200F4),
+                    color: Color(0xff003372),
                   ),
                 ),
                 ListTile(

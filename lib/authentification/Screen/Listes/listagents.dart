@@ -200,7 +200,7 @@ var fenetre = 'LISTE DES AGENTS';
             BottomNavigationBarItem(
               //backgroundColor: Color(0xff0200F4),
               icon: new IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.settings),
                 onPressed: (){
                   Navigator.push(
@@ -217,7 +217,7 @@ var fenetre = 'LISTE DES AGENTS';
             ),
             BottomNavigationBarItem(
               icon: new IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.mode_edit),
                 onPressed: (){
                   Navigator.push(
@@ -234,7 +234,7 @@ var fenetre = 'LISTE DES AGENTS';
             ),
             BottomNavigationBarItem(
                 icon: IconButton(
-                  color: Color(0xff0200F4),
+                  color: Color(0xfff80003),
                   icon: Icon(Icons.search),
                   onPressed: (){
                     Navigator.push(
@@ -276,7 +276,7 @@ var fenetre = 'LISTE DES AGENTS';
                   backgroundColor: Colors.white,
                 ),
                 decoration: BoxDecoration(
-                  color: Color(0xff0200F4),
+                  color: Color(0xff003372),
                 ),
               ),
               ListTile(

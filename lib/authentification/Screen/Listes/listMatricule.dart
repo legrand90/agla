@@ -111,7 +111,7 @@ class _ListMatriculesState extends State<ListMatricules>{
             BottomNavigationBarItem(
               //backgroundColor: Color(0xff0200F4),
               icon: new IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.settings),
                 onPressed: (){
                   Navigator.push(
@@ -128,7 +128,7 @@ class _ListMatriculesState extends State<ListMatricules>{
             ),
             BottomNavigationBarItem(
               icon: new IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.mode_edit),
                 onPressed: (){
                   Navigator.push(
@@ -145,7 +145,7 @@ class _ListMatriculesState extends State<ListMatricules>{
             ),
             BottomNavigationBarItem(
                 icon: IconButton(
-                  color: Color(0xff0200F4),
+                  color: Color(0xfff80003),
                   icon: Icon(Icons.search),
                   onPressed: (){
                     Navigator.push(
@@ -178,7 +178,7 @@ class _ListMatriculesState extends State<ListMatricules>{
                   backgroundColor: Colors.white,
                 ),
                 decoration: BoxDecoration(
-                  color: Color(0xff0200F4),
+                  color: Color(0xff003372),
                 ),
               ),
               ListTile(
