@@ -16,6 +16,7 @@ import 'package:lavage/authentification/Screen/commission.dart';
 import 'package:lavage/authentification/Screen/create_user.dart';
 import 'package:lavage/authentification/Screen/lavage.dart';
 import 'package:lavage/authentification/Screen/matricule.dart';
+import 'package:lavage/authentification/Screen/montantService.dart';
 import 'package:lavage/authentification/Screen/photo.dart';
 import 'package:lavage/authentification/Screen/prestation.dart';
 import 'package:lavage/authentification/Screen/solde.dart';
@@ -60,7 +61,7 @@ class _RegisterState extends State<Register> {
     return Scaffold(
           backgroundColor: Colors.grey[200],
           appBar: AppBar(
-            title: Text('SERVICES', textAlign: TextAlign.center,),
+            title: Text('PARAMETRE', textAlign: TextAlign.center,),
           ),
           body: load ? Center(
             child: new Container(
@@ -71,9 +72,9 @@ class _RegisterState extends State<Register> {
                 children: <Widget>[
                   //CARD1
                   (admin == '0' || admin == '1') ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
+
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -172,9 +173,8 @@ class _RegisterState extends State<Register> {
                   ) : Text(''),
 
                   (admin == '0' || admin == '1') ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -274,9 +274,8 @@ class _RegisterState extends State<Register> {
                   ) : Text(''),
 
                   (admin == '0' || admin == '1') ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -374,9 +373,8 @@ class _RegisterState extends State<Register> {
                   ) : Text(''),
 
                   (admin == '0' || admin == '1') ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -477,9 +475,8 @@ class _RegisterState extends State<Register> {
 
 
                   (admin == '0' || admin == '1') ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -530,9 +527,8 @@ class _RegisterState extends State<Register> {
                   ) : Text(''),
 
                   (admin == '2' || admin == '3' || admin == '4') ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -632,9 +628,8 @@ class _RegisterState extends State<Register> {
                   ) : Text(''),
 
                   (admin == '2' || admin == '3' || admin == '4') ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -732,9 +727,8 @@ class _RegisterState extends State<Register> {
                   ) : Text(''),
 
                   (admin == '2' || admin == '3' || admin == '4') ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -832,9 +826,8 @@ class _RegisterState extends State<Register> {
                   ) : Text(''),
 
                   (admin == '2' || admin == '3' || admin == '4') ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -931,11 +924,9 @@ class _RegisterState extends State<Register> {
                     ],
                   ) : Text(''),
 
-
                   (admin == '2' || admin == '3' || admin == '4') ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),),
                       SizedBox(
                         width: 150.0,
                         height: 140.0,
@@ -981,6 +972,52 @@ class _RegisterState extends State<Register> {
                           ),
                         ),
                       ),
+
+                      SizedBox(
+                        width: 150.0,
+                        height: 140.0,
+                        child: new Card(
+                          child: Container(
+                            child: Center(
+                              child: Container(
+                                  width: 150.0,
+                                  height: 140.0,
+                                  child : FlatButton(
+                                    color: Color(0xff003372),
+                                    onPressed: () async{
+                                      setState(() {
+                                        load = false;
+                                      });
+                                      await Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                          builder: (BuildContext context) {
+                                            return Montant();
+                                          },
+                                        ),
+                                      );
+                                      setState(() {
+                                        load = true;
+                                      });
+                                    },
+                                    child: Text('Montant Service', textAlign: TextAlign.center,style: TextStyle(color: Colors.white)),
+                                  )),
+                            ),
+                            /*
+                        new Stack(
+                          children: <Widget>[
+                            new Image.asset(
+                              'assets/mobile1.png',
+                              width: 200.0,
+                              height: 120.0,
+                            ),
+                          ],
+                        ),
+                        */
+                            //   onTap{("")}
+                          ),
+                        ),
+                      )
 
                     ],
                   ) : Text(''),
@@ -1254,7 +1291,7 @@ class _RegisterState extends State<Register> {
                 backgroundColor: Colors.white,
               ),
               decoration: BoxDecoration(
-                color: Color(0xff0200F4),
+                color: Color(0xff003372),
               ),
             ),
             ListTile(

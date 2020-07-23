@@ -122,7 +122,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
     //this.nombreCarWashed();
 
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => getRecette());
-    timer2 = Timer.periodic(Duration(seconds: 1), (Timer t) => getStatut()) ;
+    timer2 = Timer.periodic(Duration(seconds: 1), (Timer t) => getStatut());
   }
 
   Widget build(BuildContext context){
@@ -131,7 +131,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
           child:  Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
-              title: Text('TABLEAU DE BOARD'),
+              title: Text('TABLEAU DE BORD'),
             ),
             body: load ? new Container(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -141,9 +141,8 @@ class _DashbordScreenState extends State<DashbordScreen> {
                     LogoAgla(),
                     SizedBox(height: 50.0,),
                     (admin == '0' || admin == '1') ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10.0),),
                         Container(
                           width: 150.0,
                           height: 140.0,
@@ -163,7 +162,6 @@ class _DashbordScreenState extends State<DashbordScreen> {
                         ),
 
                         Container(
-
                           width: 150.0,
                           height: 140.0,
                           child: new Card(
@@ -184,11 +182,9 @@ class _DashbordScreenState extends State<DashbordScreen> {
                     ) : Text(''),
 
                     (admin == '0' || admin == '1') ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10.0),),
                         Container(
-
                           width: 150.0,
                           height: 140.0,
                           child: new Card(

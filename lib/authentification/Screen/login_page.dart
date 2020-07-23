@@ -271,7 +271,7 @@ class _LoginPageState extends State<LoginPage> {
                                     shape: new RoundedRectangleBorder(
                                         borderRadius: new BorderRadius.circular(30.0)
                                     ),
-                                    color: Color(0xff003372),
+                                    color: Colors.white,
                                     onPressed: (){
                                       _passwordForgot();
                                     },
@@ -288,7 +288,7 @@ class _LoginPageState extends State<LoginPage> {
                                               "Mot de passe oublie",
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
-                                                color: Colors.white,
+                                                color: Colors.red,
                                                 //fontWeight: FontWeight.bold
                                               ),
                                             ),

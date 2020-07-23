@@ -48,7 +48,6 @@ class _HistoriqueState extends State<Historique>{
   var idtrans;
   bool load = true;
 
-
   Future<dynamic> getPost() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');

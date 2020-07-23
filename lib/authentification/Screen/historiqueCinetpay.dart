@@ -49,6 +49,7 @@ class _HistoriqueCinetpayTransState extends State<HistoriqueCinetpayTrans>{
   var idcli;
   var idtrans;
   bool load = true;
+  bool chargement = false;
 
   ListcinetpayTrans listcynetpay = ListcinetpayTrans();
 
@@ -62,6 +63,7 @@ class _HistoriqueCinetpayTransState extends State<HistoriqueCinetpayTrans>{
       var resBody = json.decode(res.body)['data'];
       setState(() {
         listcynetpay = listcinetpayTransFromJson(res.body);
+        chargement = true;
 
       });
     }
@@ -120,7 +122,7 @@ class _HistoriqueCinetpayTransState extends State<HistoriqueCinetpayTrans>{
 
                   SizedBox(height: 40.0,),
 
-                  Container(
+                  chargement ? Container(
                       height: 470.0,
                       child:
 
@@ -204,7 +206,7 @@ class _HistoriqueCinetpayTransState extends State<HistoriqueCinetpayTrans>{
 //                },
                             ), color: Color(0xff11b719),)
                         ),
-                      )) ,
+                      )) : Center(child: CircularProgressIndicator(),) ,
 
                 ]),
 

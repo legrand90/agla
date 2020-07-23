@@ -68,17 +68,21 @@ class _AbonnementState extends State<Abonnement> {
   List data2 = List();
   var EndPeriod;
   var JourRestant;
+  var montantService;
 
   void getEndPeriod() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
     var res = await CallApi().getData('getJourRestant/$id');
+    var res2 = await CallApi().getData('getServiceMontant');
     var resBody = json.decode(res.body);
+    var resBody2 = json.decode(res2.body);
 
 
     if(resBody['success']) {
       setState(() {
         EndPeriod = resBody['dateFinAbon'];
+        montantService = resBody2['montant'];
         visible = true;
         JourRestant = resBody['nbjour'];
       });
@@ -153,7 +157,7 @@ class _AbonnementState extends State<Abonnement> {
     return showDialog(
         context: context,
         builder: (context) => AlertDialog(
-            title: Text("Vous serez débité de XXX FCFA. Cliquez sur Oui pour effectuer votre paiement !"),
+            title: Text("Vous serez débité de $montantService FCFA. Cliquez sur Oui pour effectuer votre paiement !"),
             actions: <Widget>[
               FlatButton(
                 child: Text("Non"),
