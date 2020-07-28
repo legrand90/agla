@@ -321,7 +321,7 @@ class _DetailsCommissionsState extends State<DetailsCommissions> {
                 },
               ),
               ListTile(
-                title: Text('Historique'),
+                title: Text('Transactions'),
                 onTap: () async{
                   setState(() {
                     load = false;

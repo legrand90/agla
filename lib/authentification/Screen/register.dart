@@ -10,6 +10,10 @@ import 'package:lavage/authentification/Screen/Couleur.dart';
 import 'package:lavage/authentification/Screen/Listes/listlog.dart';
 import 'package:lavage/authentification/Screen/Listes/listusers_pw.dart';
 import 'package:lavage/authentification/Screen/Marque.dart';
+import 'package:lavage/authentification/Screen/finances.dart';
+import 'package:lavage/authentification/Screen/gestionClient.dart';
+import 'package:lavage/authentification/Screen/gestionAgent.dart';
+import 'package:lavage/authentification/Screen/configuration.dart';
 import 'package:lavage/authentification/Screen/cinetpayPage.dart';
 import 'package:lavage/authentification/Screen/client.dart';
 import 'package:lavage/authentification/Screen/commission.dart';
@@ -71,460 +75,203 @@ class _RegisterState extends State<Register> {
                // mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   //CARD1
-                  (admin == '0' || admin == '1') ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-
-                      SizedBox(
-                        width: 150.0,
-                        height: 140.0,
-                        child: new Card(
-                          child: Container(
-                            child: Center(
-                              child: Container(
-                                width: 150.0,
-                                height: 140.0,
-                                child : FlatButton(
-                                  color: Color(0xff003372),
-                                onPressed: ()async{
-                                    setState(() {
-                                      load = false;
-                                    });
-                                  await Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return Commission();
-                                      },
+                  (admin == '0' || admin == '1') ? Container(
+                    margin: const EdgeInsets.only(top: 20.0),
+                    padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Expanded(
+                          child: FlatButton(
+                            shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0)
+                            ),
+                            color: Color(0xff003372),
+                            onPressed: (){
+                              Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                                    return Configuration();
+                                  },
+                                ),
+                              );
+                            },
+                            child: new Container(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 10.0,
+                                horizontal: 10.0,
+                              ),
+                              child: new Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text(
+                                      "Configuration",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20.0
+                                        //fontWeight: FontWeight.bold
+                                      ),
                                     ),
-                                  );
-                                  setState(() {
-                                    load =true;
-                                  });
-                                },
-                                child: Text('Commission',style: TextStyle(color: Colors.white),),
-                              )),
+                                  ),
+                                ],
+                              ),
                             ),
-                            /*
-                        new Stack(
-                          children: <Widget>[
-                            new Image.asset(
-                              'assets/mobile1.png',
-                              width: 200.0,
-                              height: 120.0,
-                            ),
-                          ],
-                        ),
-                        */
-                            //   onTap{("")}
                           ),
-                        ),
-                      ),
-
-                      SizedBox(
-                        width: 150.0,
-                        height: 140.0,
-                        child: new Card(
-                          child: Container(
-                            child: Center(
-                              child: Container(
-                                  width: 150.0,
-                                  height: 140.0,
-                                  child : FlatButton(
-                                    color: Color(0xff003372),
-                                    onPressed: () async{
-                                      setState(() {
-                                        load = false;
-                                      });
-                                      await Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                          builder: (BuildContext context) {
-                                            return Matricule();
-                                          },
-                                        ),
-                                      );
-
-                                      setState(() {
-                                        load = true;
-                                      });
-                                    },
-                                    child: Text('Matricule',style: TextStyle(color: Colors.white)),
-                                  )),
-                            ),
-                            /*
-                        new Stack(
-                          children: <Widget>[
-                            new Image.asset(
-                              'assets/mobile1.png',
-                              width: 200.0,
-                              height: 120.0,
-                            ),
-                          ],
-                        ),
-                        */
-                            //   onTap{("")}
-                          ),
-                        ),
-                      ),
-
-
-                    ],
+                        )
+                      ],
+                    ),
                   ) : Text(''),
 
-                  (admin == '0' || admin == '1') ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        width: 150.0,
-                        height: 140.0,
-                        child: new Card(
-                          child: Container(
-                            child: Center(
-                              child: Container(
-                                  width: 150.0,
-                                  height: 140.0,
-                                  child : FlatButton(
-                                    color: Color(0xff003372),
-                                    onPressed: () async{
-                                      setState(() {
-                                        load = false;
-                                      });
-                                      await Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                          builder: (BuildContext context) {
-                                            return TarificationList();
-                                          },
-                                        ),
-                                      );
-
-                                      setState(() {
-                                        load = true;
-                                      });
-                                    },
-                                    child: Text('Tarification',style: TextStyle(color: Colors.white)),
-                                  )),
+                  (admin == '0' || admin == '1') ? Container(
+                    margin: const EdgeInsets.only(top: 20.0),
+                    padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Expanded(
+                          child: FlatButton(
+                            shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0)
                             ),
-                            /*
-                        new Stack(
-                          children: <Widget>[
-                            new Image.asset(
-                              'assets/mobile1.png',
-                              width: 200.0,
-                              height: 120.0,
+                            color: Color(0xff003372),
+                            onPressed: (){
+                              Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                                    return GestionAgent();
+                                  },
+                                ),
+                              );
+                            },
+                            child: new Container(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 10.0,
+                                horizontal: 10.0,
+                              ),
+                              child: new Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text(
+                                      "Gestion Agent",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20.0
+                                        //fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                        */
-                            //   onTap{("")}
                           ),
-                        ),
-                      ),
-
-                      SizedBox(
-                        width: 150.0,
-                        height: 140.0,
-                        child: new Card(
-                          child: Container(
-                            child: Center(
-                              child: Container(
-                                  width: 150.0,
-                                  height: 140.0,
-                                  child : FlatButton(
-                                    color: Color(0xff003372),
-                                    onPressed: () async{
-                                      setState(() {
-                                        load = false;
-                                      });
-                                      await Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                          builder: (BuildContext context) {
-                                            return Prestation();
-                                          },
-                                        ),
-                                      );
-
-                                      setState(() {
-                                        load = true;
-                                      });
-                                    },
-                                    child: Text('Prestation',style: TextStyle(color: Colors.white)),
-                                  )),
-                            ),
-                            /*
-                        new Stack(
-                          children: <Widget>[
-                            new Image.asset(
-                              'assets/mobile1.png',
-                              width: 200.0,
-                              height: 120.0,
-                            ),
-                          ],
-                        ),
-                        */
-                            //   onTap{("")}
-                          ),
-                        ),
-                      ),
-
-
-                    ],
+                        )
+                      ],
+                    ),
                   ) : Text(''),
 
-                  (admin == '0' || admin == '1') ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        width: 150.0,
-                        height: 140.0,
-                        child: new Card(
-                          child: Container(
-                            child: Center(
-                              child: Container(
-                                  width: 150.0,
-                                  height: 140.0,
-                                  child : FlatButton(
-                                    color: Color(0xff003372),
-                                    onPressed: () async{
-                                      setState(() {
-                                        load = false;
-                                      });
-                                      await Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                          builder: (BuildContext context) {
-                                            return Client();
-                                          },
-                                        ),
-                                      );
-
-                                      setState(() {
-                                        load = true;
-                                      });
-                                    },
-                                    child: Text('Client',style: TextStyle(color: Colors.white)),
-                                  )),
+                  (admin == '0' || admin == '1') ? Container(
+                    margin: const EdgeInsets.only(top: 20.0),
+                    padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Expanded(
+                          child: FlatButton(
+                            shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0)
                             ),
-                            /*
-                        new Stack(
-                          children: <Widget>[
-                            new Image.asset(
-                              'assets/mobile1.png',
-                              width: 200.0,
-                              height: 120.0,
+                            color: Color(0xff003372),
+                            onPressed: (){
+                              Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                                    return GestionClient();
+                                  },
+                                ),
+                              );
+                            },
+                            child: new Container(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 10.0,
+                                horizontal: 10.0,
+                              ),
+                              child: new Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text(
+                                      "Gestion Client",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20.0
+                                        //fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                        */
-                            //   onTap{("")}
                           ),
-                        ),
-                      ),
-
-                      SizedBox(
-                        width: 150.0,
-                        height: 140.0,
-                        child: new Card(
-                          child: Container(
-                            child: Center(
-                              child: Container(
-                                  width: 150.0,
-                                  height: 140.0,
-                                  child : FlatButton(
-                                    color: Color(0xff003372),
-                                    onPressed: () async{
-                                      setState(() {
-                                        load = false;
-                                      });
-                                      await Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                          builder: (BuildContext context) {
-                                            return Agent();
-                                          },
-                                        ),
-                                      );
-
-                                      setState(() {
-                                        load = true;
-                                      });
-                                    },
-                                    child: Text('Agent',style: TextStyle(color: Colors.white)),
-                                  )),
-                            ),
-                            /*
-                        new Stack(
-                          children: <Widget>[
-                            new Image.asset(
-                              'assets/mobile1.png',
-                              width: 200.0,
-                              height: 120.0,
-                            ),
-                          ],
-                        ),
-                        */
-                            //   onTap{("")}
-                          ),
-                        ),
-                      ),
-                    ],
+                        )
+                      ],
+                    ),
                   ) : Text(''),
 
-                  (admin == '0' || admin == '1') ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        width: 150.0,
-                        height: 140.0,
-                        child: new Card(
-                          child: Container(
-                            child: Center(
-                              child: Container(
-                                  width: 150.0,
-                                  height: 140.0,
-                                  child : FlatButton(
-                                    color: Color(0xff003372),
-                                    onPressed: () async{
-                                      setState(() {
-                                        load = false;
-                                      });
-                                      await Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                          builder: (BuildContext context) {
-                                            return ListSolde();
-                                          },
-                                        ),
-                                      );
-
-                                      setState(() {
-                                        load = true;
-                                      });
-                                    },
-                                    child: Text('Soldes',style: TextStyle(color: Colors.white)),
-                                  )),
+                  (admin == '0' || admin == '1') ? Container(
+                    margin: const EdgeInsets.only(top: 20.0),
+                    padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Expanded(
+                          child: FlatButton(
+                            shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0)
                             ),
-                            /*
-                        new Stack(
-                          children: <Widget>[
-                            new Image.asset(
-                              'assets/mobile1.png',
-                              width: 200.0,
-                              height: 120.0,
+                            color: Color(0xff003372),
+                            onPressed: (){
+                              Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                                    return Finances();
+                                  },
+                                ),
+                              );
+                            },
+                            child: new Container(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 10.0,
+                                horizontal: 10.0,
+                              ),
+                              child: new Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text(
+                                      "Finances",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20.0
+                                        //fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                        */
-                            //   onTap{("")}
                           ),
-                        ),
-                      ),
-
-                      SizedBox(
-                        width: 150.0,
-                        height: 140.0,
-                        child: new Card(
-                          child: Container(
-                            child: Center(
-                              child: Container(
-                                  width: 150.0,
-                                  height: 140.0,
-                                  child : FlatButton(
-                                    color: Color(0xff003372),
-                                    onPressed: () async{
-                                      setState(() {
-                                        load = false;
-                                      });
-
-                                      await Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                          builder: (BuildContext context) {
-                                            return PaimentTab();
-                                          },
-                                        ),
-                                      );
-
-
-                                      setState(() {
-                                        load = true;
-                                      });
-                                    },
-                                    child: Text('Transaction Paiement',style: TextStyle(color: Colors.white)),
-                                  )),
-                            ),
-                            /*
-                        new Stack(
-                          children: <Widget>[
-                            new Image.asset(
-                              'assets/mobile1.png',
-                              width: 200.0,
-                              height: 120.0,
-                            ),
-                          ],
-                        ),
-                        */
-                            //   onTap{("")}
-                          ),
-                        ),
-                      ),
-                    ],
+                        )
+                      ],
+                    ),
                   ) : Text(''),
 
-
-                  (admin == '0' || admin == '1') ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        width: 150.0,
-                        height: 140.0,
-                        child: new Card(
-                          child: Container(
-                            child: Center(
-                              child: Container(
-                                  width: 150.0,
-                                  height: 140.0,
-                                  child : FlatButton(
-                                    color: Color(0xff003372),
-                                    onPressed: () async{
-                                      setState(() {
-                                        load = false;
-                                      });
-                                      await Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                          builder: (BuildContext context) {
-                                            return CinetpayTab();
-                                          },
-                                        ),
-                                      );
-
-                                      setState(() {
-                                        load = true;
-                                      });
-                                    },
-                                    child: Text('Services Cinetpay',style: TextStyle(color: Colors.white)),
-                                  )),
-                            ),
-                            /*
-                        new Stack(
-                          children: <Widget>[
-                            new Image.asset(
-                              'assets/mobile1.png',
-                              width: 200.0,
-                              height: 120.0,
-                            ),
-                          ],
-                        ),
-                        */
-                            //   onTap{("")}
-                          ),
-                        ),
-                      ),
-                    ],
-                  ) : Text(''),
+                  //////////////////////////////////////////////////////////////////////////////////////////
 
                   (admin == '2' || admin == '3' || admin == '4') ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -1163,7 +910,7 @@ class _RegisterState extends State<Register> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;

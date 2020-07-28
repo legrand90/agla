@@ -360,7 +360,7 @@ class _UserSearchState extends State<UserSearch> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;

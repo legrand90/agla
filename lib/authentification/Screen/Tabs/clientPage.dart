@@ -266,7 +266,7 @@ class _ClientPagetState extends State<ClientPage> with SingleTickerProviderState
                   },
                 ),
                 ListTile(
-                  title: Text('Historique'),
+                  title: Text('Transactions'),
                   onTap: () {
                     Navigator.push(
                       context,

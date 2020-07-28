@@ -339,7 +339,7 @@ var fenetre = 'LISTE DES AGENTS';
                 },
               ),
               ListTile(
-                title: Text('Historique'),
+                title: Text('Transactions'),
                 onTap: () async{
                   setState(() {
                     load = false;

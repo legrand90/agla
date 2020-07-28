@@ -2,218 +2,165 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-//import 'package:font_awesome_flutter/fa_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
-import 'package:json_table/json_table.dart';
-import 'package:http/http.dart' as http;
 import 'package:lavage/api/api.dart';
-import 'package:lavage/authentification/Models/Logs.dart';
-import 'package:lavage/authentification/Models/Transaction.dart';
-import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
+import 'package:lavage/authentification/Screen/prestation.dart';
+import 'package:lavage/authentification/Screen/register.dart';
+import 'package:lavage/authentification/Screen/tarification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../Transaction.dart';
-import '../dashbord.dart';
-import '../historique.dart';
-import '../login_page.dart';
-import '../register.dart';
 
-class ListLogs extends StatefulWidget {
+import 'Listes/listtarification.dart';
+import 'Tabs/clientPage.dart';
+import 'TabsCinetpay/cinetpayTabs.dart';
+import 'TabsTransactionPaiement/paiementTab.dart';
+import 'Transaction.dart';
+import 'create_superAdmin.dart';
+import 'dashbord.dart';
+import 'gestionAbonnement.dart';
+import 'historique.dart';
+import 'historiqueCinetpay.dart';
+import 'login_page.dart';
+
+class Configuration extends StatefulWidget {
+
   @override
-  _ListLogsState createState() => _ListLogsState();
+
+  _ConfigurationState createState() => _ConfigurationState();
 }
 
-class _ListLogsState extends State<ListLogs> {
+class _ConfigurationState extends State<Configuration> {
 
-  var json2 ;
-  bool toggle = false;
-  var affiche = false;
   bool load = true;
-  bool chargement = false;
 
-  Listlogs logs = Listlogs();
-
-  void getLogs() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    //final String urlTrans = "http://192.168.43.217:8000/api/Transaction/$id";
-    var res = await CallApi().getData('Log');
-    //final res = await http.get(Uri.encodeFull(urlTrans), headers: {"Accept": "application/json","Content-type" : "application/json",});
-//    final res2 = await http.get(Uri.encodeFull(urlTrans), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
-
-    if(res.statusCode == 200){
-
-      var resBody = json.decode(res.body)['data'];
-
-      setState(() {
-        logs = listlogsFromJson(res.body);
-        toggle = true;
-        affiche = true;
-        chargement = true;
-
-      });
-    }
-
-
-    print('donnees json : ${logs.data.length}');
-
-  }
-
-  String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
-
-  var recette;
-  var commissions;
-  var totalTarif;
-
-  final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
-
-  _showMsg(msg) {
-    final snackBar = SnackBar(
-        content: Text(msg),
-        action: SnackBarAction(
-          label: 'Fermer',
-          onPressed: () {
-
-          },
-        )
-    );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
-  }
 
   @override
   void initState(){
     super.initState();
     this.getUserName();
-    this.getLogs();
     this.getStatut();
   }
+
   Widget build(BuildContext context){
-    var json = json2;
-
-    //SystemChrome.setPreferredOrientations([
-    // DeviceOrientation.landscapeLeft,
-    // DeviceOrientation.landscapeRight
-    //]);
-
     return Scaffold(
-      //key: _scaffoldKey,
-      //ackgroundColor: Color(0xFFDADADA),
-      body: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              new SliverAppBar(
-                pinned: true,
-                title: new Text('LOGS'),
-              ),
-            ];
-          },
-          body: ListView(
-            //shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              children: <Widget>[
-                SizedBox(height: 40.0,),
-                Container(
-                  margin: EdgeInsets.only(left: 20.0,),
-                  child: Text("LISTE DES LOGS", style: TextStyle(fontSize: 18.0), textAlign: TextAlign.center),
-                ),
+      backgroundColor: Colors.grey[200],
+      appBar: AppBar(
+        title: Text('CONFIGURATION', textAlign: TextAlign.center,),
+      ),
+      body: load ? Center(
+        child: new Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          margin: EdgeInsets.only(top: 110.0),
+          child: new ListView(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              //CARD1
+              (admin == '0' || admin == '1') ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
 
-                SizedBox(height: 40.0,),
-
-                Container(
-                    height: 450.0,
-                    child:
-
-                    chargement ? ListView.builder(
-                      // shrinkWrap: true,
-                      //  physics: ClampingScrollPhysics(),
-                      itemCount: (logs == null || logs.data == null || logs.data.length == 0 )? 0 : logs.data.length,
-                      itemBuilder: (_,int index)=>Container(
-                          child : Card(child :ListTile(
-                            title: Column(
-                              children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    Text('DATE : '),
-                                    SizedBox(width: 20.0,),
-                                    Text('${logs.data [index].dateEnreg}'),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('FENETRE : '),
-                                    SizedBox(width: 20.0,),
-                                    Expanded(child: Text('${logs.data [index].fenetre}'),),
-
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('TACHE : '),
-                                    SizedBox(width: 20.0,),
-                                    Expanded(child: Text('${logs.data [index].tache}'),),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('EXECUTION : '),
-                                    SizedBox(width: 20.0,),
-                                    Text('${logs.data [index].execution}'),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('NOM : '),
-                                    SizedBox(width: 20.0,),
-                                    Text('${logs.data [index].idUser}'),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('TYPE USER : '),
-                                    SizedBox(width: 20.0,),
-                                    Expanded(child: Text('${logs.data [index].typeUser}'),),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('LAVAGE : '),
-                                    SizedBox(width: 20.0,),
-                                    Text('${logs.data [index].idLavage}'),
-                                  ],
-                                ),
-
-                                // SizedBox(height: 20.0,),
-                                // Divider(color: Colors.white, height: 10.0,),
-                              ],
+                  SizedBox(
+                    width: 150.0,
+                    height: 140.0,
+                    child: new Card(
+                      child: Container(
+                        child: Center(
+                          child: Container(
+                              width: 150.0,
+                              height: 140.0,
+                              child : FlatButton(
+                                color: Color(0xff003372),
+                                onPressed: ()async{
+                                  setState(() {
+                                    load = false;
+                                  });
+                                  await Navigator.push(
+                                    context,
+                                    new MaterialPageRoute(
+                                      builder: (BuildContext context) {
+                                        return Prestation();
+                                      },
+                                    ),
+                                  );
+                                  setState(() {
+                                    load =true;
+                                  });
+                                },
+                                child: Text('Prestation',style: TextStyle(color: Colors.white),),
+                              )),
+                        ),
+                        /*
+                        new Stack(
+                          children: <Widget>[
+                            new Image.asset(
+                              'assets/mobile1.png',
+                              width: 200.0,
+                              height: 120.0,
                             ),
-
-
-
-//                onTap: (){
-////                  Navigator.push(
-////                      context,
-////                      MaterialPageRoute(
-////                        builder: (context) => DetailsPrestation(idpresta: listprestations.data[index].id),
-////                      ));
-//                },
-                          ), color: Color(0xff6fb4db),)
+                          ],
+                        ),
+                        */
+                        //   onTap{("")}
                       ),
-                    ) : Center(child: CircularProgressIndicator(),))
+                    ),
+                  ),
 
-              ])
-      ) ,
+                  SizedBox(
+                    width: 150.0,
+                    height: 140.0,
+                    child: new Card(
+                      child: Container(
+                        child: Center(
+                          child: Container(
+                              width: 150.0,
+                              height: 140.0,
+                              child : FlatButton(
+                                color: Color(0xff003372),
+                                onPressed: () async{
+                                  setState(() {
+                                    load = false;
+                                  });
+                                  await Navigator.push(
+                                    context,
+                                    new MaterialPageRoute(
+                                      builder: (BuildContext context) {
+                                        return TarificationList();
+                                      },
+                                    ),
+                                  );
+
+                                  setState(() {
+                                    load = true;
+                                  });
+                                },
+                                child: Text('Tarification',style: TextStyle(color: Colors.white)),
+                              )),
+                        ),
+                        /*
+                        new Stack(
+                          children: <Widget>[
+                            new Image.asset(
+                              'assets/mobile1.png',
+                              width: 200.0,
+                              height: 120.0,
+                            ),
+                          ],
+                        ),
+                        */
+                        //   onTap{("")}
+                      ),
+                    ),
+                  ),
+
+
+                ],
+              ) : Text(''),
+
+            ],
+          ),
+        ),
+      ) : Center(child: CircularProgressIndicator(),),
 
       bottomNavigationBar: BottomNavigationBar(
         //backgroundColor: Color(0xff0200F4),
@@ -222,7 +169,7 @@ class _ListLogsState extends State<ListLogs> {
           BottomNavigationBarItem(
             //backgroundColor: Color(0xff0200F4),
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.settings),
               onPressed: (){
                 Navigator.push(
@@ -239,7 +186,7 @@ class _ListLogsState extends State<ListLogs> {
           ),
           BottomNavigationBarItem(
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.mode_edit),
               onPressed: (){
                 Navigator.push(
@@ -256,7 +203,7 @@ class _ListLogsState extends State<ListLogs> {
           ),
           BottomNavigationBarItem(
               icon: IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.search),
                 onPressed: (){
                   Navigator.push(
@@ -273,11 +220,12 @@ class _ListLogsState extends State<ListLogs> {
           )
         ],
       ),
+
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
         // space to fit everything.
-        child: ListView(
+        child: (admin == '0' || admin == '1') ? ListView(
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -351,7 +299,7 @@ class _ListLogsState extends State<ListLogs> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -467,11 +415,143 @@ class _ListLogsState extends State<ListLogs> {
               ),
             )
 
+          ],
+        ) : ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text('$nameUser'),
+              accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+              ),
+              decoration: BoxDecoration(
+                color: Color(0xff003372),
+              ),
+            ),
+            ListTile(
+              title: Text('Accueil'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return DashbordScreen();
+                    },
+                  ),
+                );
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+
+            ListTile(
+              title: Text('Parametre'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Register();
+                    },
+                  ),
+                );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+
+            ListTile(
+              title: Text('Tutoriel'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                // await Navigator.push(
+                //  context,
+                // new MaterialPageRoute(
+                //   builder: (BuildContext context) {
+                //    return Register();
+                //  },
+                // ),
+                // );
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('A propos'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                //await _alertDeconnexion();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('Deconnexion'),
+              onTap: () async{
+                setState(() {
+                  load = false;
+                });
+                await _alertDeconnexion();
+
+                setState(() {
+                  load = true;
+                });
+              },
+            ),
+
+            Container(
+              margin: const EdgeInsets.only(top: 210.0,),
+              padding: EdgeInsets.symmetric(horizontal:20.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(child: Text('Suivez-nous', style: TextStyle(color: Colors.red),),),
+                  //SizedBox(width: 170,),
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.blue,
+                    icon: FaIcon(FontAwesomeIcons.facebook),
+                    onPressed: ()async{
+                      await _launchFacebookURL();
+
+                    },
+                  ),
+
+                  SizedBox(width: 20,),
+
+                  IconButton(
+                    iconSize: 40.0,
+                    color: Colors.red,
+                    icon: FaIcon(FontAwesomeIcons.chrome),
+                    onPressed: ()async{
+                      await _launchMaxomURL();
+                    },
+                  ),
+                ],
+              ),
+            )
 
           ],
         ),
-      ) : Center(child: CircularProgressIndicator(),),);
-
+      ) : Center(child: CircularProgressIndicator(),),
+    );
   }
 
   void _logout() async{
@@ -495,6 +575,7 @@ class _ListLogsState extends State<ListLogs> {
   }
 
   var nameUser;
+  var admin;
 
   void getUserName() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -502,6 +583,7 @@ class _ListLogsState extends State<ListLogs> {
 
     setState(() {
       nameUser = userName;
+      admin = localStorage.getString('Admin');
     });
 
     //print('la valeur de admin est : $admin');
@@ -582,6 +664,7 @@ class _ListLogsState extends State<ListLogs> {
       throw 'Could not launch $url';
     }
   }
-
 }
+
+
 

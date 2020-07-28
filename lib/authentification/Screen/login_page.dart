@@ -285,7 +285,7 @@ class _LoginPageState extends State<LoginPage> {
                                         children: <Widget>[
                                           new Expanded(
                                             child: Text(
-                                              "Mot de passe oublie",
+                                              "Mot de passe oublié",
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 color: Colors.red,
@@ -313,7 +313,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onPressed: ()async{
                                   _launchMaxomURL();
                                 },
-                                child :Text("Un produit de MAXOM", style: TextStyle(color: Colors.red),),),),)
+                                child :Text("Un produit de MAXOM : (225) 494 928 25", style: TextStyle(color: Color(0xff003372)),),),),)
                         ],
                       ),
                     ),

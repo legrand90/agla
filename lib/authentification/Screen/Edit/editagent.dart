@@ -642,7 +642,7 @@ class _EditAgentState extends State<EditAgent> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;

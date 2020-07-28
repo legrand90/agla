@@ -363,7 +363,7 @@ class _ListClientState extends State<ListClient>{
                 },
               ),
               ListTile(
-                title: Text('Historique'),
+                title: Text('Transactions'),
                 onTap: () async{
                   setState(() {
                     load = false;

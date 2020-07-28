@@ -188,7 +188,7 @@ class _ListSoldeState extends State<ListSolde> {
 ////                        builder: (context) => DetailsPrestation(idpresta: listprestations.data[index].id),
 ////                      ));
 //                },
-                          ), color: Color(0xff11b719),)
+                          ), color: Color(0xff6fb4db),)
                       ),
                     )) : Center(child: CircularProgressIndicator(),)
 
@@ -331,7 +331,7 @@ class _ListSoldeState extends State<ListSolde> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;

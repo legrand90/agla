@@ -272,7 +272,7 @@ class _PaimentTabState extends State<PaimentTab> with SingleTickerProviderStateM
                     },
                   ),
                   ListTile(
-                    title: Text('Historique'),
+                    title: Text('Transactions'),
                     onTap: () {
                       Navigator.push(
                         context,

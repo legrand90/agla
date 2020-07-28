@@ -627,7 +627,7 @@ class _EditClientState extends State<EditClient> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;

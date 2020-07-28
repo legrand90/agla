@@ -589,7 +589,7 @@ class _EditCommissionState extends State<EditCommission> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;

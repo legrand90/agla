@@ -512,7 +512,7 @@ class _PrestationState extends State<Prestation> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;

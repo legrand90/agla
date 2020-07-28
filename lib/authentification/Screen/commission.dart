@@ -505,7 +505,7 @@ class _CommissionState extends State<Commission> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;

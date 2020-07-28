@@ -327,7 +327,7 @@ class _TarificationListState extends State<TarificationList> {
                 },
               ),
               ListTile(
-                title: Text('Historique'),
+                title: Text('Transactions'),
                 onTap: () async{
                   setState(() {
                     load = false;

@@ -241,7 +241,7 @@ class _ListMatriculesState extends State<ListMatricules>{
                 },
               ),
               ListTile(
-                title: Text('Historique'),
+                title: Text('Transactions'),
                 onTap: () async{
                   setState(() {
                     load = false;

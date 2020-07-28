@@ -524,7 +524,7 @@ class _EditTarificationState extends State<EditTarification> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;

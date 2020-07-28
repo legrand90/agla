@@ -64,7 +64,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
     return showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text("Vous serez débité de XXX FCFA. Cliquez sur Oui pour effectuer votre paiement !"),
+          title: Text("Vous voulez vraiment vous deconnecter ?"),
           actions: <Widget>[
             FlatButton(
               child: Text("Non"),
@@ -72,14 +72,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
             ),
             FlatButton(
               child: Text("Oui"),
-              onPressed: () => Navigator.push(
-                context,
-                new MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return ClientPage();
-                  },
-                ),
-              ),
+              onPressed: () => _logout(),
             )
           ],
         )
@@ -139,6 +132,30 @@ class _DashbordScreenState extends State<DashbordScreen> {
                   //mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     LogoAgla(),
+                    SizedBox(height: 40.0,),
+
+                    affichDateFinAbonn ? Container(
+                      // padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Center(
+                        child: Text("Votre souscription prendra fin le $dateFinAbon",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 14.0,
+                          ),),),
+
+                    ) : Text(""),
+
+                    affichJourR ? Container(
+                      // padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Center(
+                        child: Text("Votre souscription prendra fin dans $jourR jours",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 14.0,
+                          ),),),
+
+                    ) : Text(""),
+
                     SizedBox(height: 50.0,),
                     (admin == '0' || admin == '1') ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -404,7 +421,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                                   children: <Widget>[
                                     new Expanded(
                                       child: Text(
-                                        "Parametre",
+                                        "Paramètre",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           color: Colors.white,
@@ -421,19 +438,6 @@ class _DashbordScreenState extends State<DashbordScreen> {
                         ],
                       ),
                     ),
-
-                    SizedBox(height: 90.0,),
-
-                    affichDateFinAbonn ? Container(
-                     // padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                      child: Center(
-                        child: Text("Votre souscription prendra fin le $dateFinAbon",
-                          style: TextStyle(
-                              color: Colors.red,
-                            fontSize: 13.0,
-                          ),),),
-
-                    ) : Text("")
 
                   ],
                 ),
@@ -556,7 +560,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                     },
                   ),
                   ListTile(
-                    title: Text('Historique'),
+                    title: Text('Transactions'),
                     onTap: () async{
                       setState(() {
                         load = false;
@@ -834,28 +838,33 @@ class _DashbordScreenState extends State<DashbordScreen> {
   var statu;
   var libLavage;
   bool affichDateFinAbonn = false;
+  bool affichJourR = false;
   var dateFinAbon;
+  var jourR;
 
   Future <void> getStatut()async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var idUser = localStorage.getInt('ID');
     adm = localStorage.getString('Admin');
     var idlav = localStorage.getString('id_lavage');
+    var resAbon = await CallApi().getData('isActive/$idlav');
+    var resJRestant = await CallApi().getData('getJourRestant/$idlav');
+    var resBodyJR = json.decode(resJRestant.body);
+    var resBodyAbon = json.decode(resAbon.body);
 
     if(adm == '0' || adm == '1'){
       var res = await CallApi().getData('getUser/$idUser');
-      var resAbon = await CallApi().getData('isActive/$idlav');
-      var resBodyAbon = json.decode(resAbon.body);
+
       //print('le corps $res');
       var resBody = json.decode(res.body)['data'];
 
       if(resBody['success']){
 
         setState((){
-          dateFinAbon = resBodyAbon['date'];
+          //dateFinAbon = resBodyAbon['date'];
           statu = resBody['status'];
           libLavage = resBody['nomLavage'];
-          affichDateFinAbonn = true;
+         // affichDateFinAbonn = true;
         });
       }
 
@@ -864,11 +873,24 @@ class _DashbordScreenState extends State<DashbordScreen> {
       var resBody2 = json.decode(res2.body)['data'];
 
       if(resBody2['success']){
-
         setState((){
           statu = resBody2['status'];
         });
       }
+    }
+
+    if(resBodyJR['nbjour'] <= 7){
+      setState((){
+        jourR = resBodyJR['nbjour'];
+        affichJourR = true;
+        affichDateFinAbonn = false;
+      });
+    }else{
+      setState((){
+        dateFinAbon = resBodyAbon['date'];
+        affichDateFinAbonn = true;
+        affichJourR = false;
+      });
     }
 
 

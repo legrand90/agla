@@ -488,7 +488,7 @@ class _EditPrestationnState extends State<EditPrestation> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;

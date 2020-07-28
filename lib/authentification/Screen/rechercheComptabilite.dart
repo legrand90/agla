@@ -1,76 +1,103 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-//import 'package:font_awesome_flutter/fa_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:json_table/json_table.dart';
-import 'package:http/http.dart' as http;
 import 'package:lavage/api/api.dart';
-import 'package:lavage/authentification/Models/Logs.dart';
-import 'package:lavage/authentification/Models/Transaction.dart';
-import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
+import 'package:lavage/authentification/Models/Agent.dart';
+import 'package:lavage/authentification/Models/Commission.dart';
+import 'package:lavage/authentification/Models/Tarifications.dart';
+import 'package:lavage/authentification/Models/listagentNum.dart';
+import 'package:lavage/authentification/Models/searchAgent.dart';
+import 'package:lavage/authentification/Screen/DetailSreen/detailsCommission.dart';
+import 'package:lavage/authentification/Screen/DetailSreen/detailsagent.dart';
+import 'package:lavage/authentification/Screen/Listes/listsearchagent.dart';
+import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
-import '../Transaction.dart';
-import '../dashbord.dart';
-import '../historique.dart';
-import '../login_page.dart';
-import '../register.dart';
+import 'Tabs/clientPage.dart';
+import 'Transaction.dart';
+import 'dashbord.dart';
+import 'historique.dart';
+import 'login_page.dart';
 
-class ListLogs extends StatefulWidget {
+class RechercheCompta extends StatefulWidget {
+
+  final Widget child ;
+
+  RechercheCompta({Key key, @required this.child}) : super(key: key);
+
   @override
-  _ListLogsState createState() => _ListLogsState();
+
+  _RechercheComptaState createState() => _RechercheComptaState();
 }
 
-class _ListLogsState extends State<ListLogs> {
+class _RechercheComptaState extends State<RechercheCompta> {
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _Text = TextEditingController();
+  final TextEditingController _date1 = TextEditingController();
+  final TextEditingController _date2 = TextEditingController();
+  final TextEditingController dateCtl = TextEditingController();
+  final TextEditingController dateCtl2 = TextEditingController();
 
-  var json2 ;
-  bool toggle = false;
-  var affiche = false;
+  var datEnreg1 ;
+  var datEnreg2 ;
+  var mydate1;
+  var mydate2;
+  var date1 ;
+  var date2 ;
+  var commi;
+  var _mySelection;
+
+  int selectedRadio ;
+
+  bool visible = false ;
+
+  bool loading = true;
+
+  Listagentfromsearch serchValue = Listagentfromsearch();
+  ListagentTransaction serchValue2 = ListagentTransaction();
+  ListagentNumTrans serchValue3 = ListagentNumTrans();
+  var data ;
+  List data2 = List() ;
+
+  var recette ;
+  var commissions ;
+  var tarifications ;
   bool load = true;
-  bool chargement = false;
 
-  Listlogs logs = Listlogs();
-
-  void getLogs() async {
+  void getComptabilite() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
-    //final String urlTrans = "http://192.168.43.217:8000/api/Transaction/$id";
-    var res = await CallApi().getData('Log');
-    //final res = await http.get(Uri.encodeFull(urlTrans), headers: {"Accept": "application/json","Content-type" : "application/json",});
-//    final res2 = await http.get(Uri.encodeFull(urlTrans), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
+    var res = await CallApi().getData('comptabiliser/$id/$datEnreg1/$datEnreg2');
 
-    if(res.statusCode == 200){
+    var resBody = json.decode(res.body);
 
-      var resBody = json.decode(res.body)['data'];
+    if(resBody['recette'] != 0) {
 
       setState(() {
-        logs = listlogsFromJson(res.body);
-        toggle = true;
-        affiche = true;
-        chargement = true;
-
+        recette = resBody['recette'];
+        commissions = resBody['commissions'];
+        tarifications = resBody['tarifications'];
+        visible = true;
       });
+
+    }else{
+      _showMsg('Desole ! Pas de transactions effectuees au-cours de cette periode');
     }
 
 
-    print('donnees json : ${logs.data.length}');
-
   }
 
-  String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
 
-  var recette;
-  var commissions;
-  var totalTarif;
+  setSelectRadio(int valeur){
 
+    setState(() {
+      selectedRadio = valeur;
+    });
+  }
   final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
 
   _showMsg(msg) {
@@ -86,134 +113,174 @@ class _ListLogsState extends State<ListLogs> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
+
+
+  void initDate()async{
+    setState(() {
+      dateCtl.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      dateCtl2.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      mydate1 = DateFormat('dd-MM-yyyy').format(DateTime.now());
+      mydate2 = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    });
+  }
+
   @override
   void initState(){
     super.initState();
+    this.initDate();
     this.getUserName();
-    this.getLogs();
     this.getStatut();
+    //this.getAgent();
   }
+
   Widget build(BuildContext context){
-    var json = json2;
-
-    //SystemChrome.setPreferredOrientations([
-    // DeviceOrientation.landscapeLeft,
-    // DeviceOrientation.landscapeRight
-    //]);
-
-    return Scaffold(
-      //key: _scaffoldKey,
-      //ackgroundColor: Color(0xFFDADADA),
-      body: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              new SliverAppBar(
-                pinned: true,
-                title: new Text('LOGS'),
+    return  Scaffold(
+      //height: 300.0,
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: Text('RECHERCHE'),
+      ),
+      backgroundColor: Colors.white,
+      body: load ? Form(
+          key: _formKey,
+          child: ListView(
+            children: <Widget>[
+              LogoRecherche(),
+              SizedBox(
+                height: 30.2,
               ),
-            ];
-          },
-          body: ListView(
-            //shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              children: <Widget>[
-                SizedBox(height: 40.0,),
+
+              SizedBox(
+                height: 20.2,
+              ),
+
+              Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  child: Row(
+                    children: <Widget>[
+                      Text("DE :"),
+                      Expanded(child: Container(
+                        // margin: EdgeInsets.only(right: 100.0, left: 20.0),
+                        decoration: BoxDecoration(
+                            color: Colors.white
+                        ),
+                        child: TextFormField(
+                          controller: dateCtl,
+                          decoration: InputDecoration(
+                            labelText: "Selectionner date 1",
+                            hintText: "DATE",),
+                          onTap: () async{
+                            DateTime date = DateTime(1900);
+                            FocusScope.of(context).requestFocus(new FocusNode());
+
+                            date = await showDatePicker(
+                                context: context,
+                                initialDate:DateTime.now(),
+                                firstDate:DateTime(1900),
+                                lastDate: DateTime(2100));
+                            dateCtl.text = DateFormat('yyyy-MM-dd').format(date);
+                            mydate1 = DateFormat('dd-MM-yyyy').format(date);
+                          },
+                        ),
+                      ),
+                      ),
+
+                      SizedBox(width: 10.0,),
+                      Text("A :"),
+                      SizedBox(width: 10.0,),
+
+                      Expanded(
+                        child: Container(
+                          //margin: EdgeInsets.only(right: 100.0, left: 20.0),
+                          decoration: BoxDecoration(
+                              color: Colors.white
+                          ),
+                          child: TextFormField(
+                            controller: dateCtl2,
+                            decoration: InputDecoration(
+                              labelText: "Selectionner date 2",
+                              hintText: "DATE",),
+                            onTap: () async{
+                              DateTime date = DateTime(1900);
+                              FocusScope.of(context).requestFocus(new FocusNode());
+                              date = await showDatePicker(
+                                  context: context,
+                                  initialDate:DateTime.now(),
+                                  firstDate:DateTime(1900),
+                                  lastDate: DateTime(2100));
+
+                              dateCtl2.text = DateFormat('yyyy-MM-dd').format(date);
+                              mydate2 = DateFormat('dd-MM-yyyy').format(date);
+                            },
+                          ),
+                        )
+                        ,),
+                      //SizedBox(width: 5.0,),
+                      Expanded(
+                        child: IconButton(
+                          icon: Icon(Icons.search),
+                          onPressed: ()async{
+                            setState(() {
+                              visible = false ;
+                            });
+                            await checkDate();
+
+                          },
+                        ),
+                      )
+                    ],
+                  )),
+
+              SizedBox(
+                height: 30.2,
+              ),
+
+              SizedBox(
+                height: 20.2,
+              ),
+
+
+              visible ? Container(
+                height: 150.0,
+                child:
+
                 Container(
-                  margin: EdgeInsets.only(left: 20.0,),
-                  child: Text("LISTE DES LOGS", style: TextStyle(fontSize: 18.0), textAlign: TextAlign.center),
-                ),
-
-                SizedBox(height: 40.0,),
-
-                Container(
-                    height: 450.0,
-                    child:
-
-                    chargement ? ListView.builder(
-                      // shrinkWrap: true,
-                      //  physics: ClampingScrollPhysics(),
-                      itemCount: (logs == null || logs.data == null || logs.data.length == 0 )? 0 : logs.data.length,
-                      itemBuilder: (_,int index)=>Container(
-                          child : Card(child :ListTile(
-                            title: Column(
+                    child: Card(child: ListTile(
+                        title: Column(
+                          children: <Widget>[
+                            SizedBox(height: 10.0,),
+                            Row(
                               children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    Text('DATE : '),
-                                    SizedBox(width: 20.0,),
-                                    Text('${logs.data [index].dateEnreg}'),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('FENETRE : '),
-                                    SizedBox(width: 20.0,),
-                                    Expanded(child: Text('${logs.data [index].fenetre}'),),
-
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('TACHE : '),
-                                    SizedBox(width: 20.0,),
-                                    Expanded(child: Text('${logs.data [index].tache}'),),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('EXECUTION : '),
-                                    SizedBox(width: 20.0,),
-                                    Text('${logs.data [index].execution}'),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('NOM : '),
-                                    SizedBox(width: 20.0,),
-                                    Text('${logs.data [index].idUser}'),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('TYPE USER : '),
-                                    SizedBox(width: 20.0,),
-                                    Expanded(child: Text('${logs.data [index].typeUser}'),),
-                                  ],
-                                ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Text('LAVAGE : '),
-                                    SizedBox(width: 20.0,),
-                                    Text('${logs.data [index].idLavage}'),
-                                  ],
-                                ),
-
-                                // SizedBox(height: 20.0,),
-                                // Divider(color: Colors.white, height: 10.0,),
+                                Text('TOTAL PRESTATIONS : '),
+                                SizedBox(width: 20.0,),
+                                Expanded(child: Text('$tarifications FCFA')),
                               ],
                             ),
-
-
-
-//                onTap: (){
-////                  Navigator.push(
-////                      context,
-////                      MaterialPageRoute(
-////                        builder: (context) => DetailsPrestation(idpresta: listprestations.data[index].id),
-////                      ));
-//                },
-                          ), color: Color(0xff6fb4db),)
-                      ),
-                    ) : Center(child: CircularProgressIndicator(),))
-
-              ])
-      ) ,
+                            SizedBox(height: 20.0,),
+                            Row(
+                              children: <Widget>[
+                                Text('TOTAL COMMISSIONS : '),
+                                SizedBox(width: 20.0,),
+                                Expanded(child: Text('$commissions FCFA'),),
+                              ],
+                            ),
+                            SizedBox(height: 20.0,),
+                            Row(
+                              children: <Widget>[
+                                Text('RECETTE : '),
+                                SizedBox(width: 20.0,),
+                                Text('$recette FCFA'),
+                              ],
+                            ),
+                            SizedBox(height: 10.0,),
+                            //Divider(),
+                          ],
+                        )
+                    ), color: Color(0xff6fb4db),)),
+              ) : Text(''),
+            ],
+          )
+      ) : Center(child: CircularProgressIndicator(),),
 
       bottomNavigationBar: BottomNavigationBar(
         //backgroundColor: Color(0xff0200F4),
@@ -222,7 +289,7 @@ class _ListLogsState extends State<ListLogs> {
           BottomNavigationBarItem(
             //backgroundColor: Color(0xff0200F4),
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.settings),
               onPressed: (){
                 Navigator.push(
@@ -239,7 +306,7 @@ class _ListLogsState extends State<ListLogs> {
           ),
           BottomNavigationBarItem(
             icon: new IconButton(
-              color: Color(0xff0200F4),
+              color: Color(0xfff80003),
               icon: Icon(Icons.mode_edit),
               onPressed: (){
                 Navigator.push(
@@ -256,7 +323,7 @@ class _ListLogsState extends State<ListLogs> {
           ),
           BottomNavigationBarItem(
               icon: IconButton(
-                color: Color(0xff0200F4),
+                color: Color(0xfff80003),
                 icon: Icon(Icons.search),
                 onPressed: (){
                   Navigator.push(
@@ -273,6 +340,7 @@ class _ListLogsState extends State<ListLogs> {
           )
         ],
       ),
+
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
@@ -351,7 +419,7 @@ class _ListLogsState extends State<ListLogs> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -460,30 +528,42 @@ class _ListLogsState extends State<ListLogs> {
                     icon: FaIcon(FontAwesomeIcons.chrome),
                     onPressed: ()async{
 
-                      await _launchMaxomURL();
+                      _launchMaxomURL();
                     },
                   ),
                 ],
               ),
             )
 
-
           ],
         ),
-      ) : Center(child: CircularProgressIndicator(),),);
-
+      ) : Center(child: CircularProgressIndicator(),),
+    );
   }
+
+  bool validateAndSave(){
+    final form = _formKey.currentState;
+    if(form.validate()){
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  void _getSearch() async {
+    datEnreg1 = mydate1;
+    datEnreg2 = mydate2;
+    getComptabilite();
+  }
+
 
   void _logout() async{
     var res = await CallApi().getData('logout');
     var body = json.decode(res.body);
     if(body['success']){
       SharedPreferences localStorage = await SharedPreferences.getInstance();
-      var token = localStorage.getString('token');
       localStorage.remove('token');
       localStorage.remove('user');
-      localStorage.remove('id_lavage');
-      localStorage.remove('Admin');
       await Navigator.push(context,
           new MaterialPageRoute(
               builder: (BuildContext context){
@@ -493,6 +573,35 @@ class _ListLogsState extends State<ListLogs> {
     }
 
   }
+
+  void checkDate(){
+    DateTime d1;
+    DateTime d2;
+    int differ;
+    Duration dur;
+    setState(() {
+      date1 = dateCtl.text;
+      date2 = dateCtl2.text;
+    });
+
+    if(date1 != "" && date2 != "") {
+      d1 = DateTime.parse(date1);
+      d2 = DateTime.parse(date2);
+      dur = d2.difference(d1);
+      differ = int.parse((dur.inDays / 365).floor().toString());
+    }
+
+    if(dateCtl.text == "" || dateCtl2.text == ""){
+      print("la date est $date1");
+      _showMsg("Renseignez correctement les Dates...Merci !");
+    }else if(differ < 0){
+      _showMsg("Desole, la Date2 ne peut pas etre inferieur a la Date1...Merci de renseigner correctement ce champ !");
+    }else{
+      _getSearch();
+    }
+
+  }
+
 
   var nameUser;
 
@@ -563,6 +672,7 @@ class _ListLogsState extends State<ListLogs> {
       }
     }
 
+
   }
 
   _launchFacebookURL() async {
@@ -582,6 +692,18 @@ class _ListLogsState extends State<ListLogs> {
       throw 'Could not launch $url';
     }
   }
-
 }
 
+
+class LogoRecherche extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/Recherche.jpg');
+    Image image = Image(image: assetImage, width: 250.0,);
+
+    return Container(child: image,);
+  }
+
+}

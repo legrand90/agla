@@ -683,7 +683,7 @@ class _AgentState extends State<Agent> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -798,7 +798,6 @@ class _AgentState extends State<Agent> {
                 ],
               ),
             )
-
 
           ],
         ),

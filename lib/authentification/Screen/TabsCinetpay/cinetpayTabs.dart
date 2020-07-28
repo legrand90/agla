@@ -263,7 +263,7 @@ class _CinetpayTabState extends State<CinetpayTab> with SingleTickerProviderStat
                     },
                   ),
                   ListTile(
-                    title: Text('Historique'),
+                    title: Text('Transactions'),
                     onTap: () {
                       Navigator.push(
                         context,

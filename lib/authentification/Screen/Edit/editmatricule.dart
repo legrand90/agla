@@ -703,7 +703,7 @@ class _EditMatriculeState extends State<EditMatricule> {
               },
             ),
             ListTile(
-              title: Text('Historique'),
+              title: Text('Transactions'),
               onTap: () async{
                 setState(() {
                   load = false;

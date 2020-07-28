@@ -47,6 +47,7 @@ class _HistoriqueState extends State<Historique>{
   var idcli;
   var idtrans;
   bool load = true;
+  bool chargement = false;
 
   Future<dynamic> getPost() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -60,6 +61,7 @@ class _HistoriqueState extends State<Historique>{
     setState(() {
       //listclients = listclientsFromJson(res.body);
       listtransac = listtransactionsFromJson(res.body);
+      chargement = true;
     });
     return listclients;
   }
@@ -81,12 +83,12 @@ class _HistoriqueState extends State<Historique>{
 
 
   @override
-
   void initState(){
     super.initState();
     this.getUserName();
     this.getPost();
     this.getStatut();
+    this.getUserName();
   }
 
   Widget build(BuildContext context){
@@ -116,7 +118,7 @@ class _HistoriqueState extends State<Historique>{
 
               SizedBox(height: 50.0,),
 
-              Container(
+              chargement ? Container(
 
                 height: 800.0,
 
@@ -144,8 +146,8 @@ class _HistoriqueState extends State<Historique>{
 
                 ],
               )
-          ), color: Color(0xff11b719),),
-        )))]),
+          ), color: Color(0xff6fb4db),),
+        ))) : Center(child: CircularProgressIndicator(),)]),
 
 //        ListView.builder(
 //          itemCount: (listclients == null || listclients.data == null || listclients.data.length == 0 )? 0 : listclients.data.length,
@@ -157,7 +159,7 @@ class _HistoriqueState extends State<Historique>{
 //                  MaterialPageRoute(
 //                    builder: (context) => DetailsClient(
 //                      idclient : listclients.data[index].id,
-//                      nom : listclients.data[index].nom,
+//                      nom : listclients.data[inde x].nom,
 //                      contact : listclients.data[index].contact,
 //                      email : listclients.data[index].email,
 //                    // matricule : listclients.data[index].matricule,
@@ -202,7 +204,7 @@ class _HistoriqueState extends State<Historique>{
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
-                      builder: (BuildContext context) {
+                      builder: (BuildContext context){
                         return Transaction();
                       },
                     ),
@@ -308,7 +310,7 @@ class _HistoriqueState extends State<Historique>{
                 },
               ),
               ListTile(
-                title: Text('Historique'),
+                title: Text('Transactions'),
                 onTap: () async{
                   setState(() {
                     load = false;
