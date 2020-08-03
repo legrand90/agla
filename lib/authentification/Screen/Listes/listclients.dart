@@ -10,6 +10,7 @@ import 'package:lavage/authentification/Models/Client.dart';
 import 'package:lavage/authentification/Screen/DetailSreen/detailsclient.dart';
 import 'package:lavage/authentification/Screen/Edit/editclient.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
+import 'package:lavage/authentification/Screen/client.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,6 +19,8 @@ import '../dashbord.dart';
 import '../historique.dart';
 import '../login_page.dart';
 import 'package:http/http.dart' as http;
+
+import '../tutoriel.dart';
 
 class ListClient extends StatefulWidget {
 
@@ -202,7 +205,7 @@ class _ListClientState extends State<ListClient>{
           ),
         ) : Center(child: CircularProgressIndicator(),),
 
-        bottomNavigationBar: BottomNavigationBar(
+        bottomNavigationBar: (adm == '0' || adm == '1') ? BottomNavigationBar(
           //backgroundColor: Color(0xff0200F4),
           //currentIndex: 0, // this will be set when a new tab is tapped
           items: [
@@ -210,56 +213,56 @@ class _ListClientState extends State<ListClient>{
               //backgroundColor: Color(0xff0200F4),
               icon: new IconButton(
                 color: Color(0xfff80003),
-                icon: Icon(Icons.settings),
+                icon: Icon(Icons.group_add),
                 onPressed: (){
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
-                        return Register();
+                        return Client();
                       },
                     ),
                   );
                 },
               ),
-              title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+              title: new Text('Nouveau Client', style: TextStyle(color: Color(0xff0200F4))),
             ),
             BottomNavigationBarItem(
               icon: new IconButton(
                 color: Color(0xfff80003),
-                icon: Icon(Icons.mode_edit),
+                icon: Icon(Icons.home),
                 onPressed: (){
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
-                        return Transaction();
+                        return DashbordScreen();
                       },
                     ),
                   );
                 },
               ),
-              title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+              title: new Text('Accueil', style: TextStyle(color: Color(0xff0200F4))),
             ),
             BottomNavigationBarItem(
                 icon: IconButton(
                   color: Color(0xfff80003),
-                  icon: Icon(Icons.search),
+                  icon: Icon(Icons.edit),
                   onPressed: (){
                     Navigator.push(
                       context,
                       new MaterialPageRoute(
                         builder: (BuildContext context) {
-                          return ClientPage();
+                          return Transaction();
                         },
                       ),
                     );
                   },
                 ),
-                title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+                title: Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4)),)
             )
           ],
-        ),
+        ) : Text(''),
 
 
 //        ListView.builder(
@@ -407,14 +410,14 @@ class _ListClientState extends State<ListClient>{
                   setState(() {
                     load = false;
                   });
-                  // await Navigator.push(
-                  //  context,
-                  // new MaterialPageRoute(
-                  //   builder: (BuildContext context) {
-                  //    return Register();
-                  //  },
-                  // ),
-                  // );
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Tutoriel();
+                      },
+                    ),
+                  );
                   setState(() {
                     load = true;
                   });

@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
+import 'package:lavage/authentification/Screen/client.dart';
 import 'package:lavage/authentification/Screen/prestation.dart';
 import 'package:lavage/authentification/Screen/rechercheComptabilite.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:lavage/authentification/Screen/solde.dart';
 import 'package:lavage/authentification/Screen/tarification.dart';
+import 'package:lavage/authentification/Screen/tutoriel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:lavage/authentification/Screen/Tabs/comptabiliteTabPage.dart';
@@ -37,12 +40,60 @@ class _FinancesState extends State<Finances> {
 
   bool load = true;
 
+  String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
+
+  var recette, commissions, totalTarif, joursR;
+
+  void getRecette() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+    // String url = "http://192.168.43.217:8000/api/getCommissionsAndRecette/$date/$id";
+    var res = await CallApi().getData('getCommissionsAndRecette/$date/$id');
+    var resJRestant = await CallApi().getData('getJourRestant/$id');
+    var resBodyJR = json.decode(resJRestant.body);
+    //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
+    var resBody = json.decode(res.body);
+    // final response = await http.get('$url');
+
+    setState(() {
+      recette = (resBody['recette'] == null) ? 0 : resBody['recette'] ;
+      commissions = (resBody['commissions'] == null) ? 0 : resBody['commissions'] ;
+      totalTarif = recette + commissions;
+      joursR = resBodyJR['nbjour'] ;
+    });
+
+    //print("la recette est  : ${recette['recette']}");
+
+  }
+
+  var mtAPayer, credit;
+
+  void getTotalSoldeAgents() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+    // String url = "http://192.168.43.217:8000/api/getCommissionsAndRecette/$date/$id";
+    var res = await CallApi().getData('getSolde/$id');
+    var resBody = json.decode(res.body);
+    // final response = await http.get('$url');
+
+    setState(() {
+      mtAPayer = resBody['montantAPayer'] ;
+      credit = resBody['credit'] ;
+
+    });
+
+    //print("la recette est  : ${recette['recette']}");
+
+  }
+
 
   @override
   void initState(){
     super.initState();
     this.getUserName();
     this.getStatut();
+    this.getRecette();
+    this.getTotalSoldeAgents();
   }
 
   Widget build(BuildContext context){
@@ -54,7 +105,7 @@ class _FinancesState extends State<Finances> {
       body: load ? Center(
         child: new Container(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          margin: EdgeInsets.only(top: 110.0),
+          margin: EdgeInsets.only(top: 20.0),
           child: new ListView(
             // mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -78,19 +129,12 @@ class _FinancesState extends State<Finances> {
                                   setState(() {
                                     load = false;
                                   });
-                                  await Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return CinetpayTab();
-                                      },
-                                    ),
-                                  );
+
                                   setState(() {
                                     load =true;
                                   });
                                 },
-                                child: Text('Abonnement',style: TextStyle(color: Colors.white),),
+                                child: Text('Nombre Jour(s) Restant(s) :  \n\n $joursR', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
                               )),
                         ),
                         /*
@@ -124,20 +168,13 @@ class _FinancesState extends State<Finances> {
                                   setState(() {
                                     load = false;
                                   });
-                                  await Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return PaimentTab();
-                                      },
-                                    ),
-                                  );
+
 
                                   setState(() {
                                     load = true;
                                   });
                                 },
-                                child: Text('Gain Agent',style: TextStyle(color: Colors.white)),
+                                child: Text('Chiffres d\'affaires journaliers :  \n\n $totalTarif FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
                               )),
                         ),
                         /*
@@ -181,19 +218,12 @@ class _FinancesState extends State<Finances> {
                                   setState(() {
                                     load = false;
                                   });
-                                  await Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return ListSolde();
-                                      },
-                                    ),
-                                  );
+
                                   setState(() {
                                     load =true;
                                   });
                                 },
-                                child: Text('Solde',style: TextStyle(color: Colors.white),),
+                                child: Text('Montant à payer :  \n\n $mtAPayer FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
                               )),
                         ),
                         /*
@@ -228,20 +258,11 @@ class _FinancesState extends State<Finances> {
                                     load = false;
                                   });
 
-                                  await Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return RechercheCompta();
-                                      },
-                                    ),
-                                  );
-
                                   setState(() {
                                     load = true;
                                   });
                                 },
-                                child: Text('Chiffres d\'Affaires',style: TextStyle(color: Colors.white)),
+                                child: Text('Montant en crédit :  \n\n $credit FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
                               )),
                         ),
                         /*
@@ -264,12 +285,236 @@ class _FinancesState extends State<Finances> {
                 ],
               ) : Text(''),
 
+
+              (admin == '0' || admin == '1') ? Container(
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: FlatButton(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)
+                        ),
+                        color: Color(0xff003372),
+                        onPressed: ()async{
+                          setState(() {
+                            load = false;
+                          });
+                          await Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return CinetpayTab();
+                              },
+                            ),
+                          );
+                          setState(() {
+                            load =true;
+                          });
+                        },
+                        child: new Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0,
+                          ),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Expanded(
+                                child: Text(
+                                  "Abonnement",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0
+                                    //fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ) : Text(''),
+
+              (admin == '0' || admin == '1') ? Container(
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: FlatButton(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)
+                        ),
+                        color: Color(0xff003372),
+                        onPressed: ()async{
+                          setState(() {
+                            load = false;
+                          });
+                          await Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return PaimentTab();
+                              },
+                            ),
+                          );
+
+                          setState(() {
+                            load = true;
+                          });
+                        },
+                        child: new Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0,
+                          ),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Expanded(
+                                child: Text(
+                                  "Gain Agent",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0
+                                    //fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ) : Text(''),
+
+              Container(
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: FlatButton(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)
+                        ),
+                        color: Color(0xff003372),
+                        onPressed: ()async{
+                          setState(() {
+                            load = false;
+                          });
+                          await Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return ListSolde();
+                              },
+                            ),
+                          );
+                          setState(() {
+                            load =true;
+                          });
+                        },
+                        child: new Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0,
+                          ),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Expanded(
+                                child: Text(
+                                  "Soldes",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0
+                                    //fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+
+              Container(
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: FlatButton(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)
+                        ),
+                        color: Color(0xff003372),
+                        onPressed: ()async{
+                          setState(() {
+                            load = false;
+                          });
+
+                          await Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return RechercheCompta();
+                              },
+                            ),
+                          );
+
+                          setState(() {
+                            load = true;
+                          });
+                        },
+                        child: new Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0,
+                          ),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Expanded(
+                                child: Text(
+                                  "Chiffres d'Affaires",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0
+                                    //fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+
             ],
           ),
         ),
       ) : Center(child: CircularProgressIndicator(),),
 
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: (adm == '0' || adm == '1') ? BottomNavigationBar(
         //backgroundColor: Color(0xff0200F4),
         //currentIndex: 0, // this will be set when a new tab is tapped
         items: [
@@ -277,56 +522,56 @@ class _FinancesState extends State<Finances> {
             //backgroundColor: Color(0xff0200F4),
             icon: new IconButton(
               color: Color(0xfff80003),
-              icon: Icon(Icons.settings),
+              icon: Icon(Icons.group_add),
               onPressed: (){
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return Register();
+                      return Client();
                     },
                   ),
                 );
               },
             ),
-            title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+            title: new Text('Nouveau Client', style: TextStyle(color: Color(0xff0200F4))),
           ),
           BottomNavigationBarItem(
             icon: new IconButton(
               color: Color(0xfff80003),
-              icon: Icon(Icons.mode_edit),
+              icon: Icon(Icons.home),
               onPressed: (){
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return Transaction();
+                      return DashbordScreen();
                     },
                   ),
                 );
               },
             ),
-            title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+            title: new Text('Accueil', style: TextStyle(color: Color(0xff0200F4))),
           ),
           BottomNavigationBarItem(
               icon: IconButton(
                 color: Color(0xfff80003),
-                icon: Icon(Icons.search),
+                icon: Icon(Icons.edit),
                 onPressed: (){
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
-                        return ClientPage();
+                        return Transaction();
                       },
                     ),
                   );
                 },
               ),
-              title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+              title: Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4)),)
           )
         ],
-      ),
+      ) : Text(''),
 
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
@@ -450,14 +695,14 @@ class _FinancesState extends State<Finances> {
                 setState(() {
                   load = false;
                 });
-                // await Navigator.push(
-                //  context,
-                // new MaterialPageRoute(
-                //   builder: (BuildContext context) {
-                //    return Register();
-                //  },
-                // ),
-                // );
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Tutoriel();
+                    },
+                  ),
+                );
                 setState(() {
                   load = true;
                 });
@@ -687,7 +932,6 @@ class _FinancesState extends State<Finances> {
   void getUserName() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var userName = localStorage.getString('nom');
-
     setState(() {
       nameUser = userName;
       admin = localStorage.getString('Admin');

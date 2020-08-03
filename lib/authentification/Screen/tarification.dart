@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Screen/Listes/listtarification.dart';
 import 'package:lavage/authentification/Screen/register.dart';
+import 'package:lavage/authentification/Screen/tutoriel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -492,14 +493,14 @@ class _TarificationState extends State<Tarification> {
                 setState(() {
                   load = false;
                 });
-                // await Navigator.push(
-                //  context,
-                // new MaterialPageRoute(
-                //   builder: (BuildContext context) {
-                //    return Register();
-                //  },
-                // ),
-                // );
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Tutoriel();
+                    },
+                  ),
+                );
                 setState(() {
                   load = true;
                 });

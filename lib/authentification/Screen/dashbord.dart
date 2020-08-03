@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+//import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,7 @@ import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
 import 'package:lavage/authentification/Screen/historique.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:lavage/authentification/Screen/transac.dart';
+import 'package:lavage/authentification/Screen/tutoriel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Transaction.dart';
 import 'login_page.dart';
@@ -15,6 +17,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:lavage/authentification/Screen/client.dart';
 
 class DashbordScreen extends StatefulWidget {
 
@@ -132,8 +135,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                   //mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     LogoAgla(),
-                    SizedBox(height: 40.0,),
-
+                    //SizedBox(height: 40.0,),
                     affichDateFinAbonn ? Container(
                       // padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                       child: Center(
@@ -156,17 +158,17 @@ class _DashbordScreenState extends State<DashbordScreen> {
 
                     ) : Text(""),
 
-                    SizedBox(height: 50.0,),
+                    SizedBox(height: 5.0,),
                     (admin == '0' || admin == '1') ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Container(
                           width: 150.0,
-                          height: 140.0,
+                          height: 120.0,
                           child: new Card(
                             child: Container(
                                     width: 150.0,
-                                    height: 140.0,
+                                    height: 120.0,
                                     child : FlatButton(
                                       color: Color(0xff003372),
                                       onPressed: ()async{
@@ -180,11 +182,11 @@ class _DashbordScreenState extends State<DashbordScreen> {
 
                         Container(
                           width: 150.0,
-                          height: 140.0,
+                          height: 120.0,
                           child: new Card(
                                 child: Container(
                                     width: 150.0,
-                                    height: 140.0,
+                                    height: 120.0,
                                     child : FlatButton(
                                       color: Color(0xff003372),
                                       onPressed: () async{
@@ -203,11 +205,11 @@ class _DashbordScreenState extends State<DashbordScreen> {
                       children: <Widget>[
                         Container(
                           width: 150.0,
-                          height: 140.0,
+                          height: 120.0,
                           child: new Card(
                                 child: Container(
                                     width: 150.0,
-                                    height: 140.0,
+                                    height: 120.0,
                                     child : FlatButton(
                                       color: Color(0xff003372),
                                       onPressed: ()async{
@@ -221,11 +223,11 @@ class _DashbordScreenState extends State<DashbordScreen> {
 
                         Container(
                           width: 150.0,
-                          height: 140.0,
+                          height: 120.0,
                           child: new Card(
                                 child: Container(
                                     width: 150.0,
-                                    height: 140.0,
+                                    height: 120.0,
                                     child : FlatButton(
                                       color: Color(0xff003372),
                                       onPressed: () async{
@@ -293,7 +295,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
 //                    )),
 
                     (admin == '0' || admin == '1') ? Container(
-                      margin: const EdgeInsets.only(top: 20.0),
+                      margin: const EdgeInsets.only(top: 5.0),
                       padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                       child: Row(
                         children: <Widget>[
@@ -342,7 +344,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                     ) : Text(''),
 
                     (admin == '0' || admin == '1') ? Container(
-                      margin: const EdgeInsets.only(top: 20.0),
+                      margin: const EdgeInsets.only(top: 5.0),
                       padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                       child: Row(
                         children: <Widget>[
@@ -391,7 +393,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                     ) : Text(''),
 
                     Container(
-                      margin: const EdgeInsets.only(top: 20.0),
+                      margin: const EdgeInsets.only(top: 5.0),
                       padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                       child: Row(
                         children: <Widget>[
@@ -421,7 +423,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                                   children: <Widget>[
                                     new Expanded(
                                       child: Text(
-                                        "Paramètre",
+                                        "Paramètres",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           color: Colors.white,
@@ -443,7 +445,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                 ),
               ) : Center(child: CircularProgressIndicator(),),
 
-            bottomNavigationBar: BottomNavigationBar(
+            bottomNavigationBar: (admin == '0' || admin == '1') ? BottomNavigationBar(
               //backgroundColor: Color(0xff0200F4),
               //currentIndex: 0, // this will be set when a new tab is tapped
               items: [
@@ -451,56 +453,56 @@ class _DashbordScreenState extends State<DashbordScreen> {
                   //backgroundColor: Color(0xff0200F4),
                   icon: new IconButton(
                     color: Color(0xfff80003),
-                    icon: Icon(Icons.settings),
+                    icon: Icon(Icons.group_add),
                     onPressed: (){
                       Navigator.push(
                         context,
                         new MaterialPageRoute(
                           builder: (BuildContext context) {
-                            return Register();
+                            return Client();
                           },
                         ),
                       );
                     },
                   ),
-                  title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+                  title: new Text('Nouveau Client', style: TextStyle(color: Color(0xff0200F4))),
                 ),
                 BottomNavigationBarItem(
                   icon: new IconButton(
                     color: Color(0xfff80003),
-                    icon: Icon(Icons.mode_edit),
+                    icon: Icon(Icons.home),
                     onPressed: (){
                       Navigator.push(
                         context,
                         new MaterialPageRoute(
                           builder: (BuildContext context) {
-                            return Transaction();
+                            return DashbordScreen();
                           },
                         ),
                       );
                     },
                   ),
-                  title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+                  title: new Text('Accueil', style: TextStyle(color: Color(0xff0200F4))),
                 ),
                 BottomNavigationBarItem(
                     icon: IconButton(
                       color: Color(0xfff80003),
-                      icon: Icon(Icons.search),
+                      icon: Icon(Icons.edit),
                       onPressed: (){
                         Navigator.push(
                           context,
                           new MaterialPageRoute(
                             builder: (BuildContext context) {
-                              return ClientPage();
+                              return Transaction();
                             },
                           ),
                         );
                       },
                     ),
-                    title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+                    title: Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4)),)
                 )
               ],
-            ),
+            ) : Text(''),
 
             drawer: load ? Drawer(
               // Add a ListView to the drawer. This ensures the user can scroll
@@ -604,14 +606,14 @@ class _DashbordScreenState extends State<DashbordScreen> {
                       setState(() {
                         load = false;
                       });
-                     // await Navigator.push(
-                      //  context,
-                       // new MaterialPageRoute(
-                       //   builder: (BuildContext context) {
-                        //    return Register();
-                        //  },
-                       // ),
-                     // );
+                      await Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return Tutoriel();
+                          },
+                        ),
+                      );
                       setState(() {
                         load = true;
                       });

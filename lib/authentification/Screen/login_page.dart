@@ -313,7 +313,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onPressed: ()async{
                                   _launchMaxomURL();
                                 },
-                                child :Text("Un produit de MAXOM : (225) 494 928 25", style: TextStyle(color: Color(0xff003372)),),),),)
+                                child :Text("Un produit de MAXOM : (00225) 494 928 25", style: TextStyle(color: Color(0xff003372)),),),),)
                         ],
                       ),
                     ),

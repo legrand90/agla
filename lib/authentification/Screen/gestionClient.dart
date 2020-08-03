@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Screen/Agent.dart';
 import 'package:lavage/authentification/Screen/client.dart';
@@ -13,6 +14,7 @@ import 'package:lavage/authentification/Screen/rechercheClient.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:lavage/authentification/Screen/solde.dart';
 import 'package:lavage/authentification/Screen/tarification.dart';
+import 'package:lavage/authentification/Screen/tutoriel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientTabPage.dart';
@@ -41,12 +43,43 @@ class _GestionClientState extends State<GestionClient> {
 
   bool load = true;
 
+  String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
+
+  var nbTotalClients, nbClientsActifs, nbTotalMatricules, nbMatriculesActifs;
+
+  void getNbClients() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+    // String url = "http://192.168.43.217:8000/api/getCommissionsAndRecette/$date/$id";
+    var res = await CallApi().getData('getNbTotalClient/$id');
+    var res2 = await CallApi().getData('getNbClientJours/$id/$date');
+    var res3 = await CallApi().getData('getNbTotalMatricule/$id');
+    var res4 = await CallApi().getData('getNbMatriculeJours/$date/$id');
+    //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
+    var resBody = json.decode(res.body);
+    var resBody2 = json.decode(res2.body);
+    var resBody3 = json.decode(res3.body);
+    var resBody4 = json.decode(res4.body);
+    // final response = await http.get('$url');
+
+    setState(() {
+      nbTotalClients = resBody['nbTotalClients'] ;
+      nbClientsActifs = resBody2['nbClients'] ;
+      nbTotalMatricules = resBody3['nbTotalMatricules'] ;
+      nbMatriculesActifs = resBody4['nbMatricules'] ;
+    });
+
+    //print("la recette est  : ${recette['recette']}");
+
+  }
+
 
   @override
   void initState(){
     super.initState();
     this.getUserName();
     this.getStatut();
+    this.getNbClients();
   }
 
   Widget build(BuildContext context){
@@ -58,7 +91,7 @@ class _GestionClientState extends State<GestionClient> {
       body: load ? Center(
         child: new Container(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          margin: EdgeInsets.only(top: 110.0),
+          margin: EdgeInsets.only(top: 20.0),
           child: new ListView(
             // mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -82,19 +115,12 @@ class _GestionClientState extends State<GestionClient> {
                                   setState(() {
                                     load = false;
                                   });
-                                  await Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return Client();
-                                      },
-                                    ),
-                                  );
+
                                   setState(() {
                                     load =true;
                                   });
                                 },
-                                child: Text('Client',style: TextStyle(color: Colors.white),),
+                                child: Text('Nombre total Clients :  \n\n $nbTotalClients', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
                               )),
                         ),
                         /*
@@ -128,20 +154,13 @@ class _GestionClientState extends State<GestionClient> {
                                   setState(() {
                                     load = false;
                                   });
-                                  await Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return Matricule();
-                                      },
-                                    ),
-                                  );
+
 
                                   setState(() {
                                     load = true;
                                   });
                                 },
-                                child: Text('Immatriculation',style: TextStyle(color: Colors.white)),
+                                child: Text('Nombre Clients Journalier :  \n\n $nbClientsActifs', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
                               )),
                         ),
                         /*
@@ -186,20 +205,11 @@ class _GestionClientState extends State<GestionClient> {
                                     load = false;
                                   });
 
-                                  await Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return RechercheClient();
-                                      },
-                                    ),
-                                  );
-
                                   setState(() {
                                     load =true;
                                   });
                                 },
-                                child: Text('Recherche',style: TextStyle(color: Colors.white),),
+                                child: Text('Nombre total Matricules :  \n\n $nbTotalMatricules', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
                               )),
                         ),
                         /*
@@ -218,15 +228,202 @@ class _GestionClientState extends State<GestionClient> {
                     ),
                   ),
 
+                  SizedBox(
+                    width: 150.0,
+                    height: 140.0,
+                    child: new Card(
+                      child: Container(
+                        child: Center(
+                          child: Container(
+                              width: 150.0,
+                              height: 140.0,
+                              child : FlatButton(
+                                color: Color(0xff003372),
+                                onPressed: () async{
+                                  setState(() {
+                                    load = false;
+                                  });
+
+                                  setState(() {
+                                    load = true;
+                                  });
+                                },
+                                child: Text('Nombre Matricules journalier :  \n\n $nbMatriculesActifs', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
+                              )),
+                        ),
+                        /*
+                        new Stack(
+                          children: <Widget>[
+                            new Image.asset(
+                              'assets/mobile1.png',
+                              width: 200.0,
+                              height: 120.0,
+                            ),
+                          ],
+                        ),
+                        */
+                        //   onTap{("")}
+                      ) ,
+                    ),
+                  ),
+
                 ],
               ) : Text(''),
+
+
+              (admin == '0' || admin == '1') ? Container(
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: FlatButton(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)
+                        ),
+                        color: Color(0xff003372),
+                        onPressed: (){
+                          Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return Client();
+                              },
+                            ),
+                          );
+                        },
+                        child: new Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0,
+                          ),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Expanded(
+                                child: Text(
+                                  "Client",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0
+                                    //fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ) : Text(''),
+
+              (admin == '0' || admin == '1') ? Container(
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: FlatButton(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)
+                        ),
+                        color: Color(0xff003372),
+                        onPressed: (){
+                          Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return Matricule();
+                              },
+                            ),
+                          );
+                        },
+                        child: new Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0,
+                          ),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Expanded(
+                                child: Text(
+                                  "Immatriculation",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0
+                                    //fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ) : Text(''),
+
+              Container(
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: FlatButton(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)
+                        ),
+                        color: Color(0xff003372),
+                        onPressed: (){
+                          Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return RechercheClient();
+                              },
+                            ),
+                          );
+                        },
+                        child: new Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0,
+                          ),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Expanded(
+                                child: Text(
+                                  "Recherche",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0
+                                    //fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
 
             ],
           ),
         ),
       ) : Center(child: CircularProgressIndicator(),),
 
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: (adm == '0' || adm == '1') ? BottomNavigationBar(
         //backgroundColor: Color(0xff0200F4),
         //currentIndex: 0, // this will be set when a new tab is tapped
         items: [
@@ -234,56 +431,56 @@ class _GestionClientState extends State<GestionClient> {
             //backgroundColor: Color(0xff0200F4),
             icon: new IconButton(
               color: Color(0xfff80003),
-              icon: Icon(Icons.settings),
+              icon: Icon(Icons.group_add),
               onPressed: (){
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return Register();
+                      return Client();
                     },
                   ),
                 );
               },
             ),
-            title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+            title: new Text('Nouveau Client', style: TextStyle(color: Color(0xff0200F4))),
           ),
           BottomNavigationBarItem(
             icon: new IconButton(
               color: Color(0xfff80003),
-              icon: Icon(Icons.mode_edit),
+              icon: Icon(Icons.home),
               onPressed: (){
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return Transaction();
+                      return DashbordScreen();
                     },
                   ),
                 );
               },
             ),
-            title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+            title: new Text('Accueil', style: TextStyle(color: Color(0xff0200F4))),
           ),
           BottomNavigationBarItem(
               icon: IconButton(
                 color: Color(0xfff80003),
-                icon: Icon(Icons.search),
+                icon: Icon(Icons.edit),
                 onPressed: (){
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
-                        return ClientPage();
+                        return Transaction();
                       },
                     ),
                   );
                 },
               ),
-              title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+              title: Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4)),)
           )
         ],
-      ),
+      ) : Text(''),
 
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
@@ -407,14 +604,14 @@ class _GestionClientState extends State<GestionClient> {
                 setState(() {
                   load = false;
                 });
-                // await Navigator.push(
-                //  context,
-                // new MaterialPageRoute(
-                //   builder: (BuildContext context) {
-                //    return Register();
-                //  },
-                // ),
-                // );
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Tutoriel();
+                    },
+                  ),
+                );
                 setState(() {
                   load = true;
                 });

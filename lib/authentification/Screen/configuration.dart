@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
+import 'package:lavage/authentification/Screen/client.dart';
 import 'package:lavage/authentification/Screen/prestation.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:lavage/authentification/Screen/tarification.dart';
+import 'package:lavage/authentification/Screen/tutoriel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -34,12 +37,57 @@ class _ConfigurationState extends State<Configuration> {
 
   bool load = true;
 
+  String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
+
+  var recette, commissions, totalTarif, nbOpera;
+
+  void getRecette() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+    // String url = "http://192.168.43.217:8000/api/getCommissionsAndRecette/$date/$id";
+    var res = await CallApi().getData('getCommissionsAndRecette/$date/$id');
+    //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
+    var resBody = json.decode(res.body);
+    // final response = await http.get('$url');
+
+    setState(() {
+      recette = (resBody['recette'] == null) ? 0 : resBody['recette'] ;
+      commissions = (resBody['commissions'] == null) ? 0 : resBody['commissions'] ;
+      totalTarif = recette + commissions;
+      nbOpera = (resBody['nbOpera'] == null) ? 0 : resBody['nbOpera'] ;
+    });
+
+    //print("la recette est  : ${recette['recette']}");
+
+  }
+
+  var nbPresta;
+
+  void getNombrePresta() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+    // String url = "http://192.168.43.217:8000/api/getCommissionsAndRecette/$date/$id";
+    var res = await CallApi().getData('getNbPrestation/$id');
+    //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
+    var resBody = json.decode(res.body);
+    // final response = await http.get('$url');
+
+    setState(() {
+      nbPresta =  resBody['nbPresta'];
+    });
+
+    //print("la recette est  : ${recette['recette']}");
+
+  }
+
 
   @override
   void initState(){
     super.initState();
     this.getUserName();
     this.getStatut();
+    this.getNombrePresta();
+    this.getRecette();
   }
 
   Widget build(BuildContext context){
@@ -51,11 +99,12 @@ class _ConfigurationState extends State<Configuration> {
       body: load ? Center(
         child: new Container(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          margin: EdgeInsets.only(top: 110.0),
+          margin: EdgeInsets.only(top: 20.0),
           child: new ListView(
             // mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               //CARD1
+
               (admin == '0' || admin == '1') ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -75,19 +124,12 @@ class _ConfigurationState extends State<Configuration> {
                                   setState(() {
                                     load = false;
                                   });
-                                  await Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return Prestation();
-                                      },
-                                    ),
-                                  );
+
                                   setState(() {
                                     load =true;
                                   });
                                 },
-                                child: Text('Prestation',style: TextStyle(color: Colors.white),),
+                                child: Text('Nombre de Prestations :  \n\n $nbPresta', textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
                               )),
                         ),
                         /*
@@ -121,20 +163,13 @@ class _ConfigurationState extends State<Configuration> {
                                   setState(() {
                                     load = false;
                                   });
-                                  await Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return TarificationList();
-                                      },
-                                    ),
-                                  );
+
 
                                   setState(() {
                                     load = true;
                                   });
                                 },
-                                child: Text('Tarification',style: TextStyle(color: Colors.white)),
+                                child: Text('Nombre de Prestaions journalières :  \n\n $nbOpera', textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
                               )),
                         ),
                         /*
@@ -157,12 +192,198 @@ class _ConfigurationState extends State<Configuration> {
                 ],
               ) : Text(''),
 
+              /////////////////////////////////////////////////////////////////////////////////////////////
+
+              (admin == '0' || admin == '1') ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+
+                  SizedBox(
+                    width: 150.0,
+                    height: 140.0,
+                    child: new Card(
+                      child: Container(
+                        child: Center(
+                          child: Container(
+                              width: 150.0,
+                              height: 140.0,
+                              child : FlatButton(
+                                color: Color(0xff003372),
+                                onPressed: ()async{
+                                  setState(() {
+                                    load = false;
+                                  });
+
+                                  setState(() {
+                                    load =true;
+                                  });
+                                },
+                                child: Text('Chiffres d\'affaires journaliers :  \n\n $totalTarif FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
+                              )),
+                        ),
+                        /*
+                        new Stack(
+                          children: <Widget>[
+                            new Image.asset(
+                              'assets/mobile1.png',
+                              width: 200.0,
+                              height: 120.0,
+                            ),
+                          ],
+                        ),
+                        */
+                        //   onTap{("")}
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(
+                    width: 150.0,
+                    height: 140.0,
+                    child: new Card(
+                      child: Container(
+                        child: Center(
+                          child: Container(
+                              width: 150.0,
+                              height: 140.0,
+                              child : FlatButton(
+                                color: Color(0xff003372),
+                                onPressed: () async{
+                                  setState(() {
+                                    load = false;
+                                  });
+
+                                  setState(() {
+                                    load = true;
+                                  });
+                                },
+                                child: Text('',style: TextStyle(color: Colors.white)),
+                              )),
+                        ),
+                        /*
+                        new Stack(
+                          children: <Widget>[
+                            new Image.asset(
+                              'assets/mobile1.png',
+                              width: 200.0,
+                              height: 120.0,
+                            ),
+                          ],
+                        ),
+                        */
+                        //   onTap{("")}
+                      ),
+                    ),
+                  ),
+
+
+                ],
+              ) : Text(''),
+
+              (admin == '0' || admin == '1') ? Container(
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: FlatButton(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)
+                        ),
+                        color: Color(0xff003372),
+                        onPressed: (){
+                          Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return Prestation();
+                              },
+                            ),
+                          );
+                        },
+                        child: new Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0,
+                          ),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Expanded(
+                                child: Text(
+                                  "Prestation",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0
+                                    //fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ) : Text(''),
+
+              (admin == '0' || admin == '1') ? Container(
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: FlatButton(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)
+                        ),
+                        color: Color(0xff003372),
+                        onPressed: (){
+                          Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return TarificationList();
+                              },
+                            ),
+                          );
+                        },
+                        child: new Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0,
+                          ),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Expanded(
+                                child: Text(
+                                  "Tarification",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0
+                                    //fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ) : Text(''),
+
             ],
           ),
         ),
       ) : Center(child: CircularProgressIndicator(),),
 
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: (adm == '0' || adm == '1') ? BottomNavigationBar(
         //backgroundColor: Color(0xff0200F4),
         //currentIndex: 0, // this will be set when a new tab is tapped
         items: [
@@ -170,56 +391,56 @@ class _ConfigurationState extends State<Configuration> {
             //backgroundColor: Color(0xff0200F4),
             icon: new IconButton(
               color: Color(0xfff80003),
-              icon: Icon(Icons.settings),
+              icon: Icon(Icons.group_add),
               onPressed: (){
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return Register();
+                      return Client();
                     },
                   ),
                 );
               },
             ),
-            title: new Text('Paramètre', style: TextStyle(color: Color(0xff0200F4))),
+            title: new Text('Nouveau Client', style: TextStyle(color: Color(0xff0200F4))),
           ),
           BottomNavigationBarItem(
             icon: new IconButton(
               color: Color(0xfff80003),
-              icon: Icon(Icons.mode_edit),
+              icon: Icon(Icons.home),
               onPressed: (){
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return Transaction();
+                      return DashbordScreen();
                     },
                   ),
                 );
               },
             ),
-            title: new Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4))),
+            title: new Text('Accueil', style: TextStyle(color: Color(0xff0200F4))),
           ),
           BottomNavigationBarItem(
               icon: IconButton(
                 color: Color(0xfff80003),
-                icon: Icon(Icons.search),
+                icon: Icon(Icons.edit),
                 onPressed: (){
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (BuildContext context) {
-                        return ClientPage();
+                        return Transaction();
                       },
                     ),
                   );
                 },
               ),
-              title: Text('Recherche', style: TextStyle(color: Color(0xff0200F4)),)
+              title: Text('Nouvelle Entrée', style: TextStyle(color: Color(0xff0200F4)),)
           )
         ],
-      ),
+      ) : Text(''),
 
       drawer: load ? Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
@@ -343,14 +564,14 @@ class _ConfigurationState extends State<Configuration> {
                 setState(() {
                   load = false;
                 });
-                // await Navigator.push(
-                //  context,
-                // new MaterialPageRoute(
-                //   builder: (BuildContext context) {
-                //    return Register();
-                //  },
-                // ),
-                // );
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Tutoriel();
+                    },
+                  ),
+                );
                 setState(() {
                   load = true;
                 });
