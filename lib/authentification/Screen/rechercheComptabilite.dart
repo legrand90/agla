@@ -12,6 +12,7 @@ import 'package:lavage/authentification/Models/searchAgent.dart';
 import 'package:lavage/authentification/Screen/DetailSreen/detailsCommission.dart';
 import 'package:lavage/authentification/Screen/DetailSreen/detailsagent.dart';
 import 'package:lavage/authentification/Screen/Listes/listsearchagent.dart';
+import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/client.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:lavage/authentification/Screen/tutoriel.dart';
@@ -382,7 +383,7 @@ class _RechercheComptaState extends State<RechercheCompta> {
               },
             ),
             ListTile(
-              title: Text('Nouvelle Entree'),
+              title: Text('Nouvelle Entrée'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -440,7 +441,7 @@ class _RechercheComptaState extends State<RechercheCompta> {
               },
             ),
             ListTile(
-              title: Text('Parametre'),
+              title: Text('Paramètres'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -484,7 +485,14 @@ class _RechercheComptaState extends State<RechercheCompta> {
                 setState(() {
                   load = false;
                 });
-                //await _alertDeconnexion();
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Apropos();
+                    },
+                  ),
+                );
 
                 setState(() {
                   load = true;
@@ -492,7 +500,7 @@ class _RechercheComptaState extends State<RechercheCompta> {
               },
             ),
             ListTile(
-              title: Text('Deconnexion'),
+              title: Text('Déconnexion'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -687,7 +695,7 @@ class _RechercheComptaState extends State<RechercheCompta> {
   }
 
   _launchMaxomURL() async {
-    const url = 'https://maxom.ci';
+    const url = 'https://agla.app';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

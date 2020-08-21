@@ -408,7 +408,7 @@ class _ResetPasswordState extends State<ResetPassword> {
               },
             ),
             ListTile(
-              title: Text('Nouvelle Entree'),
+              title: Text('Nouvelle Entrée'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -466,7 +466,7 @@ class _ResetPasswordState extends State<ResetPassword> {
               },
             ),
             ListTile(
-              title: Text('Parametre'),
+              title: Text('Paramètres'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -485,7 +485,7 @@ class _ResetPasswordState extends State<ResetPassword> {
               },
             ),
             ListTile(
-              title: Text('Deconnexion'),
+              title: Text('Déconnexion'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -535,7 +535,7 @@ class _ResetPasswordState extends State<ResetPassword> {
             ),
 
             ListTile(
-              title: Text('Parametre'),
+              title: Text('Paramètres'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -587,7 +587,7 @@ class _ResetPasswordState extends State<ResetPassword> {
               },
             ),
             ListTile(
-              title: Text('Deconnexion'),
+              title: Text('Déconnexion'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -826,7 +826,7 @@ class _ResetPasswordState extends State<ResetPassword> {
   }
 
   _launchMaxomURL() async {
-    const url = 'https://maxom.ci';
+    const url = 'https://agla.app';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

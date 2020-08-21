@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lavage/api/api.dart';
+import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/client.dart';
 import 'package:lavage/authentification/Screen/dashbord.dart';
 import 'package:lavage/authentification/Screen/register.dart';
@@ -647,7 +648,7 @@ class _AgentState extends State<Agent> {
               },
             ),
             ListTile(
-              title: Text('Nouvelle Entree'),
+              title: Text('Nouvelle Entrée'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -705,7 +706,7 @@ class _AgentState extends State<Agent> {
               },
             ),
             ListTile(
-              title: Text('Parametre'),
+              title: Text('Paramètres'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -749,7 +750,14 @@ class _AgentState extends State<Agent> {
                 setState(() {
                   load = false;
                 });
-                //await _alertDeconnexion();
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Apropos();
+                    },
+                  ),
+                );
 
                 setState(() {
                   load = true;
@@ -757,7 +765,7 @@ class _AgentState extends State<Agent> {
               },
             ),
             ListTile(
-              title: Text('Deconnexion'),
+              title: Text('Déconnexion'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -988,7 +996,7 @@ class _AgentState extends State<Agent> {
   }
 
   _launchMaxomURL() async {
-    const url = 'https://maxom.ci';
+    const url = 'https://agla.app';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

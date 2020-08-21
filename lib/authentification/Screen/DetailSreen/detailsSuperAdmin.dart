@@ -430,7 +430,7 @@ class _DetailsSuperAdminState extends State<DetailsSuperAdmin> {
               ),
 
               ListTile(
-                title: Text('Parametre'),
+                title: Text('Paramètres'),
                 onTap: () async{
                   setState(() {
                     load = false;
@@ -482,7 +482,7 @@ class _DetailsSuperAdminState extends State<DetailsSuperAdmin> {
                 },
               ),
               ListTile(
-                title: Text('Deconnexion'),
+                title: Text('Déconnexion'),
                 onTap: () async{
                   setState(() {
                     load = false;

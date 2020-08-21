@@ -1,92 +1,152 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
-import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/client.dart';
+import 'package:lavage/authentification/Screen/dashbord.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:lavage/authentification/Screen/tutoriel.dart';
+import 'package:mime/mime.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
+import 'package:lavage/authentification/Models/Agent.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
-import 'package:lavage/authentification/Screen/dashbord.dart';
+import 'package:lavage/authentification/Screen/Listes/listagents.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http_parser/http_parser.dart';
 
-import 'Listes/listCommissions.dart';
+
 import 'Tabs/clientPage.dart';
 import 'Transaction.dart';
 import 'historique.dart';
 import 'login_page.dart';
+//import 'Listes/listagents.dart';
 
-class Commission extends StatefulWidget {
+//import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
+
+
+class Apropos extends StatefulWidget {
   @override
-  _CommissionState createState() => new _CommissionState();
+  _AproposState createState() => new _AproposState();
 }
 
-class _CommissionState extends State<Commission> {
+class _AproposState extends State<Apropos> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _gainAgent = TextEditingController();
-  //final TextEditingController _password = TextEditingController();
+  final TextEditingController _nomAgent = TextEditingController();
+  final TextEditingController _contactAgent = TextEditingController();
+  final TextEditingController _domicilAgent = TextEditingController();
+  final TextEditingController _contactUrgence = TextEditingController();
+  final TextEditingController _numeroCNI = TextEditingController();
+  final TextEditingController _photo = TextEditingController();
+  final TextEditingController dateCtl = TextEditingController();
 
-  String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
-  String gainAgent;
 
+  String dateHeure = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
 
- // final String urlTarification = "http://192.168.43.217:8000/api/tarification";
-  bool val = false;
-  bool isButtonDisable = false;
-  List data = List() ;
-  List data2 = List() ;//edited line
-  var id ;
-  String _mySelection;
-  String _mySelection2;
+  String nomAgent;
+  String contactAgent;
+  String domicilAgent;
+  String contactUrgence;
+
+  bool _autoValidate = false;
+  bool _loadingVisible = false;
   bool loading = true;
   bool load = true;
+  var mydate1;
 
-  var fenetre = 'COMMISSIONS' ;
+  var urlPhoto;
 
-  Future<String> getAgent() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    var res = await CallApi().getData('agent/$id');
-    //final String urlAgent = "http://192.168.43.217:8000/api/agent/$id";
+  var fenetre = 'APROPOS';
 
-    //final res = await http.get(Uri.encodeFull(urlAgent), headers: {"Accept": "application/json","Content-type" : "application/json",});
-    var resBody = json.decode(res.body)['data'];
+  int _currentIndex = 0;
+  final List<Widget> _children = [];
+
+  var _currencies2 = <String>[
+    '1-EN CONCUBINAGE',
+    '2-CELIBATAIRE',
+  ];
+
+  int _mySelection2;
+
+  var _currencies = <String>[
+    '1-OUI',
+    '2-NON',
+  ];
+
+  int _mySelection;
+
+  var _currencies3 = <String>[
+    '1-OUI',
+    '2-NON',
+  ];
+
+  int _mySelection3;
+
+  var _currencies4 = <String>[
+    '1-OUI',
+    '2-NON',
+  ];
+
+  int _mySelection4;
+
+  File _imageFile;
+  // To track the file uploading state
+  bool _isUploading = false;
+  String baseUrl = 'https://service.agla.app/api/savePhoto';
 
 
+  // Listagents listagents = Listagents ()  ;
+
+  Future <void> _changeLoadingVisible() async {
     setState(() {
-      data = resBody;
+      _loadingVisible = !_loadingVisible;
     });
-
-    print(resBody);
-    return "Success";
   }
 
-  Future<String> getTarification() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    var res = await CallApi().getData('tarification/$id');
-   // final String urlTarification = "http://192.168.43.217:8000/api/tarification/$id";
-    //final res = await http.get(Uri.encodeFull(urlTarification), headers: {"Accept": "application/json","Content-type" : "application/json",});
-    var resBody = json.decode(res.body)['data'];
-   //SharedPreferences localStorage = await SharedPreferences.getInstance();
 
-    setState(() {
+//  String url = "http://192.168.43.217:8000/api/agent";
+//
+//  Future<String> getPost() async{
+//    final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
+//    var resBody = json.decode(res.body)['data'];
+//   // final response = await http.get('$url');
+//
+//    setState(() {
+//      listagents = listagentsFromJson(resBody);
+//    });
+//    return "success";
+//  }
 
-      data2 = resBody;
-
-      //localStorage.setBool('valeur', null);
-    });
-
-
-
-    print(val);
-    return "Success";
-  }
-  //SharedPreferences localStorage = await SharedPreferences.getInstance();
+//   createAgentList(){
+//
+//     ListView.builder(
+//         //itemBuilder: (_,int index)=>Listagents(this.data[index]),
+//         itemCount: (listagents == null || listagents.data == null || listagents.data.length == 0 )? 0 : listagents.data.length,
+//       itemBuilder: (_,int index)=>ListTile(
+//         title: Text(listagents.data [index] .nom),
+//       ),
+//     );
+//
+//
+////    for(agent agt in Agents){
+////      widgets.add(Text('Nom agent : ${agt.nom}'));
+////    }
+//
+////     FutureBuilder<Listagents>(
+////        future: getPost(),
+////        builder: (context, snapshot) {
+////          return Text('${snapshot.data.nom}');
+////        }
+////    );
+//
+//
+//  }
 
 
   final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
@@ -104,11 +164,10 @@ class _CommissionState extends State<Commission> {
   }
 
   @override
+
   void initState(){
     super.initState();
-    this.getAgent();
     this.getUserName();
-    this.getTarification();
     this.getStatut();
   }
   Widget build(BuildContext context){
@@ -130,245 +189,95 @@ class _CommissionState extends State<Commission> {
     // TODO: implement build
     return Scaffold(
       key: _scaffoldKey,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('$fenetre'),
       ),
-      backgroundColor: Colors.white,
       body: load ? Form(
         key: _formKey,
-       // autovalidate: _autoValidate,
+        autovalidate: _autoValidate,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Center(
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  LogoCommission(),
-                  SizedBox(height: 40.0),
-                  Text("COMMISSION",
+                  SizedBox(height: 10.0),
+                  LogoApropos(),
+                  SizedBox(height: 25.0),
+                  Text("AGLA, Application de Gestion des Lavages Autos, est une application mobile et sécurisée qui facilite votre quotidien .",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.red,
+                          color: Colors.blue,
                           fontWeight: FontWeight.bold
                       )
                   ),
-                  SizedBox(height: 50.0),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40.0),
+                  SizedBox(height: 25.0),
+                  //////////////////////////////////////////////////////////
+                  Container(
+                    //margin: const EdgeInsets.only(top: 270.0,),
+                    //padding: EdgeInsets.symmetric(horizontal:20.0),
+                    child: Text('Développée par', textAlign: TextAlign.center, style: TextStyle(color: Colors.red, fontSize: 16.0),),
+                        //SizedBox(width: 170,),
                   ),
-
+                  Container(child:Center(child: LogoMaxom())),
+                  SizedBox(height: 20,),
                   Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-
-                      SizedBox(width: 5.0,),
-                      Expanded(
-                          child : DropdownButton(
-                            items: data.map((value) => DropdownMenuItem(
-                              child: Text(
-                                value['nom'],
-                                style: TextStyle(color: Colors.black, fontSize: 18.0),
-                              ),
-                              value: value['id'].toString(),
-                            )).toList(),
-                            onChanged: (choix){
-                              setState(() {
-                                _mySelection = choix ;
-                              });
-                            },
-                            value: _mySelection,
-                            isExpanded: true,
-                            hint: Text('Selectionner l\'agent', style: TextStyle(fontSize: 18.0)),
-                            style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
-                          ))
-                    ],
-
-                  )),
-
-                  ////////////////////////////////////////////////////////////////
-
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-
-                      SizedBox(width: 5.0,),
-                      Expanded(
-                          child : DropdownButton(
-                            items: data2.map((value) => DropdownMenuItem(
-                              child: Text(
-                                value['prestation_montant'],
-                                style: TextStyle(color: Colors.black, fontSize: 18.0),
-                              ),
-                              value: value['id'].toString(),
-                            )).toList(),
-                            onChanged: (choix){
-                              setState(() {
-                                _mySelection2 = choix ;
-                              });
-                            },
-                            value: _mySelection2,
-                            isExpanded: true,
-                            hint:  Text('Selectionner la tarification', style: TextStyle(fontSize: 18.0)) ,
-                            style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
-                          ))
-                    ],
-
-                  )),
-
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.grey.withOpacity(0.5),
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                    //margin: const EdgeInsets.only(top: 270.0,),
+                    //padding: EdgeInsets.symmetric(horizontal:20.0),
                     child: Row(
                       children: <Widget>[
-                        new Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-                          child: Icon(
-                            Icons.monetization_on,
-                            color: Colors.red,
-                              size: 27.0
-                          ),
-                        ),
-                        new Expanded(
-                          child: TextFormField(
-                            keyboardType: TextInputType.number,
-                            //autofocus: false,
-                            controller: _gainAgent,
-                            validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
-                            onSaved: (value) => gainAgent = value,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Gain en FCFA",
-                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
-                            ),
-                          ),
-                        )
+                      IconButton(
+                      iconSize: 30.0,
+                      //color: Colors.red,
+                      icon: FaIcon(FontAwesomeIcons.phone),
+                    ),
+                        //SizedBox(width: 170,),
+                        SizedBox(width: 10,),
+                        Text('(00225) 22 544 924 \n(00225) 49 492 825', style: TextStyle(color: Colors.blue,),),
                       ],
                     ),
                   ),
-                  ////////////////////////////////////////////////////////////////////////////
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40.0),
+
+                  Container(
+                    //margin: const EdgeInsets.only(top: 270.0,),
+                    //padding: EdgeInsets.symmetric(horizontal:20.0),
+                    child: Row(
+                      children: <Widget>[
+                        IconButton(
+                          iconSize: 30.0,
+                          //color: Colors.blue,
+                          icon: FaIcon(FontAwesomeIcons.mailBulk),
+                        ),
+                        //SizedBox(width: 170,),
+                        SizedBox(width: 10,),
+                        Text('agla@maxom.ci', style: TextStyle(color: Colors.blue,),),
+                      ],
+                    ),
                   ),
 
-                  ////////////////////////////////////////////////////////////////
-
-                  Row(
-                    children : <Widget>[
-                      Expanded(child :Container(
-                        margin: const EdgeInsets.only(top: 20.0),
-                        //padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                        child: Row(
-                          children: <Widget>[
-                            new Expanded(
-                              child:  loading ? FlatButton(
-                                shape: new RoundedRectangleBorder(
-                                    borderRadius: new BorderRadius.circular(30.0)
-                                ),
-                                color: Color(0xff003372),
-                                onPressed: ()async{
-                                  setState(() {
-                                    loading = false;
-                                  });
-
-                                  await checkCommission();
-
-                                  setState(() {
-                                    loading = true;
-                                  });
-                                } ,
-                                child: new Container(
-                                  child: new Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      new Expanded(
-                                        child: Text(
-                                          "ENREGISTRER",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            //fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ) : Center(child: CircularProgressIndicator(),),
-                            )
-                          ],
+                  Container(
+                    //margin: const EdgeInsets.only(top: 270.0,),
+                    //padding: EdgeInsets.symmetric(horizontal:20.0),
+                    child: Row(
+                      children: <Widget>[
+                        IconButton(
+                          iconSize: 30.0,
+                          //color: Colors.blue,
+                          icon: FaIcon(FontAwesomeIcons.home),
                         ),
-                      )),
-
-                      //////////////////////////////////////////////////////////
-                      Container(
-                        width: 15.0,
-                      ),
-                      Expanded(child : Container(
-                        margin: const EdgeInsets.only(top: 20.0),
-                        //padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                        child: Row(
-                          children: <Widget>[
-                            new Expanded(
-                              child: FlatButton(
-                                shape: new RoundedRectangleBorder(
-                                    borderRadius: new BorderRadius.circular(30.0)
-                                ),
-                                color: Color(0xff003372),
-                                child: new Container(
-                                  //padding: const EdgeInsets.only(left: 20.0),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "AFFICHER",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 14.0,
-                                      color: Colors.white,
-                                      //fontWeight: FontWeight.bold
-                                    ),
-                                  ),
-                                ),
-                                onPressed: () async{
-                                  setState(() {
-                                    load = false;
-                                  });
-                                 await Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return CommissionList();
-                                      },
-                                    ),
-                                  );
-                                 setState(() {
-                                   load = true;
-                                 });
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                      ),)],),
-
-                  //////////////////////////////////////////////////////////
-
+                        //SizedBox(width: 170,),
+                        SizedBox(width: 10,),
+                        Text('Côte d\'Ivoire, Abidjan. \nCocody, Riviera', style: TextStyle(color: Colors.blue,),),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
+
         ),
       ) : Center(child: CircularProgressIndicator(),),
 
@@ -632,13 +541,12 @@ class _CommissionState extends State<Commission> {
               ),
             )
 
-
           ],
         ),
       ) : Center(child: CircularProgressIndicator(),),
 
     );
-    }
+  }
 
   Future<void> smsError(String error) async{
     Text titre = new Text("Error:");
@@ -664,59 +572,56 @@ class _CommissionState extends State<Commission> {
     }
     return false;
   }
-  void _sendDataCommission() async{
+
+  void _sendDataAgent() async{
+
     if(validateAndSave()) {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
-      var idlavage = localStorage.getString('id_lavage');
+      var id = localStorage.getString('id_lavage');
       var id_user = localStorage.getInt('ID');
       var data = {
-        'gain_agent': _gainAgent.text,
-        'dateEnreg': date,
-        'id_lavage': idlavage,
-        'id_agent': _mySelection,
-        'id_tarification': _mySelection2,
-
+        'nom': _nomAgent.text.toUpperCase(),
+        'contact': _contactAgent.text,
+        'quartier': _domicilAgent.text.toUpperCase(),
+        'contactUrgence': _contactUrgence.text,
+        'dateEnreg': dateHeure,
+        'id_lavage': id,
+        'numero_cni': _numeroCNI.text,
+        'photo': urlPhoto,
+        'dateNaiss': mydate1,
       };
 
       var dataLog = {
         'fenetre': '$fenetre',
-        'tache': "Enregistrement des Commissions",
+        'tache': "Enregistrement d'un Agent",
         'execution': "Enregistrer",
         'id_user': id_user,
-        'dateEnreg': date,
+        'dateEnreg': dateHeure,
         'id_lavage': id,
         'type_user': statu,
       };
 
-      var resTarif = await CallApi().getData('getTarification/$_mySelection2/$idlavage');
+      var res = await CallApi().postDataAgent(data, 'create_agent');
+      var body = json.decode(res.body)['data'];
+      // print('les donnees de l\'Agent: ${body}');
 
-      var resBodyTarif = json.decode(resTarif.body)['data'];
-
-      if (int.parse(resBodyTarif['montant']) > int.parse(_gainAgent.text)){
-        var res = await CallApi().postAppData(data, 'create_commission');
-
-      // print('les donnees de commission: $body');
-
-      if (res.statusCode == 200) {
+      if(res.statusCode == 200) {
         var res = await CallApi().postData(dataLog, 'create_log');
-        var body = json.decode(res.body)['data'];
-
-
         setState(() {
-          _gainAgent.text = '';
-          _mySelection = null;
-          _mySelection2 = null;
+          _nomAgent.text = '';
+          _contactAgent.text = '';
+          _domicilAgent.text = '';
+          _contactUrgence.text = '';
+          _imageFile = null;
+          dateCtl.text = '';
+          _numeroCNI.text = '';
         });
 
+        _showMsg("Donnees enregistrees avec succes");
 
-        _showMsg('Donnees enregistrees avec succes');
-      } else {
-        _showMsg("Erreur d' enregistrement");
+      }else{
+        _showMsg("Erreur d'enregistrement");
       }
-    }else{
-        _showMsg("Désolé ! la commission ne peut pas être supérieur à la tarification !");
-      }
-
     }
   }
 
@@ -809,6 +714,7 @@ class _CommissionState extends State<Commission> {
       }
     }
 
+
   }
 
   _launchFacebookURL() async {
@@ -829,45 +735,144 @@ class _CommissionState extends State<Commission> {
     }
   }
 
-  void checkCommission()async{
+  void _openImagePickerModal(BuildContext context) {
+    final flatButtonColor = Theme.of(context).primaryColor;
+    print('Image Picker Modal Called');
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 150.0,
+            padding: EdgeInsets.all(10.0),
+            child: Column(
+              children: <Widget>[
+                Text(
+                  'Faire un Choix',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                FlatButton(
+                  textColor: flatButtonColor,
+                  child: Text('Utiliser la Camera'),
+                  onPressed: () {
+                    _getImage(context, ImageSource.camera);
 
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
+                  },
+                ),
+                FlatButton(
+                  textColor: flatButtonColor,
+                  child: Text('Utiliser la Gallery'),
+                  onPressed: () {
+                    _getImage(context, ImageSource.gallery);
 
-
-    var resCommi = await CallApi().getData('checkAgentCommission/$id/$_mySelection2/$_mySelection');
-    var resCommiBody = json.decode(resCommi.body);
-
-    if((resCommiBody['success'])){
-
-      // print('donnee 1 $matriculebody');
-      //print('donnee 2 $contactbody');
-      _showMsg("Cet agent dispose déja une commission pour cette tarification !!!");
-    }
-
-    else{
-      //_showMsg("existe pas!!!");
-      _sendDataCommission();
-
-    }
-
+                  },
+                ),
+              ],
+            ),
+          );
+        });
   }
 
+  void _getImage(BuildContext context, ImageSource source) async {
+    File image = await ImagePicker.pickImage(source: source);
+    setState(() {
+      _imageFile = image;
+    });
+    // Closes the bottom sheet
+    Navigator.pop(context);
+  }
+
+  Future<Map<String, dynamic>> _uploadImage(File image) async {
+
+    final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8]).split('/');
+
+    final imageUploadRequest = http.MultipartRequest('POST', Uri.parse(baseUrl));
+
+    final file = await http.MultipartFile.fromPath('photo', image.path,
+        contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
+
+    imageUploadRequest.fields['photo'] = mimeTypeData[1];
+
+    imageUploadRequest.files.add(file);
+
+
+    try {
+      final streamedResponse = await imageUploadRequest.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode != 200) {
+        return null;
+      }
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      //_resetState();
+      return responseData;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  void _startUploading() async {
+
+    if(validateAndSave()) {
+      if((_imageFile != null) && (mydate1 != null)) {
+        final Map<String, dynamic> response = await _uploadImage(_imageFile);
+        // Check if any error occured
+        if (response == null) {
+          _showMsg("Erreur d'enregistrement de la photo .");
+        } else {
+          print("contenu ${response['nomImage']}");
+
+          setState(() {
+            urlPhoto = response['nomImage'];
+          });
+
+          print('imageFile: $urlPhoto');
+
+          if (urlPhoto != '') {
+            _sendDataAgent();
+
+          }
+        }
+
+      }else {
+        _showMsg('Erreur: la photo et la date de naissance de l\'agent sont requises. Vérifier si elles sont bien renseignées...Merci!');
+      }
+    }
+  }
 }
 
 
-class LogoCommission extends StatelessWidget{
+class LogoApropos extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    AssetImage assetImage = AssetImage('assets/images/Commission.jpg');
+    AssetImage assetImage = AssetImage('assets/images/apropos.jpg');
     Image image = Image(image: assetImage, width: 250.0,);
 
     return Container(child: image,);
   }
 
 }
+
+class LogoMaxom extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/logomaxom.jpg');
+    Image image = Image(image: assetImage, width: 150.0,);
+
+    return Container(child: image,);
+  }
+
+}
+
+
+
+
 
 
 

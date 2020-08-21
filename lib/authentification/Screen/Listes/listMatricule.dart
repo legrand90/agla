@@ -9,6 +9,7 @@ import 'package:lavage/authentification/Models/Client.dart';
 import 'package:lavage/authentification/Screen/DetailSreen/detailsMatricule.dart';
 import 'package:lavage/authentification/Screen/DetailSreen/detailsclient.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
+import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/client.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -205,7 +206,7 @@ class _ListMatriculesState extends State<ListMatricules>{
                 },
               ),
               ListTile(
-                title: Text('Nouvelle Entree'),
+                title: Text('Nouvelle Entrée'),
                 onTap: () async{
                   setState(() {
                     load = false;
@@ -263,7 +264,7 @@ class _ListMatriculesState extends State<ListMatricules>{
                 },
               ),
               ListTile(
-                title: Text('Parametre'),
+                title: Text('Paramètres'),
                 onTap: () async{
                   setState(() {
                     load = false;
@@ -307,7 +308,14 @@ class _ListMatriculesState extends State<ListMatricules>{
                   setState(() {
                     load = false;
                   });
-                  //await _alertDeconnexion();
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Apropos();
+                      },
+                    ),
+                  );
 
                   setState(() {
                     load = true;
@@ -315,7 +323,7 @@ class _ListMatriculesState extends State<ListMatricules>{
                 },
               ),
               ListTile(
-                title: Text('Deconnexion'),
+                title: Text('Déconnexion'),
                 onTap: () async{
                   setState(() {
                     load = false;
@@ -471,7 +479,7 @@ class _ListMatriculesState extends State<ListMatricules>{
   }
 
   _launchMaxomURL() async {
-    const url = 'https://maxom.ci';
+    const url = 'https://agla.app';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

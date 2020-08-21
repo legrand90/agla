@@ -438,7 +438,7 @@ class _SuperAdminListState extends State<SuperAdminList> {
               ),
 
               ListTile(
-                title: Text('Parametre'),
+                title: Text('Paramètres'),
                 onTap: () async{
                   setState(() {
                     load = false;
@@ -490,7 +490,7 @@ class _SuperAdminListState extends State<SuperAdminList> {
                 },
               ),
               ListTile(
-                title: Text('Deconnexion'),
+                title: Text('Déconnexion'),
                 onTap: () async{
                   setState(() {
                     load = false;
@@ -652,7 +652,7 @@ class _SuperAdminListState extends State<SuperAdminList> {
   }
 
   _launchMaxomURL() async {
-    const url = 'https://maxom.ci';
+    const url = 'https://agla.app';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

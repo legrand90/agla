@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
+import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/client.dart';
 import 'package:lavage/authentification/Screen/prestation.dart';
 import 'package:lavage/authentification/Screen/register.dart';
@@ -169,7 +170,7 @@ class _ConfigurationState extends State<Configuration> {
                                     load = true;
                                   });
                                 },
-                                child: Text('Nombre de Prestaions journalières :  \n\n $nbOpera', textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+                                child: Text('Nombre de Prestations journalières :  \n\n $nbOpera', textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
                               )),
                         ),
                         /*
@@ -199,13 +200,13 @@ class _ConfigurationState extends State<Configuration> {
                 children: <Widget>[
 
                   SizedBox(
-                    width: 150.0,
+                    width: 300.0,
                     height: 140.0,
                     child: new Card(
                       child: Container(
                         child: Center(
                           child: Container(
-                              width: 150.0,
+                              width: 300.0,
                               height: 140.0,
                               child : FlatButton(
                                 color: Color(0xff003372),
@@ -218,46 +219,7 @@ class _ConfigurationState extends State<Configuration> {
                                     load =true;
                                   });
                                 },
-                                child: Text('Chiffres d\'affaires journaliers :  \n\n $totalTarif FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
-                              )),
-                        ),
-                        /*
-                        new Stack(
-                          children: <Widget>[
-                            new Image.asset(
-                              'assets/mobile1.png',
-                              width: 200.0,
-                              height: 120.0,
-                            ),
-                          ],
-                        ),
-                        */
-                        //   onTap{("")}
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(
-                    width: 150.0,
-                    height: 140.0,
-                    child: new Card(
-                      child: Container(
-                        child: Center(
-                          child: Container(
-                              width: 150.0,
-                              height: 140.0,
-                              child : FlatButton(
-                                color: Color(0xff003372),
-                                onPressed: () async{
-                                  setState(() {
-                                    load = false;
-                                  });
-
-                                  setState(() {
-                                    load = true;
-                                  });
-                                },
-                                child: Text('',style: TextStyle(color: Colors.white)),
+                                child: Text('Chiffres d\'affaires journaliers :  \n\n $totalTarif FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 20.0),),
                               )),
                         ),
                         /*
@@ -481,7 +443,7 @@ class _ConfigurationState extends State<Configuration> {
               },
             ),
             ListTile(
-              title: Text('Nouvelle Entree'),
+              title: Text('Nouvelle Entrée'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -539,7 +501,7 @@ class _ConfigurationState extends State<Configuration> {
               },
             ),
             ListTile(
-              title: Text('Parametre'),
+              title: Text('Paramètres'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -583,7 +545,14 @@ class _ConfigurationState extends State<Configuration> {
                 setState(() {
                   load = false;
                 });
-                //await _alertDeconnexion();
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Apropos();
+                    },
+                  ),
+                );
 
                 setState(() {
                   load = true;
@@ -591,7 +560,7 @@ class _ConfigurationState extends State<Configuration> {
               },
             ),
             ListTile(
-              title: Text('Deconnexion'),
+              title: Text('Déconnexion'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -878,7 +847,7 @@ class _ConfigurationState extends State<Configuration> {
   }
 
   _launchMaxomURL() async {
-    const url = 'https://maxom.ci';
+    const url = 'https://agla.app';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

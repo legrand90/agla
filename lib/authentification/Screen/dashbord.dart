@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
+import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/historique.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:lavage/authentification/Screen/transac.dart';
@@ -523,7 +524,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                     ),
                   ),
                   ListTile(
-                    title: Text('Nouvelle Entree'),
+                    title: Text('Nouvelle Entrée'),
                     onTap: () async{
                       setState(() {
                         load = false;
@@ -581,7 +582,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                     },
                   ),
                   ListTile(
-                    title: Text('Parametre'),
+                    title: Text('Paramètres'),
                     onTap: () async{
                       setState(() {
                         load = false;
@@ -625,7 +626,14 @@ class _DashbordScreenState extends State<DashbordScreen> {
                       setState(() {
                         load = false;
                       });
-                      //await _alertDeconnexion();
+                      await Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (BuildContext context){
+                            return Apropos();
+                          },
+                        ),
+                      );
 
                       setState(() {
                         load = true;
@@ -633,7 +641,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                     },
                   ),
                   ListTile(
-                    title: Text('Deconnexion'),
+                    title: Text('Déconnexion'),
                     onTap: () async{
                       setState(() {
                         load = false;
@@ -695,7 +703,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                   ),
 
                   ListTile(
-                    title: Text('Parametre'),
+                    title: Text('Paramètres'),
                     onTap: () async{
                       setState(() {
                         load = false;
@@ -747,7 +755,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                     },
                   ),
                   ListTile(
-                    title: Text('Deconnexion'),
+                    title: Text('Déconnexion'),
                     onTap: () async{
                       setState(() {
                         load = false;
@@ -909,7 +917,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
   }
 
   _launchMaxomURL() async {
-    const url = 'https://maxom.ci';
+    const url = 'https://agla.app';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

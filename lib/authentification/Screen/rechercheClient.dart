@@ -13,6 +13,7 @@ import 'package:lavage/authentification/Models/searchclient.dart';
 import 'package:lavage/authentification/Models/searchclientTrans.dart';
 import 'package:lavage/authentification/Screen/DetailSreen/detailsCommission.dart';
 import 'package:lavage/authentification/Screen/DetailSreen/detailsagent.dart';
+import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/client.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:lavage/authentification/Screen/tutoriel.dart';
@@ -699,7 +700,7 @@ class _RechercheClientState extends State<RechercheClient> {
               },
             ),
             ListTile(
-              title: Text('Nouvelle Entree'),
+              title: Text('Nouvelle Entrée'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -757,7 +758,7 @@ class _RechercheClientState extends State<RechercheClient> {
               },
             ),
             ListTile(
-              title: Text('Parametre'),
+              title: Text('Paramètres'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -801,7 +802,14 @@ class _RechercheClientState extends State<RechercheClient> {
                 setState(() {
                   load = false;
                 });
-                //await _alertDeconnexion();
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Apropos();
+                    },
+                  ),
+                );
 
                 setState(() {
                   load = true;
@@ -809,7 +817,7 @@ class _RechercheClientState extends State<RechercheClient> {
               },
             ),
             ListTile(
-              title: Text('Deconnexion'),
+              title: Text('Déconnexion'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -1025,7 +1033,7 @@ class _RechercheClientState extends State<RechercheClient> {
   }
 
   _launchMaxomURL() async {
-    const url = 'https://maxom.ci';
+    const url = 'https://agla.app';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

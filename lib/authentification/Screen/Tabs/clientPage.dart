@@ -11,9 +11,11 @@ import 'package:lavage/authentification/Screen/DetailSreen/detailsCommission.dar
 import 'package:lavage/authentification/Screen/DetailSreen/detailsagent.dart';
 import 'package:lavage/authentification/Screen/Tabs/comptabiliteTabPage.dart';
 import 'package:lavage/authentification/Screen/Tabs/prestationTabPage.dart';
+import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/client.dart';
 import 'package:lavage/authentification/Screen/prestation.dart';
 import 'package:lavage/authentification/Screen/register.dart';
+import 'package:lavage/authentification/Screen/tutoriel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Transaction.dart';
@@ -241,7 +243,7 @@ class _ClientPagetState extends State<ClientPage> with SingleTickerProviderState
                   },
                 ),
                 ListTile(
-                  title: Text('Nouvelle Entree'),
+                  title: Text('Nouvelle Entrée'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -280,7 +282,7 @@ class _ClientPagetState extends State<ClientPage> with SingleTickerProviderState
                   },
                 ),
                 ListTile(
-                  title: Text('Parametre'),
+                  title: Text('Paramètres'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -296,17 +298,33 @@ class _ClientPagetState extends State<ClientPage> with SingleTickerProviderState
                 ListTile(
                   title: Text('Tutoriel'),
                   onTap: () async{
+                    await Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return Tutoriel();
+                        },
+                      ),
+                    );
 
                   },
                 ),
                 ListTile(
                   title: Text('A propos'),
                   onTap: () async{
+                    await Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return Apropos();
+                        },
+                      ),
+                    );
 
                   },
                 ),
                 ListTile(
-                  title: Text('Deconnexion'),
+                  title: Text('Déconnexion'),
                   onTap: () {
                     _alertDeconnexion();
                   },
@@ -455,7 +473,7 @@ class _ClientPagetState extends State<ClientPage> with SingleTickerProviderState
   }
 
   _launchMaxomURL() async {
-    const url = 'https://maxom.ci';
+    const url = 'https://agla.app';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

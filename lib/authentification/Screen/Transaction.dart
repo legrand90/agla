@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Models/Client.dart';
 import 'package:lavage/authentification/Screen/Listes/listTransactions.dart';
+import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/dashbord.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:lavage/authentification/Screen/tutoriel.dart';
@@ -772,7 +773,7 @@ class _TransactionState extends State<Transaction> {
               },
             ),
             ListTile(
-              title: Text('Nouvelle Entree'),
+              title: Text('Nouvelle Entrée'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -830,7 +831,7 @@ class _TransactionState extends State<Transaction> {
               },
             ),
             ListTile(
-              title: Text('Parametre'),
+              title: Text('Paramètres'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -874,7 +875,14 @@ class _TransactionState extends State<Transaction> {
                 setState(() {
                   load = false;
                 });
-                //await _alertDeconnexion();
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Apropos();
+                    },
+                  ),
+                );
 
                 setState(() {
                   load = true;
@@ -882,7 +890,7 @@ class _TransactionState extends State<Transaction> {
               },
             ),
             ListTile(
-              title: Text('Deconnexion'),
+              title: Text('Déconnexion'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -1173,7 +1181,7 @@ class _TransactionState extends State<Transaction> {
   }
 
   _launchMaxomURL() async {
-    const url = 'https://maxom.ci';
+    const url = 'https://agla.app';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

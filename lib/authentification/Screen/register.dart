@@ -10,6 +10,7 @@ import 'package:lavage/authentification/Screen/Couleur.dart';
 import 'package:lavage/authentification/Screen/Listes/listlog.dart';
 import 'package:lavage/authentification/Screen/Listes/listusers_pw.dart';
 import 'package:lavage/authentification/Screen/Marque.dart';
+import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/finances.dart';
 import 'package:lavage/authentification/Screen/gestionClient.dart';
 import 'package:lavage/authentification/Screen/gestionAgent.dart';
@@ -922,7 +923,7 @@ class _RegisterState extends State<Register> {
               },
             ),
             ListTile(
-              title: Text('Nouvelle Entree'),
+              title: Text('Nouvelle Entrée'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -980,7 +981,7 @@ class _RegisterState extends State<Register> {
               },
             ),
             ListTile(
-              title: Text('Parametre'),
+              title: Text('Paramètres'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -1024,7 +1025,14 @@ class _RegisterState extends State<Register> {
                 setState(() {
                   load = false;
                 });
-                //await _alertDeconnexion();
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Apropos();
+                    },
+                  ),
+                );
 
                 setState(() {
                   load = true;
@@ -1032,7 +1040,7 @@ class _RegisterState extends State<Register> {
               },
             ),
             ListTile(
-              title: Text('Deconnexion'),
+              title: Text('Déconnexion'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -1114,7 +1122,7 @@ class _RegisterState extends State<Register> {
             ),
 
             ListTile(
-              title: Text('Parametre'),
+              title: Text('Paramètres'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -1166,7 +1174,7 @@ class _RegisterState extends State<Register> {
               },
             ),
             ListTile(
-              title: Text('Deconnexion'),
+              title: Text('Déconnexion'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -1319,7 +1327,7 @@ class _RegisterState extends State<Register> {
   }
 
   _launchMaxomURL() async {
-    const url = 'https://maxom.ci';
+    const url = 'https://agla.app';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

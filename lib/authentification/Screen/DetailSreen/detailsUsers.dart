@@ -447,7 +447,7 @@ class _DetailsUsersState extends State<DetailsUsers> {
                 ),
 
                 ListTile(
-                  title: Text('Parametre'),
+                  title: Text('Paramètres'),
                   onTap: () async{
                     setState(() {
                       load = false;
@@ -499,7 +499,7 @@ class _DetailsUsersState extends State<DetailsUsers> {
                   },
                 ),
                 ListTile(
-                  title: Text('Deconnexion'),
+                  title: Text('Déconnexion'),
                   onTap: () async{
                     setState(() {
                       load = false;
@@ -702,7 +702,7 @@ var email;
   }
 
   _launchMaxomURL() async {
-    const url = 'https://maxom.ci';
+    const url = 'https://agla.app';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

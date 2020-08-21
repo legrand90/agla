@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Screen/Agent.dart';
+import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/client.dart';
 import 'package:lavage/authentification/Screen/commission.dart';
 import 'package:lavage/authentification/Screen/prestation.dart';
@@ -186,13 +187,13 @@ class _GestionAgentState extends State<GestionAgent> {
                 children: <Widget>[
 
                   SizedBox(
-                    width: 150.0,
+                    width: 300.0,
                     height: 140.0,
                     child: new Card(
                       child: Container(
                         child: Center(
                           child: Container(
-                              width: 150.0,
+                              width: 300.0,
                               height: 140.0,
                               child : FlatButton(
                                 color: Color(0xff003372),
@@ -205,46 +206,7 @@ class _GestionAgentState extends State<GestionAgent> {
                                     load =true;
                                   });
                                 },
-                                child: Text('Total Commissions :  \n\n $commissions FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
-                              )),
-                        ),
-                        /*
-                        new Stack(
-                          children: <Widget>[
-                            new Image.asset(
-                              'assets/mobile1.png',
-                              width: 200.0,
-                              height: 120.0,
-                            ),
-                          ],
-                        ),
-                        */
-                        //   onTap{("")}
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(
-                    width: 150.0,
-                    height: 140.0,
-                    child: new Card(
-                      child: Container(
-                        child: Center(
-                          child: Container(
-                              width: 150.0,
-                              height: 140.0,
-                              child : FlatButton(
-                                color: Color(0xff003372),
-                                onPressed: () async{
-                                  setState(() {
-                                    load = false;
-                                  });
-
-                                  setState(() {
-                                    load = true;
-                                  });
-                                },
-                                child: Text('',style: TextStyle(color: Colors.white)),
+                                child: Text('Total Commissions :  \n\n $commissions FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 20.0),),
                               )),
                         ),
                         /*
@@ -517,7 +479,7 @@ class _GestionAgentState extends State<GestionAgent> {
               },
             ),
             ListTile(
-              title: Text('Nouvelle Entree'),
+              title: Text('Nouvelle Entrée'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -575,7 +537,7 @@ class _GestionAgentState extends State<GestionAgent> {
               },
             ),
             ListTile(
-              title: Text('Parametre'),
+              title: Text('Paramètres'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -619,7 +581,14 @@ class _GestionAgentState extends State<GestionAgent> {
                 setState(() {
                   load = false;
                 });
-                //await _alertDeconnexion();
+                await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Apropos();
+                    },
+                  ),
+                );
 
                 setState(() {
                   load = true;
@@ -627,7 +596,7 @@ class _GestionAgentState extends State<GestionAgent> {
               },
             ),
             ListTile(
-              title: Text('Deconnexion'),
+              title: Text('Déconnexion'),
               onTap: () async{
                 setState(() {
                   load = false;
@@ -914,7 +883,7 @@ class _GestionAgentState extends State<GestionAgent> {
   }
 
   _launchMaxomURL() async {
-    const url = 'https://maxom.ci';
+    const url = 'https://agla.app';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

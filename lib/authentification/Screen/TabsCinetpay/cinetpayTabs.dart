@@ -17,9 +17,11 @@ import 'package:lavage/authentification/Screen/TabsCinetpay/historiqueTrans.dart
 import 'package:lavage/authentification/Screen/TabsCinetpay/renewAbonnement.dart';
 import 'package:lavage/authentification/Screen/TabsTransactionPaiement/paimentAgent.dart';
 import 'package:lavage/authentification/Screen/TabsTransactionPaiement/searchPaiement.dart';
+import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/client.dart';
 import 'package:lavage/authentification/Screen/prestation.dart';
 import 'package:lavage/authentification/Screen/register.dart';
+import 'package:lavage/authentification/Screen/tutoriel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Transaction.dart';
@@ -238,7 +240,7 @@ class _CinetpayTabState extends State<CinetpayTab> with SingleTickerProviderStat
                     },
                   ),
                   ListTile(
-                    title: Text('Nouvelle Entree'),
+                    title: Text('Nouvelle Entrée'),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -277,7 +279,7 @@ class _CinetpayTabState extends State<CinetpayTab> with SingleTickerProviderStat
                     },
                   ),
                   ListTile(
-                    title: Text('Parametre'),
+                    title: Text('Paramètres'),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -293,17 +295,33 @@ class _CinetpayTabState extends State<CinetpayTab> with SingleTickerProviderStat
                   ListTile(
                     title: Text('Tutoriel'),
                     onTap: () async{
+                      await Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return Tutoriel();
+                          },
+                        ),
+                      );
 
                     },
                   ),
                   ListTile(
                     title: Text('A propos'),
                     onTap: () async{
+                      await Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return Apropos();
+                          },
+                        ),
+                      );
 
                     },
                   ),
                   ListTile(
-                    title: Text('Deconnexion'),
+                    title: Text('Déconnexion'),
                     onTap: () {
                       _alertDeconnexion();
                     },

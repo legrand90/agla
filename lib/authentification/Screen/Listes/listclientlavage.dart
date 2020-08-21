@@ -205,7 +205,7 @@ class _ListClientLavageState extends State<ListClientLavage>{
                 },
               ),
               ListTile(
-                title: Text('Nouvelle Entree'),
+                title: Text('Nouvelle Entrée'),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -244,7 +244,7 @@ class _ListClientLavageState extends State<ListClientLavage>{
                 },
               ),
               ListTile(
-                title: Text('Parametre'),
+                title: Text('Paramètres'),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -257,7 +257,7 @@ class _ListClientLavageState extends State<ListClientLavage>{
                 },
               ),
               ListTile(
-                title: Text('Deconnexion'),
+                title: Text('Déconnexion'),
                 onTap: () {
                   _alertDeconnexion();
                 },
