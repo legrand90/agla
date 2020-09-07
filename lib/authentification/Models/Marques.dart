@@ -51,3 +51,25 @@ class Datum {
     "message": message,
   };
 }
+
+class Datu1 {
+  int id;
+  String marque;
+
+  Datu1({
+    this.id,
+    this.marque,
+
+  });
+
+  factory Datu1.fromJson(Map<String, dynamic> json) => Datu1(
+    id: json["id"],
+    marque: json["marque"] as String,
+
+  );
+
+//  Map<String, dynamic> toJson() => {
+//    "id": id,
+//    "nom": nom,
+//  };
+}

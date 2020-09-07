@@ -453,7 +453,7 @@ class _FinancesState extends State<Finances> {
                 ),
               ),
 
-              Container(
+              (admin == '1' || admin == '2') ? Container(
                 margin: const EdgeInsets.only(top: 20.0),
                 padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                 child: Row(
@@ -508,7 +508,7 @@ class _FinancesState extends State<Finances> {
                     )
                   ],
                 ),
-              ),
+              ) : Text(''),
 
             ],
           ),

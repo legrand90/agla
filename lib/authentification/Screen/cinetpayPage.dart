@@ -40,7 +40,7 @@ class _CinetpayPageState extends State<CinetpayPage> {
   bool loading = true;
   bool load = true;
 
-  var fenetre = 'CINETPAY';
+  var fenetre = 'ABONNEMENT';
 
   Future <void> _changeLoadingVisible() async {
     setState(() {
@@ -97,7 +97,7 @@ class _CinetpayPageState extends State<CinetpayPage> {
         title: Text('$fenetre'),
       ),
       body: WebView(
-        initialUrl: display ? UrlWeb : '',
+        initialUrl: display ? UrlWeb : "",
         javascriptMode: JavascriptMode.unrestricted,
         onWebViewCreated: (WebViewController webViewController) {
           controller = webViewController;
@@ -459,6 +459,7 @@ class _CinetpayPageState extends State<CinetpayPage> {
   }
 
   void checkPrestation()async {
+
     if(validateAndSave()) {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       var id = localStorage.getString('id_lavage');
@@ -487,21 +488,25 @@ class _CinetpayPageState extends State<CinetpayPage> {
   bool display = false;
 
   void getUserName() async{
+    //_showMsg("Veuillez attendre l'affichage du bouton de paiement. Cela peut prendre quelques secondes. Merci !");
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var userName = localStorage.getString('nom');
     var res = await CallApi().getData('paymentPage/$idLav');
      idLav = localStorage.getString('id_lavage');
     UrlWeb = (UrlWeb + idLav).toString();
 
-    setState(() {
-      nameUser = userName;
-      idLav = localStorage.getString('id_lavage');
-      controller.loadUrl(UrlWeb);
-     // controller.loadUrl(UrlWeb);
-      display = true;
-    });
+    if(res.statusCode == 200) {
+      _showMsg("Veuillez attendre l'affichage du bouton de paiement. Cela peut prendre quelques secondes. Merci !");
+      setState(() {
+        nameUser = userName;
+        idLav = localStorage.getString('id_lavage');
+        controller.loadUrl(UrlWeb);
+        // controller.loadUrl(UrlWeb);
+        display = true;
+      });
+    }
 
-    print("la valeur de idlav est : $UrlWeb");
+    //print("la valeur de idlav est : $UrlWeb");
 
   }
 
@@ -569,6 +574,7 @@ class _CinetpayPageState extends State<CinetpayPage> {
   var adm;
   var statu;
   var libLavage;
+  bool afficher = false;
   WebViewController controller;
 
   Future <void> getStatut()async{
@@ -582,12 +588,11 @@ class _CinetpayPageState extends State<CinetpayPage> {
       var resBody = json.decode(res.body)['data'];
 
       if(resBody['success']){
-
         setState((){
           statu = resBody['status'];
           libLavage = resBody['nomLavage'];
-
         });
+
       }
 
     }else{

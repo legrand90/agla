@@ -1,11 +1,13 @@
 import 'dart:async';
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 //import 'package:font_awesome_flutter/fa_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:http/http.dart' as http;
-import 'package:lavage/authentification/Models/Client.dart';
+import 'package:lavage/authentification/Models/Couleurs.dart';
+import 'package:lavage/authentification/Models/Marques.dart';
 import 'dart:convert';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:lavage/authentification/Screen/apropos.dart';
@@ -29,6 +31,10 @@ class Client extends StatefulWidget {
 }
 
 class _ClientState extends State<Client> {
+  AutoCompleteTextField searchTextField1;
+  AutoCompleteTextField searchTextField2;
+  GlobalKey <AutoCompleteTextFieldState<Datu1>> key1 = GlobalKey();
+  GlobalKey <AutoCompleteTextFieldState<Datu2>> key2 = GlobalKey();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _nomClient = TextEditingController();
@@ -36,6 +42,23 @@ class _ClientState extends State<Client> {
   final TextEditingController _matricule = TextEditingController();
 //  final TextEditingController _couleurVehicule = TextEditingController();
 //  final TextEditingController _marqueVehicule = TextEditingController();
+
+  static List <Datu1> Listmarques = List <Datu1>() ;
+  static List <Datu2> Listcouleurs = List <Datu2>() ;
+  var searchValMarque ;
+  var searchValCouleur ;
+
+  static List <Datu1> loadMarques(String jsonString){
+    final parsed = json.decode(jsonString)['data'].cast<Map<String, dynamic>>();
+    return parsed.map<Datu1>((json)=>Datu1.fromJson(json)).toList();
+  }
+
+  static List <Datu2> loadCouleurs(String jsonString){
+    final parsed = json.decode(jsonString)['data'].cast<Map<String, dynamic>>();
+    return parsed.map<Datu2>((json)=>Datu2.fromJson(json)).toList();
+  }
+
+
 
   String _mySelection;
   String _mySelection2;
@@ -47,6 +70,8 @@ class _ClientState extends State<Client> {
   bool success = false;
   bool loading = true;
   bool load = true;
+  bool loader1 = true;
+  bool loader2 = true;
   String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
 
 
@@ -70,7 +95,10 @@ class _ClientState extends State<Client> {
     if(res.statusCode == 200) {
       var resBody = json.decode(res.body)['data'];
       setState(() {
-        data = resBody;
+        //listclients = loadClients(res.body);
+        Listcouleurs = loadCouleurs(res.body);
+        loader2 = false ;
+        // data = resBody;
       });
     }
     //print(resBody);
@@ -90,7 +118,10 @@ class _ClientState extends State<Client> {
       var resBody = json.decode(res.body)['data'];
 
       setState(() {
-        data2 = resBody;
+        //listclients = loadClients(res.body);
+        Listmarques = loadMarques(res.body);
+        loader1 = false ;
+        // data = resBody;
       });
 
     }
@@ -136,6 +167,64 @@ class _ClientState extends State<Client> {
     }
     print('les donnees sont : $idClient');
 
+  }
+
+  Widget row1(Datu1 ag){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(ag.marque, style: TextStyle(fontSize: 18.0),)
+      ],
+    );
+  }
+
+  Widget row2(Datu2 ag){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(ag.couleur, style: TextStyle(fontSize: 18.0),)
+      ],
+    );
+  }
+
+  List<Widget> createListClient1(){
+    List<Widget> widgets = [];
+
+    for(Datu1 datu1 in Listmarques){
+      widgets.add(Row(
+        children: <Widget>[
+          Expanded(
+            child: Text(datu1.id.toString()),
+          ),
+          Expanded(
+            child: Text(datu1.id.toString()),
+          ),
+          Expanded(
+            child: Text(datu1.id.toString()),
+          ),
+        ],
+      ));
+    }
+  }
+
+  List<Widget> createListClient2(){
+    List<Widget> widgets = [];
+
+    for(Datu2 datu2 in Listcouleurs){
+      widgets.add(Row(
+        children: <Widget>[
+          Expanded(
+            child: Text(datu2.id.toString()),
+          ),
+          Expanded(
+            child: Text(datu2.id.toString()),
+          ),
+          Expanded(
+            child: Text(datu2.id.toString()),
+          ),
+        ],
+      ));
+    }
   }
 
 
@@ -259,8 +348,8 @@ class _ClientState extends State<Client> {
                             keyboardType: TextInputType.phone,
                             //autofocus: false,
                             controller: _contactClient,
-                            validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
-                            onSaved: (value) => contactClient = value,
+                           // validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
+                           // onSaved: (value) => contactClient = value,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Contact",
@@ -333,24 +422,37 @@ class _ClientState extends State<Client> {
 
                       SizedBox(width: 5.0,),
                       Expanded(
-                          child : DropdownButton(
-                            items: data2.map((value) => DropdownMenuItem(
-                              child: Text(
-                                value['marque'],
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              value: value['id'].toString(),
-                            )).toList(),
-                            onChanged: (choix){
+                          child : loader1 ? Center(child: CircularProgressIndicator()) : searchTextField1 = AutoCompleteTextField<Datu1>(
+                            key: key1,
+                            clearOnSubmit: false,
+                            suggestions: Listmarques,
+                            style: TextStyle(color: Colors.black, fontSize: 16.0),
+                            decoration: InputDecoration(
+                                contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
+                                hintText: "Marque du véhicule",
+                                hintStyle: TextStyle(color: Colors.black, fontSize: 18.0)
+                            ),
+                            itemFilter: (item, query){
+                              return item.marque.toLowerCase().startsWith(query.toLowerCase());
+                            },
+                            itemSorter: (a, b){
+                              return a.marque.compareTo(b.marque);
+                            },
+                            itemSubmitted: (item){
                               setState(() {
-                                _mySelection2 = choix ;
+                               // idmatricule = null;
+                               // affiche = false;
+                                searchTextField1.textField.controller.text = item.marque;
+                                searchValMarque = item.id ;
+                                //idclient = searchVal;
+                                //getNomClient();
                               });
                             },
-                            value: _mySelection2,
-                            isExpanded: true,
-                            hint: Text('Marque du vehicule', style: TextStyle(fontSize: 18.0)),
-                            style: TextStyle(color: Color(0xff11b719)),
-                          ))
+                            itemBuilder: (context, item){
+                              return row1(item);
+                            },
+
+                          ),)
                     ],
 
                   )),
@@ -364,24 +466,37 @@ class _ClientState extends State<Client> {
 
                       SizedBox(width: 5.0,),
                       Expanded(
-                          child : DropdownButton(
-                            items: data.map((value) => DropdownMenuItem(
-                              child: Text(
-                                value['couleur'],
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              value: value['id'].toString(),
-                            )).toList(),
-                            onChanged: (choix){
+                          child : loader2 ? Center(child: CircularProgressIndicator()) : searchTextField2 = AutoCompleteTextField<Datu2>(
+                            key: key2,
+                            clearOnSubmit: false,
+                            suggestions: Listcouleurs,
+                            style: TextStyle(color: Colors.black, fontSize: 16.0),
+                            decoration: InputDecoration(
+                                contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
+                                hintText: "Couleur du véhicule",
+                                hintStyle: TextStyle(color: Colors.black, fontSize: 18.0)
+                            ),
+                            itemFilter: (item, query){
+                              return item.couleur.toLowerCase().startsWith(query.toLowerCase());
+                            },
+                            itemSorter: (a, b){
+                              return a.couleur.compareTo(b.couleur);
+                            },
+                            itemSubmitted: (item){
                               setState(() {
-                                _mySelection = choix ;
+                                // idmatricule = null;
+                                // affiche = false;
+                                searchTextField2.textField.controller.text = item.couleur;
+                                searchValCouleur = item.id ;
+                                //idclient = searchVal;
+                                //getNomClient();
                               });
                             },
-                            value: _mySelection,
-                            isExpanded: true,
-                            hint: Text('Couleur du vehicule', style: TextStyle(fontSize: 18.0)),
-                            style: TextStyle(color: Color(0xff11b719)),
-                          ))
+                            itemBuilder: (context, item){
+                              return row2(item);
+                            },
+
+                          ),)
                     ],
 
                   )),
@@ -857,18 +972,22 @@ class _ClientState extends State<Client> {
       };
 
       var res = await CallApi().postAppData(data, 'create_client');
-      var resLog = await CallApi().postData(dataLog, 'create_log');
-      var body = json.decode(res.body)['data'];
 
-      setState(() {
-       // success = true;
-        idClient = body[0]['id'];
-      });
+      if (res.statusCode == 200) {
+        var resLog = await CallApi().postData(dataLog, 'create_log');
+        var body = json.decode(res.body)['data'];
 
-      if(res.statusCode == 200){
-        _sendDataMatricule();
+        setState(() {
+          // success = true;
+          idClient = body[0]['id'];
+        });
+
+        if (res.statusCode == 200) {
+          _sendDataMatricule();
+        }
+      }else{
+        _showMsg("Erreur d'enregistrement des donnees");
       }
-
     }
 
   }
@@ -906,8 +1025,8 @@ class _ClientState extends State<Client> {
         'libelle_matricule': _matricule.text,
         'dateEnreg': date,
         'id_lavage': idlavage,
-        'id_couleur': _mySelection,
-        'id_marque': _mySelection2,
+        'id_couleur': searchValCouleur,
+        'id_marque': searchValMarque,
       };
 
       var res = await CallApi().postAppData(data, 'create_matricule');
@@ -919,8 +1038,8 @@ class _ClientState extends State<Client> {
           _contactClient.text = '';
           _matricule.text = '';
           _email.text = '';
-          _mySelection = null;
-          _mySelection2 = null;
+          searchTextField1.textField.controller.text = "";
+          searchTextField2.textField.controller.text = "";
         });
 
         _showMsg("Donnees enregistrees avec succes");
@@ -933,28 +1052,44 @@ class _ClientState extends State<Client> {
 
   void checkMatriculeAndContact()async {
     if(validateAndSave()) {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+      var id = localStorage.getString('id_lavage');
+
+      if (_contactClient.text != '') {
+        var resContact = await CallApi().getData(
+            'checkContact/$id/${_contactClient.text}');
+        var contactbody = json.decode(resContact.body);
 
 
-    var resContact = await CallApi().getData(
-        'checkContact/$id/${_contactClient.text}');
-    var contactbody = json.decode(resContact.body);
+        var resMatricule = await CallApi().getData(
+            'checkMatricule/$id/${_matricule.text}');
+        var matriculebody = json.decode(resMatricule.body);
 
+        if ((matriculebody['success']) || (contactbody['success'])) {
+          // print('donnee 1 $matriculebody');
+          //print('donnee 2 $contactbody');
+          _showMsg("Ce matricule ou ce contact existe deja !!!");
+        } else {
+          //_showMsg("existe pas!!!");
+          _sendDataClient();
+        }
+      } else {
+        SharedPreferences localStorage = await SharedPreferences.getInstance();
+        var id = localStorage.getString('id_lavage');
+        var resMatricule = await CallApi().getData(
+            'checkMatricule/$id/${_matricule.text}');
+        var matriculebody = json.decode(resMatricule.body);
 
-    var resMatricule = await CallApi().getData(
-        'checkMatricule/$id/${_matricule.text}');
-    var matriculebody = json.decode(resMatricule.body);
-
-    if ((matriculebody['success']) || (contactbody['success'])) {
-      // print('donnee 1 $matriculebody');
-      //print('donnee 2 $contactbody');
-      _showMsg("Ce matricule ou ce contact existe deja !!!");
-    } else {
-      //_showMsg("existe pas!!!");
-      _sendDataClient();
+        if ((matriculebody['success'])) {
+          // print('donnee 1 $matriculebody');
+          //print('donnee 2 $contactbody');
+          _showMsg("Ce matricule existe deja !");
+        } else {
+          //_showMsg("existe pas!!!");
+          _sendDataClient();
+        }
+      }
     }
-  }
 
   }
 

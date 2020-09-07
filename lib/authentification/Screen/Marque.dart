@@ -30,9 +30,8 @@ class _MarqueState extends State<Marque> {
 
   String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
 
+
   String nomMarque;
-
-
   bool _autoValidate = false;
   bool _loadingVisible = false;
   bool loading = true;
@@ -48,6 +47,7 @@ class _MarqueState extends State<Marque> {
   }
 
   final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
+
 
   _showMsg(msg) {
     final snackBar = SnackBar(

@@ -7,7 +7,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
-import 'package:lavage/authentification/Models/Client.dart';
+//import 'package:lavage/authentification/Models/Client.dart';
+import 'package:lavage/authentification/Models/Matricule.dart';
 import 'package:lavage/authentification/Screen/Listes/listTransactions.dart';
 import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/dashbord.dart';
@@ -73,7 +74,8 @@ class _TransactionState extends State<Transaction> {
 //  final String urlTarification = "http://192.168.43.217:8000/api/getLastTarification";
 
 
-  static List <Datu> listclients = List <Datu>()  ;
+  //static List <Datu> listclients = List <Datu>()  ;
+  static List <Datu> Listmatricule = List <Datu>() ;
   List data = List() ;
   List data2 = List() ;
   List data3 = List() ;//edited line
@@ -121,22 +123,19 @@ class _TransactionState extends State<Transaction> {
   void getClients() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
-    var res = await CallApi().getData('client/$id');
-   // final String urlClient = "http://192.168.43.217:8000/api/client/$id";
-   // final res = await http.get(Uri.encodeFull(urlAgent), headers: {"Accept": "application/json","Content-type" : "application/json",});
-  //  final res2 = await http.get(Uri.encodeFull(urlClient), headers: {"Accept": "application/json","Content-type" : "application/json",});
-    //var resBody = json.decode(res.body)['data'];
+    var res = await CallApi().getData('listImmatriculations/$id');
 
     if(res.statusCode == 200){
 
       setState(() {
-        listclients = loadClients(res.body);
+        //listclients = loadClients(res.body);
+        Listmatricule = loadClients(res.body);
         loading = false ;
         // data = resBody;
       });
     }
 
-    print('Cli : ${listclients.length}');
+    print('Cli : ${Listmatricule.length}');
 
   }
 
@@ -221,7 +220,7 @@ class _TransactionState extends State<Transaction> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(ag.nom, style: TextStyle(fontSize: 18.0),)
+        Text(ag.matricule, style: TextStyle(fontSize: 18.0),)
       ],
     );
   }
@@ -230,7 +229,7 @@ class _TransactionState extends State<Transaction> {
   List<Widget> createListClient(){
     List<Widget> widgets = [];
 
-    for(Datu datu in listclients){
+    for(Datu datu in Listmatricule){
       widgets.add(Row(
         children: <Widget>[
           Expanded(
@@ -247,18 +246,23 @@ class _TransactionState extends State<Transaction> {
     }
   }
 
-  void getMatriculeVehicule() async{
+  var nomClient;
+  bool affiche = false;
+
+  void getNomClient() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
-    var res = await CallApi().getData('matricule/$id/$idclient');
+    var res = await CallApi().getData('nomClientByImmatriculation/$id/$searchVal');
    // String url = "http://192.168.43.217:8000/api/matricule/$id/$idclient";
     //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
-     var resBody = json.decode(res.body)['data'];
+     var resBody = json.decode(res.body);
     // final response = await http.get('$url');
 
-    setState(() {
-      listmatri = resBody;
-    });
+      setState(() {
+        nomClient = resBody['nomClient'];
+        idclient = resBody['idClient'];
+        affiche = true;
+      });
 
   }
 
@@ -362,26 +366,27 @@ class _TransactionState extends State<Transaction> {
                         child: loading ? Center(child: CircularProgressIndicator()) : searchTextField = AutoCompleteTextField<Datu>(
                           key: key,
                           clearOnSubmit: false,
-                          suggestions: listclients,
+                          suggestions: Listmatricule,
                           style: TextStyle(color: Colors.black, fontSize: 16.0),
                           decoration: InputDecoration(
                               contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
-                              hintText: "CLIENT",
+                              hintText: "PLAQUE D'IMMATRICULATION",
                               hintStyle: TextStyle(color: Colors.black, fontSize: 18.0)
                           ),
                           itemFilter: (item, query){
-                            return item.nom.toLowerCase().startsWith(query.toLowerCase());
+                            return item.matricule.toLowerCase().startsWith(query.toLowerCase());
                           },
                           itemSorter: (a, b){
-                            return a.nom.compareTo(b.nom);
+                            return a.matricule.compareTo(b.matricule);
                           },
                           itemSubmitted: (item){
                             setState(() {
                               idmatricule = null;
-                              searchTextField.textField.controller.text = item.nom;
+                              affiche = false;
+                              searchTextField.textField.controller.text = item.matricule;
                               searchVal = item.id ;
-                              idclient = searchVal;
-                              getMatriculeVehicule() ;
+                              //idclient = searchVal;
+                              getNomClient();
                             });
                           },
                           itemBuilder: (context, item){
@@ -391,20 +396,6 @@ class _TransactionState extends State<Transaction> {
                         ),
 
                       ),
-
-                       IconButton(
-                          icon: Icon(Icons.add),
-                          onPressed: (){
-                            Navigator.push(
-                              context,
-                              new MaterialPageRoute(
-                                builder: (BuildContext context){
-                                  return Client();
-                                },
-                              ),
-                            );
-                          },
-                        )
                     ],
                   )),
 
@@ -412,36 +403,10 @@ class _TransactionState extends State<Transaction> {
                     padding: const EdgeInsets.only(left: 40.0),
                   ),
 
-                  Container(
-                      margin: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(width: 5.0,),
-                      Expanded(
-                          child : DropdownButton(
-                            items: listmatri.map((value) => DropdownMenuItem(
-                              child: Text(
-                                value['matricule'],
-                                style: TextStyle(color: Colors.black, fontSize: 18.0),
-                              ),
-                              value: value['id'].toString(),
-                            )).toList(),
-                            onChanged: (choix){
-                              setState(() {
-                                idmatricule = choix ;
-                              });
-
-
-                            },
-                            value: (idmatricule != null) ? idmatricule : null,
-                            isExpanded: true,
-                            hint: Text('MATRICULE', style: TextStyle(fontSize: 18.0),),
-                            style: TextStyle(color: Color(0xff11b719)),
-                          ))
-                    ],
-
-                  )),
+                  affiche ? Container(
+                  margin: EdgeInsets.only(left: 20.0,),
+                  child: Text("$nomClient", style: TextStyle(fontSize: 18.0)),
+                ) : Text(''),
 
                   ////////////////////////////////////////////////////////////////
 
@@ -579,7 +544,6 @@ class _TransactionState extends State<Transaction> {
                                 onPressed: ()async{
                                   setState(() {
                                     loader = false;
-
                                   });
                                   await _sendDataTransaction();
 
@@ -977,11 +941,11 @@ class _TransactionState extends State<Transaction> {
         'dateEnreg': date,
         'id_lavage': idlavage,
         'id_agent': _mySelection,
-        'id_client': searchVal,
+        'id_client': idclient,
         'id_commission': id_commission,
         'id_tarification': idTari,
         'tarification': data4,
-        'id_matricule_vehicule': idmatricule,
+        'id_matricule_vehicule': searchVal,
 
       };
 
@@ -1016,6 +980,7 @@ class _TransactionState extends State<Transaction> {
           idmatricule = null;
           searchTextField.textField.controller.text = "";
           visible = false ;
+          affiche = false ;
         });
 
         _showMsg("Donnees enregistrees avec succes");

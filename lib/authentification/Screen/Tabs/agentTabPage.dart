@@ -50,6 +50,7 @@ class _AgentTabPageState extends State<AgentTabPage> {
   bool visible = false ;
 
   bool loading = true;
+  bool loader = true;
 
   Listagentfromsearch serchValue = Listagentfromsearch();
   ListagentTransaction serchValue2 = ListagentTransaction();
@@ -292,7 +293,7 @@ class _AgentTabPageState extends State<AgentTabPage> {
                             visible = false;
                             _mySelection = choix;
                           });
-                          await checkDate();
+
                         },
                         value: _mySelection,
                         isExpanded: true,
@@ -302,6 +303,54 @@ class _AgentTabPageState extends State<AgentTabPage> {
                 ],
 
               )),
+
+              Container(
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: loader ? FlatButton(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)
+                        ),
+                        color: Color(0xff003372),
+                        onPressed: ()async{
+                          setState(() {
+                            loader = false;
+                          });
+                          await checkDate();
+                          setState(() {
+                            loader = true;
+                          });
+                        },
+                        child: new Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0,
+                          ),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Expanded(
+                                child: Text(
+                                  "Rechercher",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0
+                                    //fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ) : Center(child: CircularProgressIndicator(),),
+                    )
+                  ],
+                ),
+              ),
 
               SizedBox(
                 height: 20.2,
@@ -366,8 +415,8 @@ class _AgentTabPageState extends State<AgentTabPage> {
               ): Text(''),
 
               SizedBox(height: 20.0,),
-              visible?
-              Container(
+
+              visible ? Container(
                 margin: EdgeInsets.only(left: 15.0),
                 child :
                 Row(
@@ -482,7 +531,7 @@ class _AgentTabPageState extends State<AgentTabPage> {
 
   }
 
-  void checkDate(){
+  void checkDate()async{
     DateTime d1;
     DateTime d2;
     int differ;

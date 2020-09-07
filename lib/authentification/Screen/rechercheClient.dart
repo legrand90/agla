@@ -59,6 +59,7 @@ class _RechercheClientState extends State<RechercheClient> {
   var mydate2;
   bool visible = false;
   bool load = true;
+  bool loader = true;
 
   void ClientFromSearch() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -456,7 +457,7 @@ class _RechercheClientState extends State<RechercheClient> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.grey.withOpacity(0.5),
                       width: 1.0,
                     ),
                     borderRadius: BorderRadius.circular(30.0),
@@ -473,22 +474,63 @@ class _RechercheClientState extends State<RechercheClient> {
                           //  validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
                           // onSaved: (value) => nomPrestation = value,
                           decoration: InputDecoration(
-                            //border: InputBorder,
+                            border: InputBorder.none,
                             hintText: "Saisir votre recherche",
                             hintStyle: TextStyle(color: Colors.black),
                           ),
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.search),
-                        onPressed: (){
-                          checkDate();
-                          //_getSearch();
-                          // _Text.text = "";
-                        },
-                      ),
                     ],
                   ),
+                ),
+              ),
+
+              Container(
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: loader ? FlatButton(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)
+                        ),
+                        color: Color(0xff003372),
+                        onPressed: ()async{
+                          setState(() {
+                            loader = false;
+                          });
+                          await checkDate();
+                          setState(() {
+                            loader = true;
+                            visible = false;
+                          });
+                        },
+                        child: new Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0,
+                          ),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Expanded(
+                                child: Text(
+                                  "Rechercher",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0
+                                    //fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ) : Center(child: CircularProgressIndicator(),),
+                    )
+                  ],
                 ),
               ),
 
@@ -536,6 +578,21 @@ class _RechercheClientState extends State<RechercheClient> {
                     Text('EMAIL : '),
                     //SizedBox(width: 20.0,),
                     Expanded(child: Text('${serchValue.data.email}'),)
+                  ],
+                ),
+
+              ): Text(''),
+
+              SizedBox(height: 20.0,),
+
+              visible ? Container(
+                margin: EdgeInsets.only(left: 15.0),
+                child :
+                Row(
+                  children: <Widget>[
+                    Text('NOMBRE DE PRESTATIONS : '),
+                    //SizedBox(width: 20.0,),
+                    Expanded(child: Text('  ${serchValue2.data.length}'),)
                   ],
                 ),
 
@@ -922,7 +979,7 @@ class _RechercheClientState extends State<RechercheClient> {
 
   }
 
-  void checkDate(){
+  void checkDate()async{
     DateTime d1;
     DateTime d2;
     int differ;

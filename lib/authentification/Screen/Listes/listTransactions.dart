@@ -60,6 +60,7 @@ class _ListTransactionState extends State<ListTransaction> {
   var recette;
   var commissions;
   var totalTarif;
+  var nbOpera ;
   void getRecette() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
@@ -73,6 +74,7 @@ class _ListTransactionState extends State<ListTransaction> {
       recette = (resBody['recette'] == null) ? 0 : resBody['recette'];
       commissions = (resBody['commissions'] == null) ? 0 : resBody['commissions'];
       totalTarif = recette + commissions;
+      nbOpera = (resBody['nbOpera'] == null) ? 0 : resBody['nbOpera'] ;
     });
 
     //print("la recette est  : ${recette['recette']}");
@@ -129,7 +131,12 @@ class _ListTransactionState extends State<ListTransaction> {
                   SizedBox(height: 40.0,),
                   Container(
                     margin: EdgeInsets.only(left: 20.0,),
-                    child: Text("TOTAL TARIFICATIONS : $totalTarif FCFA", style: TextStyle(fontSize: 18.0)),
+                    child: Text("NOMBRE D'OPERATIONS : $nbOpera", style: TextStyle(fontSize: 18.0)),
+                  ),
+                  SizedBox(height: 40.0,),
+                  Container(
+                    margin: EdgeInsets.only(left: 20.0,),
+                    child: Text("CHIFFRES D'AFFAIRES : $totalTarif FCFA", style: TextStyle(fontSize: 18.0)),
                   ),
 
                   SizedBox(height: 40.0,),

@@ -6,6 +6,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
+import 'package:lavage/authentification/Models/Couleurs.dart';
+import 'package:lavage/authentification/Models/Marques.dart';
 import 'package:lavage/authentification/Models/Client.dart';
 import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/dashbord.dart';
@@ -35,6 +37,10 @@ class _MatriculeState extends State<Matricule> {
 
   AutoCompleteTextField searchTextField;
   GlobalKey <AutoCompleteTextFieldState<Datu>> key = GlobalKey();
+  AutoCompleteTextField searchTextField1;
+  AutoCompleteTextField searchTextField2;
+  GlobalKey <AutoCompleteTextFieldState<Datu1>> key1 = GlobalKey();
+  GlobalKey <AutoCompleteTextFieldState<Datu2>> key2 = GlobalKey();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _matricule = TextEditingController();
@@ -50,6 +56,8 @@ class _MatriculeState extends State<Matricule> {
   var id ;
   var idTari ;
   var id_commission;
+  var searchValMarque ;
+  var searchValCouleur ;
 
   var searchVal ;
 
@@ -65,13 +73,28 @@ class _MatriculeState extends State<Matricule> {
   bool loader = true;
 
   bool load = true;
+  bool loader1 = true;
+  bool loader2 = true;
 
   var fenetre = 'INFOS VEHICULE';
+
+  static List <Datu1> Listmarques = List <Datu1>() ;
+  static List <Datu2> Listcouleurs = List <Datu2>() ;
 
 
   static List <Datu> loadClients(String jsonString){
     final parsed = json.decode(jsonString)['data'].cast<Map<String, dynamic>>();
     return parsed.map<Datu>((json)=>Datu.fromJson(json)).toList();
+  }
+
+  static List <Datu1> loadMarques(String jsonString){
+    final parsed = json.decode(jsonString)['data'].cast<Map<String, dynamic>>();
+    return parsed.map<Datu1>((json)=>Datu1.fromJson(json)).toList();
+  }
+
+  static List <Datu2> loadCouleurs(String jsonString){
+    final parsed = json.decode(jsonString)['data'].cast<Map<String, dynamic>>();
+    return parsed.map<Datu2>((json)=>Datu2.fromJson(json)).toList();
   }
 
 
@@ -123,6 +146,24 @@ class _MatriculeState extends State<Matricule> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Text(ag.nom, style: TextStyle(fontSize: 20.0),)
+      ],
+    );
+  }
+
+  Widget row1(Datu1 ag){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(ag.marque, style: TextStyle(fontSize: 18.0),)
+      ],
+    );
+  }
+
+  Widget row2(Datu2 ag){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(ag.couleur, style: TextStyle(fontSize: 18.0),)
       ],
     );
   }
@@ -219,20 +260,6 @@ class _MatriculeState extends State<Matricule> {
 
                       ),
 
-                      IconButton(
-                        icon: Icon(Icons.add),
-                        onPressed: (){
-                          Navigator.push(
-                            context,
-                            new MaterialPageRoute(
-                              builder: (BuildContext context){
-                                return Client();
-                              },
-                            ),
-                          );
-                        },
-                      )
-
                     ],
                   )),
 
@@ -244,24 +271,37 @@ class _MatriculeState extends State<Matricule> {
 
                       SizedBox(width: 5.0,),
                       Expanded(
-                          child : DropdownButton(
-                            items: data2.map((value) => DropdownMenuItem(
-                              child: Text(
-                                value['marque'],
-                                style: TextStyle(color: Colors.black, fontSize: 18.0),
-                              ),
-                              value: value['id'].toString(),
-                            )).toList(),
-                            onChanged: (choix){
+                          child : loader1 ? Center(child: CircularProgressIndicator()) : searchTextField1 = AutoCompleteTextField<Datu1>(
+                            key: key1,
+                            clearOnSubmit: false,
+                            suggestions: Listmarques,
+                            style: TextStyle(color: Colors.black, fontSize: 16.0),
+                            decoration: InputDecoration(
+                                contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
+                                hintText: "Marque du véhicule",
+                                hintStyle: TextStyle(color: Colors.black, fontSize: 18.0)
+                            ),
+                            itemFilter: (item, query){
+                              return item.marque.toLowerCase().startsWith(query.toLowerCase());
+                            },
+                            itemSorter: (a, b){
+                              return a.marque.compareTo(b.marque);
+                            },
+                            itemSubmitted: (item){
                               setState(() {
-                                _mySelection2 = choix ;
+                                // idmatricule = null;
+                                // affiche = false;
+                                searchTextField1.textField.controller.text = item.marque;
+                                searchValMarque = item.id ;
+                                //idclient = searchVal;
+                                //getNomClient();
                               });
                             },
-                            value: _mySelection2,
-                            isExpanded: true,
-                            hint: Text('Marque du vehicule', style: TextStyle(fontSize: 18.0)),
-                            style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
-                          ))
+                            itemBuilder: (context, item){
+                              return row1(item);
+                            },
+
+                          ),)
                     ],
 
                   )),
@@ -276,24 +316,37 @@ class _MatriculeState extends State<Matricule> {
 
                       SizedBox(width: 5.0,),
                       Expanded(
-                          child : DropdownButton(
-                            items: data.map((value) => DropdownMenuItem(
-                              child: Text(
-                                value['couleur'],
-                                style: TextStyle(color: Colors.black, fontSize: 18.0),
-                              ),
-                              value: value['id'].toString(),
-                            )).toList(),
-                            onChanged: (choix){
+                          child : loader2 ? Center(child: CircularProgressIndicator()) : searchTextField2 = AutoCompleteTextField<Datu2>(
+                            key: key2,
+                            clearOnSubmit: false,
+                            suggestions: Listcouleurs,
+                            style: TextStyle(color: Colors.black, fontSize: 16.0),
+                            decoration: InputDecoration(
+                                contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
+                                hintText: "Couleur du véhicule",
+                                hintStyle: TextStyle(color: Colors.black, fontSize: 18.0)
+                            ),
+                            itemFilter: (item, query){
+                              return item.couleur.toLowerCase().startsWith(query.toLowerCase());
+                            },
+                            itemSorter: (a, b){
+                              return a.couleur.compareTo(b.couleur);
+                            },
+                            itemSubmitted: (item){
                               setState(() {
-                                _mySelection = choix ;
+                                // idmatricule = null;
+                                // affiche = false;
+                                searchTextField2.textField.controller.text = item.couleur;
+                                searchValCouleur = item.id ;
+                                //idclient = searchVal;
+                                //getNomClient();
                               });
                             },
-                            value: _mySelection,
-                            isExpanded: true,
-                            hint: Text('Couleur du vehicule', style: TextStyle(fontSize: 18.0)),
-                            style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
-                          ))
+                            itemBuilder: (context, item){
+                              return row2(item);
+                            },
+
+                          ),)
                     ],
 
                   )),
@@ -772,8 +825,8 @@ class _MatriculeState extends State<Matricule> {
         'libelle_matricule': _matricule.text,
         'dateEnreg': date,
         'id_lavage': idlavage,
-        'id_couleur': _mySelection,
-        'id_marque': _mySelection2,
+        'id_couleur': searchValCouleur,
+        'id_marque': searchValMarque,
       };
 
       var dataLog = {
@@ -792,8 +845,8 @@ class _MatriculeState extends State<Matricule> {
         var res = await CallApi().postData(dataLog, 'create_log');
         setState(() {
             _matricule.text = '';
-            _mySelection = null;
-            _mySelection2 = null;
+            searchTextField1.textField.controller.text = '';
+            searchTextField2.textField.controller.text = '';
             searchTextField.textField.controller.text = '';
             searchVal = '' ;
           });
@@ -840,7 +893,10 @@ class _MatriculeState extends State<Matricule> {
     var resBody = json.decode(res.body)['data'];
 
     setState(() {
-      data = resBody;
+      //listclients = loadClients(res.body);
+      Listcouleurs = loadCouleurs(res.body);
+      loader2 = false ;
+      // data = resBody;
     });
 
     //print(resBody);
@@ -857,7 +913,10 @@ class _MatriculeState extends State<Matricule> {
     var resBody = json.decode(res.body)['data'];
 
     setState(() {
-      data2 = resBody;
+      //listclients = loadClients(res.body);
+      Listmarques = loadMarques(res.body);
+      loader1 = false ;
+      // data = resBody;
     });
 
     print(data2);

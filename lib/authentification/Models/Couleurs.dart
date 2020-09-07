@@ -51,3 +51,25 @@ class Datum {
     "message": message,
   };
 }
+
+class Datu2 {
+  int id;
+  String couleur;
+
+  Datu2({
+    this.id,
+    this.couleur,
+
+  });
+
+  factory Datu2.fromJson(Map<String, dynamic> json) => Datu2(
+    id: json["id"],
+    couleur: json["couleur"] as String,
+
+  );
+
+//  Map<String, dynamic> toJson() => {
+//    "id": id,
+//    "nom": nom,
+//  };
+}

@@ -50,6 +50,7 @@ class _ComptabiliteTabPageTabPageState extends State<ComptabiliteTabPage> {
   bool visible = false ;
 
   bool loading = true;
+  bool loader = true;
 
   Listagentfromsearch serchValue = Listagentfromsearch();
   ListagentTransaction serchValue2 = ListagentTransaction();
@@ -210,20 +211,58 @@ class _ComptabiliteTabPageTabPageState extends State<ComptabiliteTabPage> {
                     )
                     ,),
                   //SizedBox(width: 5.0,),
-                  Expanded(
-                    child: IconButton(
-                      icon: Icon(Icons.search),
-                      onPressed: ()async{
-                        setState(() {
-                          visible = false ;
-                        });
-                        await checkDate();
 
-                      },
-                    ),
-                  )
                 ],
               )),
+
+              Container(
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: loader ? FlatButton(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)
+                        ),
+                        color: Color(0xff003372),
+                        onPressed: ()async{
+                          setState(() {
+                            loader = false;
+                            visible = false;
+                          });
+                          await checkDate();
+                          setState(() {
+                            loader = true;
+                          });
+                        },
+                        child: new Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0,
+                          ),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Expanded(
+                                child: Text(
+                                  "Rechercher",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0
+                                    //fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ) : Center(child: CircularProgressIndicator(),),
+                    )
+                  ],
+                ),
+              ),
 
               SizedBox(
                 height: 30.2,
@@ -270,7 +309,7 @@ class _ComptabiliteTabPageTabPageState extends State<ComptabiliteTabPage> {
                                 //Divider(),
                               ],
                             )
-                        ), color: Color(0xff11b719),)),
+                        ), color: Color(0xff6fb4db),)),
                   ) : Text(''),
             ],
           )

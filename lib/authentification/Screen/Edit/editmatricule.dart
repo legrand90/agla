@@ -5,6 +5,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
+import 'package:lavage/authentification/Models/Couleurs.dart';
+import 'package:lavage/authentification/Models/Marques.dart';
 import 'package:lavage/authentification/Models/Client.dart';
 import 'package:lavage/authentification/Screen/DetailSreen/detailsMatricule.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
@@ -31,33 +33,41 @@ import '../tutoriel.dart';
 
 class EditMatricule extends StatefulWidget {
 
+  EditMatricule({Key key, @required this.idmatricule, this.idcouleur, this.idmarque, this.idcli, this.nomCli}) : super(key: key);
   var idmatricule;
   var idcouleur;
   var idmarque;
   var idcli;
   var nomCli;
-  EditMatricule({Key key, @required this.idmatricule, this.idcouleur, this.idmarque, this.idcli, this.nomCli}) : super(key: key);
 
   @override
   _EditMatriculeState createState() => new _EditMatriculeState(idmatricule, idcouleur, idmarque, idcli, nomCli);
 }
 
 class _EditMatriculeState extends State<EditMatricule> {
+
+  _EditMatriculeState(this.idmatricule, this.idcouleur, this.idmarque, this.idcli, this.nomCli);
+
   var idmatricule;
   var idcouleur;
   var idmarque;
   var idcli;
   var nomCli;
-  _EditMatriculeState(this.idmatricule, this.idcouleur, this.idmarque, this.idcli, this.nomCli);
 
   AutoCompleteTextField searchTextField;
   GlobalKey <AutoCompleteTextFieldState<Datu>> key = GlobalKey();
+  AutoCompleteTextField searchTextField1;
+  AutoCompleteTextField searchTextField2;
+  GlobalKey <AutoCompleteTextFieldState<Datu1>> key1 = GlobalKey();
+  GlobalKey <AutoCompleteTextFieldState<Datu2>> key2 = GlobalKey();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _matricule = TextEditingController();
   String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
 
   static List <Datu> listclients = List <Datu>()  ;
+  static List <Datu1> Listmarques = List <Datu1>() ;
+  static List <Datu2> Listcouleurs = List <Datu2>() ;
   List data = List() ;
   List data2 = List() ;
   List data3 = List() ;//edited line
@@ -67,7 +77,8 @@ class _EditMatriculeState extends State<EditMatricule> {
   var id ;
   var idTari ;
   var id_commission;
-
+  var searchValMarque ;
+  var searchValCouleur ;
   var searchVal ;
 
   var matricule ;
@@ -90,6 +101,8 @@ class _EditMatriculeState extends State<EditMatricule> {
   bool loader = true;
 
   bool load = true;
+  bool loader1 = true;
+  bool loader2 = true;
 
   var fenetre = 'MODIFICATION INFOS VEHICULE';
 
@@ -99,6 +112,16 @@ class _EditMatriculeState extends State<EditMatricule> {
   static List <Datu> loadClients(String jsonString){
     final parsed = json.decode(jsonString)['data'].cast<Map<String, dynamic>>();
     return parsed.map<Datu>((json)=>Datu.fromJson(json)).toList();
+  }
+
+  static List <Datu1> loadMarques(String jsonString){
+    final parsed = json.decode(jsonString)['data'].cast<Map<String, dynamic>>();
+    return parsed.map<Datu1>((json)=>Datu1.fromJson(json)).toList();
+  }
+
+  static List <Datu2> loadCouleurs(String jsonString){
+    final parsed = json.decode(jsonString)['data'].cast<Map<String, dynamic>>();
+    return parsed.map<Datu2>((json)=>Datu2.fromJson(json)).toList();
   }
 
 
@@ -146,8 +169,8 @@ class _EditMatriculeState extends State<EditMatricule> {
         'libelle_matricule': _matricule.text,
         'dateEnreg': date,
         'id_lavage': id,
-        'id_couleur': defaultColor ? _mySelection : CouleurId,
-        'id_marque': defaultMarque ? _mySelection2 : marqueId,
+        'id_couleur': defaultColor ? searchValCouleur : CouleurId,
+        'id_marque': defaultMarque ? searchValMarque : marqueId,
 
       };
 
@@ -169,18 +192,6 @@ class _EditMatriculeState extends State<EditMatricule> {
       if (res.statusCode == 200) {
         var res = await CallApi().postData(dataLog, 'create_log');
 
-        setState(() {
-          _matricule.text = '';
-          searchTextField.textField.controller.text = '';
-          searchVal = '' ;
-          _mySelection = null;
-          _mySelection2 = null;
-
-          defaultColor = false ;
-          defaultMarque = false ;
-         // defaultClient = false ;
-
-        });
 
        // _showMsg('Donnees mises a jour avec succes');
 
@@ -229,6 +240,24 @@ class _EditMatriculeState extends State<EditMatricule> {
     );
   }
 
+  Widget row1(Datu1 ag){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(ag.marque, style: TextStyle(fontSize: 18.0),)
+      ],
+    );
+  }
+
+  Widget row2(Datu2 ag){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(ag.couleur, style: TextStyle(fontSize: 18.0),)
+      ],
+    );
+  }
+
   void getMatriculeEdit() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var idlavage = localStorage.getString('id_lavage');
@@ -249,12 +278,15 @@ class _EditMatriculeState extends State<EditMatricule> {
     setState(() {
       _matricule.text = resBody['matricule'];
       //idcli = resBody['id_client'];
+      searchTextField.textField.controller.text = nomCli;
+      searchTextField2.textField.controller.text = idcouleur;
+      searchTextField1.textField.controller.text = idmarque;
 
     });
 
 
 
-    // print('identi est $idpresta');
+     //print('identi est $idcouleur');
 
   }
 
@@ -265,7 +297,7 @@ class _EditMatriculeState extends State<EditMatricule> {
     this.getMarque();
     this.getCouleur();
     this.getMatriculeEdit();
-    this.getNomCouleur_NomMarque_NomClient();
+    this.getIdCouleur_IdMarque();
     super.initState();
     this.getUserName();
     this.getStatut();
@@ -309,7 +341,7 @@ class _EditMatriculeState extends State<EditMatricule> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   logo,
-                  SizedBox(height: 40.0),
+                  //SizedBox(height: 40.0),
                   Text("MATRICULE",
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -318,7 +350,7 @@ class _EditMatriculeState extends State<EditMatricule> {
                           fontWeight: FontWeight.bold
                       )
                   ),
-                  SizedBox(height: 50.0),
+                  SizedBox(height: 20.0),
 
                   Container(
                       margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
@@ -357,87 +389,99 @@ class _EditMatriculeState extends State<EditMatricule> {
 
                       ),
 
-                      IconButton(
-                        icon: Icon(Icons.add),
-                        onPressed: (){
-                          Navigator.push(
-                            context,
-                            new MaterialPageRoute(
-                              builder: (BuildContext context){
-                                return Client();
-                              },
-                            ),
-                          );
-                        },
-                      )
-
                     ],
-                  )),
+                  )
+                  ),
 
                   Container(
                       margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                       child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
 
-                      SizedBox(width: 5.0,),
-
-                      Expanded(
-                          child : DropdownButton<String>(
-                            items: data2.map((value) => DropdownMenuItem<String>(
-                              child: Text(
-                                value['marque'],
-                                style: TextStyle(color: Colors.black, fontSize: 18.0),
+                          SizedBox(width: 5.0,),
+                          Expanded(
+                            child : loader1 ? Center(child: CircularProgressIndicator()) : searchTextField1 = AutoCompleteTextField<Datu1>(
+                              key: key1,
+                              clearOnSubmit: false,
+                              suggestions: Listmarques,
+                              style: TextStyle(color: Colors.black, fontSize: 16.0),
+                              decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
+                                  hintText: "Marque du véhicule",
+                                  hintStyle: TextStyle(color: Colors.black, fontSize: 18.0)
                               ),
-                              value: value['id'].toString(),
-                            )).toList(),
-                            onChanged: (choix){
-                              setState(() {
-                                _mySelection2 = choix ;
-                                defaultMarque = true;
-                              });
-                            },
-                            value: _mySelection2,
-                            isExpanded: true,
-                            hint: Text('$idmarque', style: TextStyle(fontSize: 18.0)),
-                            style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
-                          ))
-                    ],
+                              itemFilter: (item, query){
+                                return item.marque.toLowerCase().startsWith(query.toLowerCase());
+                              },
+                              itemSorter: (a, b){
+                                return a.marque.compareTo(b.marque);
+                              },
+                              itemSubmitted: (item){
+                                setState(() {
+                                  // idmatricule = null;
+                                  // affiche = false;
+                                  searchTextField1.textField.controller.text = item.marque;
+                                  searchValMarque = item.id ;
+                                  defaultMarque = true;
+                                  //idclient = searchVal;
+                                  //getNomClient();
+                                });
+                              },
+                              itemBuilder: (context, item){
+                                return row1(item);
+                              },
 
-                  )),
+                            ),)
+                        ],
+
+                      )),
 
                   ////////////////////////////////////////////////////////////////
 
                   Container(
                       margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                       child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
 
-                      SizedBox(width: 5.0,),
-                      Expanded(
-                          child : DropdownButton(
-                            items: data.map((value) => DropdownMenuItem(
-                              child: Text(
-                                value['couleur'],
-                                style: TextStyle(color: Colors.black, fontSize: 18.0),
+                          SizedBox(width: 5.0,),
+                          Expanded(
+                            child : loader2 ? Center(child: CircularProgressIndicator()) : searchTextField2 = AutoCompleteTextField<Datu2>(
+                              key: key2,
+                              clearOnSubmit: false,
+                              suggestions: Listcouleurs,
+                              style: TextStyle(color: Colors.black, fontSize: 16.0),
+                              decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
+                                  hintText: "Couleur du véhicule",
+                                  hintStyle: TextStyle(color: Colors.black, fontSize: 18.0)
                               ),
-                              value: value['id'].toString(),
-                            )).toList(),
-                            onChanged: (choix){
-                              setState(() {
-                                _mySelection = choix ;
-                                defaultColor = true;
-                              });
-                            },
-                            value:  _mySelection ,
-                            isExpanded: true,
-                            hint: Text('$idcouleur', style: TextStyle(fontSize: 18.0)),
-                            style: TextStyle(color: Color(0xff11b719), fontSize: 18.0),
-                          ))
-                    ],
+                              itemFilter: (item, query){
+                                return item.couleur.toLowerCase().startsWith(query.toLowerCase());
+                              },
+                              itemSorter: (a, b){
+                                return a.couleur.compareTo(b.couleur);
+                              },
+                              itemSubmitted: (item){
+                                setState(() {
+                                  // idmatricule = null;
+                                  // affiche = false;
+                                  searchTextField2.textField.controller.text = item.couleur;
+                                  searchValCouleur = item.id ;
+                                  defaultColor = true ;
+                                  //idclient = searchVal;
+                                  //getNomClient();
+                                });
+                              },
+                              itemBuilder: (context, item){
+                                return row2(item);
+                              },
 
-                  )),
+                            ),)
+                        ],
+
+                      )),
 
                   SizedBox(height: 30.0),
 
@@ -921,9 +965,15 @@ class _EditMatriculeState extends State<EditMatricule> {
     //final res = await http.get(Uri.encodeFull(urlCouleur), headers: {"Accept": "application/json","Content-type" : "application/json",});
     var resBody = json.decode(res.body)['data'];
 
-    setState(() {
-      data = resBody;
-    });
+    if(res.statusCode == 200) {
+      Listcouleurs = loadCouleurs(res.body);
+      setState(() {
+        //listclients = loadClients(res.body);
+
+        loader2 = false;
+        // data = resBody;
+      });
+    }
 
     print(resBody);
     return "Success";
@@ -939,9 +989,16 @@ class _EditMatriculeState extends State<EditMatricule> {
    // final res = await http.get(Uri.encodeFull(urlMarque), headers: {"Accept": "application/json","Content-type" : "application/json",});
     var resBody = json.decode(res.body)['data'];
 
-    setState(() {
-      data2 = resBody;
-    });
+    if(res.statusCode == 200) {
+      Listmarques = loadMarques(res.body);
+      setState(() {
+        //listclients = loadClients(res.body);
+
+        loader1 = false;
+        //searchTextField1.textField.controller.text = this.idmarque;
+        // data = resBody;
+      });
+    }
 
     //print(resBody);
     return "Success";
@@ -950,28 +1007,22 @@ class _EditMatriculeState extends State<EditMatricule> {
   var CouleurId ;
   var marqueId ;
 
-  Future<String> getNomCouleur_NomMarque_NomClient() async {
+  void getIdCouleur_IdMarque()async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
+
     var id = localStorage.getString('id_lavage');
 
-
-    var res = await CallApi().getData('checkCouleur/$idcouleur');
-    var res2 = await CallApi().getData('checkMarque/$idmarque');
-    var res3 = await CallApi().getData('getClientEdit/$idcli/$id');
-    //final res = await http.get(Uri.encodeFull(urlCouleur), headers: {"Accept": "application/json","Content-type" : "application/json",});
-    var resBody = json.decode(res.body)['data'];
-    var resBody2 = json.decode(res2.body)['data'];
-    var resBody3 = json.decode(res3.body)['data'];
+    var resMarque = await CallApi().getData('getIdMarque/$idmarque');
+    var resCouleur = await CallApi().getData('getIdCouleur/$idcouleur');
+    // final res = await http.get(Uri.encodeFull(urlMarque), headers: {"Accept": "application/json","Content-type" : "application/json",});
+    var resBodyMarque = json.decode(resMarque.body)['data'];
+    var resBodyCouleur = json.decode(resCouleur.body)['data'];
 
     setState(() {
-      CouleurId = resBody['id'];
-      marqueId = resBody2['id'];
-      searchTextField.textField.controller.text = resBody3['nom'];
-      //_mySelection = libCouleur;
+      marqueId = resBodyMarque['id'];
+      CouleurId = resBodyCouleur['id'];
     });
 
-    print('marque $resBody2');
-    return "Success";
   }
 
   var nameUser;
