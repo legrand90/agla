@@ -247,6 +247,7 @@ class _TransactionState extends State<Transaction> {
   }
 
   var nomClient;
+  var contactClient;
   bool affiche = false;
 
   void getNomClient() async{
@@ -260,6 +261,7 @@ class _TransactionState extends State<Transaction> {
 
       setState(() {
         nomClient = resBody['nomClient'];
+        contactClient = resBody['contactClient'];
         idclient = resBody['idClient'];
         affiche = true;
       });
@@ -347,16 +349,18 @@ class _TransactionState extends State<Transaction> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   LogoTransactions(),
-                  SizedBox(height: 40.0),
-                  Text("TRANSACTION",
+                  SizedBox(height: 20.0),
+
+                  SizedBox(height: 30.0),
+
+                  Text("INFOS CLIENT",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 20.0,
-                          color: Colors.red,
+                          color: Color(0xff003372),
                           fontWeight: FontWeight.bold
                       )
                   ),
-                  SizedBox(height: 30.0),
 
                   Container(
                       margin: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
@@ -403,12 +407,46 @@ class _TransactionState extends State<Transaction> {
                     padding: const EdgeInsets.only(left: 40.0),
                   ),
 
-                  affiche ? Container(
-                  margin: EdgeInsets.only(left: 20.0,),
-                  child: Text("$nomClient", style: TextStyle(fontSize: 18.0)),
-                ) : Text(''),
+                  Container(
+                    margin: EdgeInsets.only(left: 20.0),
+                    child :
+                    Row(
+                      children: <Widget>[
+                        Text('NOM : ', style: TextStyle(fontSize: 18.0)),
+                        //SizedBox(width: 20.0,),
+                        affiche ? Expanded(child: Text('  $nomClient', style: TextStyle(fontSize: 18.0)),) : Text('')
+                      ],
+                    ),
+
+                  ),
+
+                  SizedBox(height: 10.0,),
+
+                  Container(
+                    margin: EdgeInsets.only(left: 20.0),
+                    child :
+                    Row(
+                      children: <Widget>[
+                        Text('CONTACT : ', style: TextStyle(fontSize: 18.0)),
+                        //SizedBox(width: 20.0,),
+                        affiche ? Expanded(child: Text('  $contactClient', style: TextStyle(fontSize: 18.0)),) : Text('')
+                      ],
+                    ),
+
+                  ),
+
+                  SizedBox(height: 40.0,),
 
                   ////////////////////////////////////////////////////////////////
+
+                  Text("SELECTIONNER AGENT",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          color: Color(0xff003372),
+                          fontWeight: FontWeight.bold
+                      )
+                  ),
 
                   Container(
                       margin: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
@@ -449,6 +487,17 @@ class _TransactionState extends State<Transaction> {
                     ],
 
                   )),
+
+                  SizedBox(height: 30.0,),
+
+                  Text("SELECTIONNER PRESTATION",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          color: Color(0xff003372),
+                          fontWeight: FontWeight.bold
+                      )
+                  ),
 
               Container(
                   margin: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
@@ -501,7 +550,7 @@ class _TransactionState extends State<Transaction> {
                         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                         child: Row(
                           children: <Widget>[
-                              Text('Coût (en FCFA) :', style: TextStyle(fontSize: 18.0)),
+                              Text('Coût Prestation (FCFA) :', style: TextStyle(fontSize: 18.0)),
                             Expanded(
                               child: Text('  $data4', style: TextStyle(fontSize: 18.0)),
                             ),
@@ -513,7 +562,7 @@ class _TransactionState extends State<Transaction> {
                         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                         child: Row(
                           children: <Widget>[
-                            Text('Commission (en FCFA) :', style: TextStyle(fontSize: 18.0)),
+                            Text('Commission Agent (FCFA) :', style: TextStyle(fontSize: 18.0)),
                             Expanded(
                               child: Text('  $commission', style: TextStyle(fontSize: 18.0)),
                             ),

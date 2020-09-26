@@ -671,7 +671,6 @@ class _ResetPasswordState extends State<ResetPassword> {
 
     var data = {
       'password': _password.text,
-
     };
 
     var dataLog = {
@@ -680,7 +679,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       'execution': "Enregistrer",
       'id_user': id_user,
       'dateEnreg': date,
-      'id_lavage': id,
+      'id_lavage': 'NULL',
       'type_user': statu,
     };
 

@@ -811,7 +811,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
     var res = await CallApi().getData('logout');
     var body = json.decode(res.body);
     if(body['success']){
-      print('deconn $body');
+     // print('deconn $body');
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       var token = localStorage.getString('token');
       localStorage.remove(token);

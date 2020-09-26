@@ -81,7 +81,7 @@ class _LavageSearchState extends State<LavageSearch> {
         loading  = false ;
       });
 
-      print('les lavages $listlavages');
+      //print('les lavages $listlavages');
 
     }else{
       _showMsg('Liste vide');
@@ -229,7 +229,8 @@ class _LavageSearchState extends State<LavageSearch> {
                       )
 
                     ],
-                  )),
+                  )
+        ),
 
                   ////////////////////////////////////////////////////////////////////////////
                   SizedBox(

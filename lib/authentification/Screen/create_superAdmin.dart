@@ -913,7 +913,7 @@ class _SuperAdminState extends State<SuperAdmin> {
         'execution': "Enregistrer",
         'id_user': id_user,
         'dateEnreg': date,
-        'id_lavage': id,
+        'id_lavage': 'NULL',
         'type_user': statu,
       };
 

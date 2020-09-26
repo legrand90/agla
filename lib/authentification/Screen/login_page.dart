@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Screen/dashbord.dart';
 import 'package:lavage/authentification/widgets/loading.dart';
@@ -29,6 +30,10 @@ class _LoginPageState extends State<LoginPage> {
   var nomUser ;
 
   var body;
+
+  var fenetre = 'CONNEXION';
+
+  String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
 
   Future <void> _changeLoadingVisible() async {
     setState(() {
@@ -86,6 +91,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
+  void initState(){
+    super.initState();
+    //this.getStatut();
+    //timer = Timer.periodic(Duration(seconds: 5), (Timer t) => this.getClients());
+    //this.getLastCommission();
+  }
   Widget build(BuildContext context){
     final logo = Hero(
       tag: 'logo',
@@ -378,12 +389,53 @@ class _LoginPageState extends State<LoginPage> {
           idLav = localStorage.getString("id_lavage");
         });
 
+        var idUser = localStorage.getInt('ID');
+        adm = localStorage.getString('Admin');
+
+        if(adm == '0' || adm == '1'){
+          var res = await CallApi().getData('getUser/$idUser');
+          //print('le corps $res');
+          var resBody = json.decode(res.body)['data'];
+
+          if(resBody['success']){
+
+            setState((){
+              statu = resBody['status'];
+              // libLavage = resBody['nomLavage'];
+
+            });
+          }
+
+        }else{
+          var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+          var resBody2 = json.decode(res2.body)['data'];
+
+          if(resBody2['success']){
+
+            setState((){
+              statu = resBody2['status'];
+            });
+          }
+        }
+
         if(localStorage.getString("Admin") == '0' || localStorage.getString("Admin") == '1'){
+
+          var dataLog = {
+            'fenetre': '$fenetre',
+            'tache': "connexion",
+            'execution': "connecter",
+            'id_user': localStorage.getInt('ID'),
+            'dateEnreg': date,
+            'id_lavage': localStorage.getString('id_lavage'),
+            'type_user': statu,
+          };
 
           var resAbon = await CallApi().getData('isActive/$idLav');
           var bodyAbon = json.decode(resAbon.body);
 
           if(bodyAbon['success']){
+
+            var resLog = await CallApi().postData(dataLog, 'create_log');
 
             localStorage.setString('dateFinAbonn', bodyAbon['date']);
 
@@ -398,6 +450,19 @@ class _LoginPageState extends State<LoginPage> {
             _showMsg('Désolé...Vous n\'avez pas d\'abonnement actif !');
           }
         }else{
+
+          var dataLog = {
+            'fenetre': '$fenetre',
+            'tache': "connexion",
+            'execution': "connecter",
+            'id_user': localStorage.getInt('ID'),
+            'dateEnreg': date,
+            'id_lavage': 'NULL',
+            'type_user': statu,
+          };
+
+          var resLog = await CallApi().postData(dataLog, 'create_log');
+
           await Navigator.push(context,
             new MaterialPageRoute(
                 builder: (BuildContext context) {
@@ -426,6 +491,43 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  var adm;
+  var statu;
+  var libLavage;
+
+  Future <void> getStatut()async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idUser = localStorage.getInt('ID');
+    adm = localStorage.getString('Admin');
+
+    if(adm == '0' || adm == '1'){
+      var res = await CallApi().getData('getUser/$idUser');
+      //print('le corps $res');
+      var resBody = json.decode(res.body)['data'];
+
+      if(resBody['success']){
+
+        setState((){
+          statu = resBody['status'];
+         // libLavage = resBody['nomLavage'];
+
+        });
+      }
+
+    }else{
+      var res2 = await CallApi().getData('getUserSuperAdmin/$idUser');
+      var resBody2 = json.decode(res2.body)['data'];
+
+      if(resBody2['success']){
+
+        setState((){
+          statu = resBody2['status'];
+        });
+      }
+    }
+
   }
 
 }

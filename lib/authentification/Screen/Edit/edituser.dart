@@ -866,7 +866,7 @@ class _EditUserState extends State<EditUser> {
         'execution': "Update",
         'id_user': id_user,
         'dateEnreg': date,
-        'id_lavage': id,
+        'id_lavage': 'NULL',
         'type_user': statu,
       };
 

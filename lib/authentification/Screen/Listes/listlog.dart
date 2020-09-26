@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'package:json_table/json_table.dart';
 import 'package:http/http.dart' as http;
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Models/Logs.dart';
+import 'package:lavage/authentification/Models/Listlavages.dart';
 import 'package:lavage/authentification/Models/Transaction.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,19 +35,57 @@ class _ListLogsState extends State<ListLogs> {
   var affiche = false;
   bool load = true;
   bool chargement = false;
+  var searchVal ;
 
   Listlogs logs = Listlogs();
+
+  AutoCompleteTextField searchTextField;
+  GlobalKey <AutoCompleteTextFieldState<Datux>> keys = GlobalKey();
+
+  final TextEditingController dateCtl = TextEditingController();
+  final TextEditingController dateCtl2 = TextEditingController();
+
+  var datEnreg1 ;
+  var datEnreg2 ;
+  var mydate1;
+  var mydate2;
+  var date1 ;
+  var date2 ;
+  bool loading = true;
+
+  static List <Datux> listlavages = List <Datux>()  ;
+
+  static List <Datux> loadLavages(String jsonString){
+    final parsed = json.decode(jsonString)['data'].cast<Map<String, dynamic>>();
+    return parsed.map<Datux>((json)=>Datux.fromJson(json)).toList();
+  }
+
+  void getLavages() async {
+
+    var res = await CallApi().getData('getLavageOrderByName');
+
+    if(res.statusCode == 200){
+
+      listlavages = loadLavages(res.body);
+
+      setState(() {
+        loading  = false ;
+      });
+
+      print('les lavages $listlavages');
+
+    }else{
+      _showMsg('Liste vide');
+    }
+
+  }
 
   void getLogs() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
     //final String urlTrans = "http://192.168.43.217:8000/api/Transaction/$id";
     var res = await CallApi().getData('Log');
-    //final res = await http.get(Uri.encodeFull(urlTrans), headers: {"Accept": "application/json","Content-type" : "application/json",});
-//    final res2 = await http.get(Uri.encodeFull(urlTrans), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
+
 
     if(res.statusCode == 200){
 
@@ -61,7 +101,7 @@ class _ListLogsState extends State<ListLogs> {
     }
 
 
-    print('donnees json : ${logs.data.length}');
+    //print('donnees json : ${logs.data.length}');
 
   }
 
@@ -86,12 +126,22 @@ class _ListLogsState extends State<ListLogs> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
+  Widget row(Datux ag){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(ag.libelleLavage, style: TextStyle(fontSize: 20.0),)
+      ],
+    );
+  }
+
   @override
   void initState(){
     super.initState();
     this.getUserName();
     this.getLogs();
     this.getStatut();
+    this.getLavages();
   }
   Widget build(BuildContext context){
     var json = json2;
@@ -102,7 +152,7 @@ class _ListLogsState extends State<ListLogs> {
     //]);
 
     return Scaffold(
-      //key: _scaffoldKey,
+      key: _scaffoldKey,
       //ackgroundColor: Color(0xFFDADADA),
       body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -121,6 +171,170 @@ class _ListLogsState extends State<ListLogs> {
                 Container(
                   margin: EdgeInsets.only(left: 20.0,),
                   child: Text("LISTE DES LOGS", style: TextStyle(fontSize: 18.0), textAlign: TextAlign.center),
+                ),
+
+                SizedBox(
+                  height: 20.2,
+                ),
+                Row(
+                  children: <Widget>[
+                    Text("DE :"),
+                    Expanded(child: Container(
+                      // margin: EdgeInsets.only(right: 100.0, left: 20.0),
+                      decoration: BoxDecoration(
+                          color: Colors.white
+                      ),
+                      child: TextFormField(
+                        controller: dateCtl,
+                        decoration: InputDecoration(
+                          labelText: "Selectionner date 1",
+                          hintText: "DATE",),
+                        onTap: () async{
+                          DateTime date = DateTime(1900);
+                          FocusScope.of(context).requestFocus(new FocusNode());
+
+                          date = await showDatePicker(
+                              context: context,
+                              initialDate:DateTime.now(),
+                              firstDate:DateTime(1900),
+                              lastDate: DateTime(2100));
+
+                          dateCtl.text = DateFormat('yyyy-MM-dd').format(date);
+                          mydate1 = DateFormat('dd-MM-yyyy').format(date);
+
+                        },
+                      ),
+                    ),
+                    ),
+
+                    SizedBox(width: 10.0,),
+                    Text("A :"),
+                    SizedBox(width: 10.0,),
+
+                    Expanded(
+                      child: Container(
+                        //margin: EdgeInsets.only(right: 100.0, left: 20.0),
+                        decoration: BoxDecoration(
+                            color: Colors.white
+                        ),
+                        child: TextFormField(
+                          controller: dateCtl2,
+                          decoration: InputDecoration(
+                            labelText: "Selectionner date 2",
+                            hintText: "DATE",),
+                          onTap: () async{
+                            DateTime date = DateTime(1900);
+                            FocusScope.of(context).requestFocus(new FocusNode());
+
+                            date = await showDatePicker(
+                                context: context,
+                                initialDate:DateTime.now(),
+                                firstDate:DateTime(1900),
+                                lastDate: DateTime(2100));
+
+                            dateCtl2.text = DateFormat('yyyy-MM-dd').format(date);
+                            mydate2 = DateFormat('dd-MM-yyyy').format(date);
+                          },
+                        ),
+                      )
+                      ,),
+                    SizedBox(width: 10.0,),
+                  ],
+                ),
+
+                SizedBox(
+                  height: 30.2,
+                ),
+
+                Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: loading ? Center(child: CircularProgressIndicator()) : searchTextField = AutoCompleteTextField<Datux>(
+                            key: keys,
+                            clearOnSubmit: false,
+                            suggestions: listlavages,
+                            style: TextStyle(color: Colors.black, fontSize: 16.0),
+                            decoration: InputDecoration(
+                                contentPadding: EdgeInsets.fromLTRB(5.0, 10, 5.0, 10.0),
+                                hintText: "Saisir le lavage",
+                                hintStyle: TextStyle(color: Colors.black)
+                            ),
+                            itemFilter: (item, query){
+                              return item.libelleLavage.toLowerCase().startsWith(query.toLowerCase());
+                            },
+                            itemSorter: (a, b){
+                              return a.libelleLavage.compareTo(b.libelleLavage);
+                            },
+                            itemSubmitted: (item){
+                              setState(() {
+                                searchTextField.textField.controller.text = item.libelleLavage;
+                                searchVal = item.id ;
+                              });
+                            },
+                            itemBuilder: (context, item){
+                              return row(item);
+                            },
+
+                          ),
+
+
+                        ),
+
+
+                      ],
+                    )
+                ),
+
+                SizedBox(height: 20.0,),
+
+                Container(
+                  margin: const EdgeInsets.only(top: 20.0),
+                  padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                  child: Row(
+                    children: <Widget>[
+                      new Expanded(
+                        child: FlatButton(
+                          shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(30.0)
+                          ),
+                          color: Color(0xff003372),
+                          onPressed: ()async{
+
+                            setState(() {
+                              chargement = false;
+                            });
+
+                            await checkDate();
+
+                          },
+                          child: new Container(
+                            margin: const EdgeInsets.symmetric(
+                              vertical: 10.0,
+                              horizontal: 10.0,
+                            ),
+                            child: new Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                new Expanded(
+                                  child: Text(
+                                    "Rechercher",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20.0
+                                      //fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
 
                 SizedBox(height: 40.0,),
@@ -563,6 +777,74 @@ class _ListLogsState extends State<ListLogs> {
       }
     }
 
+  }
+
+  void checkDate()async{
+    DateTime d1;
+    DateTime d2;
+    int differ;
+    Duration dur;
+    setState(() {
+      date1 = dateCtl.text;
+      date2 = dateCtl2.text;
+      //chargement = false;
+    });
+
+    if(date1 != "" && date2 != "") {
+      d1 = DateTime.parse(date1);
+      d2 = DateTime.parse(date2);
+      dur = d2.difference(d1);
+      differ = int.parse((dur.inDays / 365).floor().toString());
+    }
+
+    if(dateCtl.text == "" || dateCtl2.text == ""){
+      //print("la date est $date1");
+      _showMsg("Renseignez correctement les Dates...Merci !");
+    }else if(differ < 0){
+      _showMsg("Desole, la Date2 ne peut pas etre inferieur a la Date1...Merci de renseigner correctement ce champ !");
+    }else{
+      _getSearch();
+    }
+
+  }
+
+  void _getSearch() async {
+
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var idLav = localStorage.getString('id_lavage');
+
+    datEnreg1 = mydate1;
+    datEnreg2 = mydate2;
+    //AgenttFromSearchTransa();
+
+    if(searchTextField.textField.controller.text != "") {
+      var res = await CallApi().getData('getLogForLavage/$searchVal/$datEnreg1/$datEnreg2');
+
+      if (res.statusCode == 200) {
+        var resBody = json.decode(res.body)['data'];
+
+        setState(() {
+          logs = listlogsFromJson(res.body);
+          toggle = true;
+          affiche = true;
+          chargement = true;
+        });
+      }
+    }else{
+      var res = await CallApi().getData('getLogAdmin/$datEnreg1/$datEnreg2');
+
+      if (res.statusCode == 200) {
+        var resBody = json.decode(res.body)['data'];
+
+        setState(() {
+          logs = listlogsFromJson(res.body);
+          toggle = true;
+          affiche = true;
+          chargement = true;
+        });
+      }
+
+    }
   }
 
   _launchFacebookURL() async {

@@ -114,7 +114,7 @@ class _AgentTabPageState extends State<AgentTabPage> {
       //_showMsg("Erreur de  !!!");
 
   }else{
-      _showMsg("Erreur de recuperation des donnees !!!");
+      _showMsg("Liste vide !!!");
 
     }
 
