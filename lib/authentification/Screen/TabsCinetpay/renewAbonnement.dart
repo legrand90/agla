@@ -169,7 +169,7 @@ class _AbonnementState extends State<Abonnement> {
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return CinetpayPage();
+                      return CinetpayPage(channel: channel);
                     },
                   ),
                 ),
@@ -185,6 +185,7 @@ class _AbonnementState extends State<Abonnement> {
     super.initState();
     this.getEndPeriod();
     this.getStatut();
+    selectedRadio = 0;
     //this.getSoldeAgent();
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => getEndPeriod());
   }
@@ -455,6 +456,27 @@ class _AbonnementState extends State<Abonnement> {
     }
 
 
+  }
+
+  var channel;
+
+  void _getPaymentPage() async {
+
+    if (validateAndSave()) {
+      if (selectedRadio == 1) {
+        channel = 'OM';
+        _alert();
+      } else if (selectedRadio == 2) {
+        channel = 'FLOOZ';
+        _alert();
+      } else if (selectedRadio == 3) {
+        channel = 'MOMO';
+        _alert();
+      }else{
+        _showMsg('Veuillez choisir une des options (OM, FLOOZ, MOMO');
+      }
+
+    }
   }
 
 

@@ -19,19 +19,19 @@ import 'dashbord.dart';
 import 'historique.dart';
 import 'login_page.dart';
 
-class CinetpayPage extends StatefulWidget {
+class PaiementproPage extends StatefulWidget {
 
   var channel;
 
-  CinetpayPage({Key key, @required this.channel}) : super(key: key);
+  PaiementproPage({Key key, @required this.channel}) : super(key: key);
   @override
-  _CinetpayPageState createState() => new _CinetpayPageState(channel);
+  _PaiementproPageState createState() => new _PaiementproPageState(channel);
 }
 
-class _CinetpayPageState extends State<CinetpayPage> {
+class _PaiementproPageState extends State<PaiementproPage> {
   var channel;
 
-  _CinetpayPageState(this.channel);
+  _PaiementproPageState(this.channel);
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nomPrestation = TextEditingController();
   final TextEditingController _descripPrestation = TextEditingController();
@@ -499,7 +499,7 @@ class _CinetpayPageState extends State<CinetpayPage> {
   var nameUser;
   var idLav;
   var fulUrl;
-  String UrlWeb = 'https://service.agla.app/api/paymentPage/';
+  String UrlWeb = 'https://service.agla.app/api/Smspayment/';
   bool display = false;
 
   void getUserName() async{
@@ -507,7 +507,7 @@ class _CinetpayPageState extends State<CinetpayPage> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var userName = localStorage.getString('nom');
     var res = await CallApi().getData('paymentPage/$idLav');
-     idLav = localStorage.getString('id_lavage');
+    idLav = localStorage.getString('id_lavage');
     UrlWeb = (UrlWeb + idLav).toString();
 
     if(res.statusCode == 200) {

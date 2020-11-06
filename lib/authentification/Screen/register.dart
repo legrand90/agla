@@ -21,6 +21,7 @@ import 'package:lavage/authentification/Screen/commission.dart';
 import 'package:lavage/authentification/Screen/create_user.dart';
 import 'package:lavage/authentification/Screen/lavage.dart';
 import 'package:lavage/authentification/Screen/matricule.dart';
+import 'package:lavage/authentification/Screen/menuSMS.dart';
 import 'package:lavage/authentification/Screen/montantService.dart';
 import 'package:lavage/authentification/Screen/photo.dart';
 import 'package:lavage/authentification/Screen/prestation.dart';
@@ -306,6 +307,55 @@ class _RegisterState extends State<Register> {
                                   new Expanded(
                                     child: Text(
                                       "Finances",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20.0
+                                        //fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ) : Text(''),
+
+                  (admin == '0' || admin == '1') ? Container(
+                    margin: const EdgeInsets.only(top: 20.0),
+                    padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Expanded(
+                          child: FlatButton(
+                            shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0)
+                            ),
+                            color: Color(0xff003372),
+                            onPressed: (){
+                              Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                                    return Menusms();
+                                  },
+                                ),
+                              );
+                            },
+                            child: new Container(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 10.0,
+                                horizontal: 10.0,
+                              ),
+                              child: new Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text(
+                                      "Menu SMS",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           color: Colors.white,

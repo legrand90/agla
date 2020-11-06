@@ -10,7 +10,6 @@ import 'package:lavage/authentification/Screen/register.dart';
 import 'package:lavage/authentification/Screen/tutoriel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import 'Listes/listprestations.dart';
 import 'Tabs/clientPage.dart';
@@ -19,22 +18,15 @@ import 'dashbord.dart';
 import 'historique.dart';
 import 'login_page.dart';
 
-class CinetpayPage extends StatefulWidget {
-
-  var channel;
-
-  CinetpayPage({Key key, @required this.channel}) : super(key: key);
+class SmsPerso extends StatefulWidget {
   @override
-  _CinetpayPageState createState() => new _CinetpayPageState(channel);
+  _SmsPersoState createState() => new _SmsPersoState();
 }
 
-class _CinetpayPageState extends State<CinetpayPage> {
-  var channel;
-
-  _CinetpayPageState(this.channel);
+class _SmsPersoState extends State<SmsPerso> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _nomPrestation = TextEditingController();
-  final TextEditingController _descripPrestation = TextEditingController();
+  final TextEditingController _numero = TextEditingController();
+  final TextEditingController _sms = TextEditingController();
   final TextEditingController _montant = TextEditingController();
 
   String nomPrestation;
@@ -47,7 +39,10 @@ class _CinetpayPageState extends State<CinetpayPage> {
   bool loading = true;
   bool load = true;
 
-  var fenetre = 'ABONNEMENT';
+  var fenetre = 'SMS PERSONNALISE';
+
+  String date = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
+
 
   Future <void> _changeLoadingVisible() async {
     setState(() {
@@ -73,20 +68,37 @@ class _CinetpayPageState extends State<CinetpayPage> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
-  void alert()async{
-    if(true){
-      _showMsg("Veuillez attendre l'affichage de la page de paiement. Cela peut prendre quelques secondes. Merci !");
-    }
-  }
 
+  void getIdPresta() async{
+
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+
+    var res = await CallApi().getData('getLastIdPrestation/$id');
+
+    //var urlClient = "http://192.168.43.217:8000/api/getClient/$id";
+    //final res = await http.get(Uri.encodeFull(urlClient), headers: {"Accept": "application/json","Content-type" : "application/json",});
+    var resBody = json.decode(res.body)['data'];
+
+    if(resBody == null){
+      setState(() {
+        idPresta = 0;
+      });
+    }else{
+      setState(() {
+        idPresta = resBody[0]['id'];
+      });
+    }
+    print('les donnees sont : $idPresta');
+
+  }
 
   @override
   void initState(){
     super.initState();
     this.getUserName();
+    this.getIdPresta();
     this.getStatut();
-    //this.alert();
-    //this._showMsg("Veuillez attendre l'affichage de la page de paiement. Cela peut prendre quelques secondes. Merci !");
   }
   Widget build(BuildContext context){
     final logo = Hero(
@@ -111,13 +123,175 @@ class _CinetpayPageState extends State<CinetpayPage> {
       appBar: AppBar(
         title: Text('$fenetre'),
       ),
-      body: WebView(
-        initialUrl: display ? UrlWeb : "",
-        javascriptMode: JavascriptMode.unrestricted,
-        onWebViewCreated: (WebViewController webViewController) {
-          controller = webViewController;
-        },
-      ),
+      body: load ? Form(
+        key: _formKey,
+        autovalidate: _autoValidate,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  //LogoPrestations(),
+                  SizedBox(height: 40.0),
+                  Text("SMS PERSONNALISE",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold
+                      )
+                  ),
+                  SizedBox(height: 50.0),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40.0),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.5),
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                          child: Icon(
+                            Icons.phone,
+                            color: Colors.red,
+                          ),
+                        ),
+                        new Expanded(
+                          child: TextFormField(
+                            textCapitalization: TextCapitalization.characters,
+                            keyboardType: TextInputType.phone,
+                            //autofocus: false,
+                            controller: _numero,
+                            validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
+                            onSaved: (value) => nomPrestation = value,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Destinataire",
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.5),
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+
+                        ),
+                        new Expanded(
+                          child: TextFormField(
+                            textCapitalization: TextCapitalization.characters,
+                            keyboardType: TextInputType.text,
+                            maxLines: 8,
+                            maxLength: 160,
+                            //autofocus: false,
+                            controller: _sms,
+                            validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
+                            onSaved: (value) => descripPrestation = value,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Votre message",
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  ////////////////////////////////////////////////////////////////////////////
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40.0),
+                  ),
+
+                  ////////////////////////////////////////////////////////////////
+
+                  Row(
+                    children : <Widget>[
+                      Expanded(child :Container(
+                        margin: const EdgeInsets.only(top: 20.0),
+                        //padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                        child: Row(
+                          children: <Widget>[
+                            new Expanded(
+                              child: loading ? FlatButton(
+                                shape: new RoundedRectangleBorder(
+                                    borderRadius: new BorderRadius.circular(30.0)
+                                ),
+                                color: Color(0xff003372),
+                                onPressed: ()async{
+                                  setState(() {
+                                    loading = false;
+                                  });
+
+                                  await _sendSMS();
+
+                                  setState(() {
+                                    loading = true;
+                                  });
+                                },
+                                child: new Container(
+                                  child: new Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      new Expanded(
+                                        child: Text(
+                                          "ENVOYER",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            //fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ) : Center(child: CircularProgressIndicator(),),
+                            )
+                          ],
+                        ),
+                      )),
+
+                      //////////////////////////////////////////////////////////
+                      Container(
+                        width: 15.0,
+                      ),
+
+                    ],),
+
+                  //////////////////////////////////////////////////////////
+
+                ],
+              ),
+            ),
+
+          ),
+        ),
+      ) : Center(child: CircularProgressIndicator(),),
 
       bottomNavigationBar: (adm == '0' || adm == '1') ? BottomNavigationBar(
         //backgroundColor: Color(0xff0200F4),
@@ -411,40 +585,35 @@ class _CinetpayPageState extends State<CinetpayPage> {
     }
     return false;
   }
-  void _sendDataPrestation ()async{
+  void _sendSMS ()async{
     if(validateAndSave()) {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       var id = localStorage.getString('id_lavage');
       var id_user = localStorage.getInt('ID');
       //try {
-      var data = {
-        'libelle_prestation': _nomPrestation.text.toUpperCase(),
-        'descrip_prestation': _descripPrestation.text.toUpperCase(),
+      var dataSms = {
+        'sms': _sms.text,
+        'numero': _numero.text,
+      };
+
+      var upDateDataSms = {
+        'contenu': _sms.text,
+        'nom_user': nameUser,
+        'dateHeure': date,
         'id_lavage': id,
       };
 
-      var dataLog = {
-        'fenetre': '$fenetre',
-        'tache': "Enregistrement des Prestations et Tarifications",
-        'execution': "Enregistrer",
-        'id_user': id_user,
-        'dateEnreg': dateHeure,
-        'id_lavage': id,
-        'type_user': statu,
-      };
-
-      var res = await CallApi().postDataPrestation(data, 'create_prestation');
-      var resLog = await CallApi().postData(dataLog, 'create_log');
-      var body = json.decode(res.body)['data'];
+      var res = await CallApi().postData(dataSms, 'sendSMS');
+     
+      var body = json.decode(res.body);
       // print('les donnees de prestation: ${body}');
 
-      setState(() {
-        // success = true;
-        idPresta = body[0]['id'];
-      });
-
-      if(res.statusCode == 200){
-        _sendDataTarification();
+      if(body['success']){
+       // _sendDataTarification();
+        var res = await CallApi().postData(upDateDataSms, 'updateSmsEnvoyerEtRestant/$id');
+        _showMsg('Message envoyé ');
+      }else{
+        _showMsg('Message échoué ');
       }
 
     }
@@ -473,98 +642,22 @@ class _CinetpayPageState extends State<CinetpayPage> {
 
   }
 
-  void checkPrestation()async {
-
-    if(validateAndSave()) {
-      SharedPreferences localStorage = await SharedPreferences.getInstance();
-      var id = localStorage.getString('id_lavage');
-
-
-      var resPrestation = await CallApi().getData(
-          'checkPrestation/$id/${_nomPrestation.text}');
-      var prestationBody = json.decode(resPrestation.body);
-
-      if ((prestationBody['success'])) {
-        // print('donnee 1 $matriculebody');
-        //print('donnee 2 $contactbody');
-        _showMsg("Cette prestation existe deja !!!");
-      } else {
-        //_showMsg("existe pas!!!");
-        _sendDataPrestation();
-      }
-    }
-
-  }
 
   var nameUser;
-  var idLav;
-  var fulUrl;
-  String UrlWeb = 'https://service.agla.app/api/paymentPage/';
-  bool display = false;
 
   void getUserName() async{
-    //_showMsg("Veuillez attendre l'affichage du bouton de paiement. Cela peut prendre quelques secondes. Merci !");
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var userName = localStorage.getString('nom');
-    var res = await CallApi().getData('paymentPage/$idLav');
-     idLav = localStorage.getString('id_lavage');
-    UrlWeb = (UrlWeb + idLav).toString();
 
-    if(res.statusCode == 200) {
-      _showMsg("Veuillez attendre l'affichage de la page de paiement. Cela peut prendre quelques secondes. Merci !");
-      setState(() {
-        nameUser = userName;
-        idLav = localStorage.getString('id_lavage');
-        controller.loadUrl(UrlWeb);
-        // controller.loadUrl(UrlWeb);
-        display = true;
-      });
-    }
+    setState(() {
+      nameUser = userName;
+    });
 
-    print("la valeur de idlav est : $UrlWeb");
+    //print('la valeur de admin est : $admin');
 
   }
 
 
-  void _sendDataTarification() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    if (validateAndSave()) {
-      //_sendDataPrestation();
-
-      var data = {
-        'id_prestation': idPresta,
-        'montant': _montant.text,
-        'id_lavage': id,
-
-      };
-
-      var res = await CallApi().postAppData(data, 'create_tarification');
-      var body = json.decode(res.body);
-      print('$body');
-
-      if (res.statusCode == 200) {
-        SharedPreferences localStorage = await SharedPreferences.getInstance();
-        localStorage.setString('idTarif', body['id'].toString());
-        localStorage.setString('presta_Montant', (body['prestation_montant']));
-        localStorage.setBool('valeur', true);
-        // print(localStorage.getString('idTarif'));
-        //  print(localStorage.getString('presta_Montant'));
-
-        setState(() {
-          _nomPrestation.text = '';
-          _descripPrestation.text = '';
-          _montant.text = '' ;
-        });
-
-        _showMsg("Donnees enregistrees avec succes ");
-
-      }else{
-        _showMsg("Erreur d'enregistrement ");
-      }
-    }
-
-  }
 
   Future<bool> _alertDeconnexion(){
 
@@ -589,8 +682,6 @@ class _CinetpayPageState extends State<CinetpayPage> {
   var adm;
   var statu;
   var libLavage;
-  bool afficher = false;
-  WebViewController controller;
 
   Future <void> getStatut()async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -603,11 +694,12 @@ class _CinetpayPageState extends State<CinetpayPage> {
       var resBody = json.decode(res.body)['data'];
 
       if(resBody['success']){
+
         setState((){
           statu = resBody['status'];
           libLavage = resBody['nomLavage'];
-        });
 
+        });
       }
 
     }else{
@@ -642,6 +734,21 @@ class _CinetpayPageState extends State<CinetpayPage> {
   }
 
 }
+
+
+class LogoPrestations extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/Prestations.jpg');
+    Image image = Image(image: assetImage, width: 250.0,);
+
+    return Container(child: image,);
+  }
+
+}
+
 
 
 

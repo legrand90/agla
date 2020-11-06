@@ -268,6 +268,33 @@ class _TransactionState extends State<Transaction> {
 
   }
 
+  var success, on_off, alerte, heure, smsR;
+
+  void smsConfig() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+    var res = await CallApi().getData('getSmsConfigData/$id');
+    var res2 = await CallApi().getData('getSmsoperaData/$id');
+    // String url = "http://192.168.43.217:8000/api/matricule/$id/$idclient";
+    //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
+    var resBody = json.decode(res.body);
+    var resBody2 = json.decode(res2.body);
+    // final response = await http.get('$url');
+
+    setState(() {
+      success = resBody['success'];
+      on_off = resBody['on_off'];
+      alerte = resBody['alerte'];
+      heure = resBody['heure'];
+      smsR = resBody2['smsR'];
+    });
+
+    //print("smsR  : ${resBody2['smsR']}");
+   // print("alerte  : ${resBody['alerte']}");
+   // print("etat  : ${resBody['on_off']}");
+
+  }
+
 //  var recette;
 //  var commissions;
 //  void getRecette() async{
@@ -289,6 +316,23 @@ class _TransactionState extends State<Transaction> {
 
   Timer timer;
 
+  Future<bool> _alertSMS(){
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Il vous reste $alerte SMS ."),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Ok"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+
+          ],
+        )
+    );
+  }
+
 
   @override
   void initState(){
@@ -296,7 +340,7 @@ class _TransactionState extends State<Transaction> {
     this.getAgent();
     this.getClients();
     this.getUserName();
-    //this.getClient();
+    this.smsConfig();
     this.getPrestation();
     this.getStatut();
     //timer = Timer.periodic(Duration(seconds: 5), (Timer t) => this.getClients());
@@ -1016,30 +1060,105 @@ class _TransactionState extends State<Transaction> {
         'id_lavage': idlavage,
       };
 
-      var res = await CallApi().postAppData(data, 'create_transaction');
+      var dataSms = {
+        'sms': 'MERCI POUR VOTRE PASSAGE AU LAVAGE $libLavage.\n\nPRESTATION : $libpresta\nCOUT : $data4 FCFA\nSOYEZ PRUDENT(E), A LA PROCHAINE !',
+        'numero': contactClient,
+      };
+
+      var upDateDataSms = {
+        'contenu': 'MERCI POUR VOTRE PASSAGE AU LAVAGE $libLavage.\n\nPRESTATION : $libpresta\nCOUT : $data4 FCFA\nSOYEZ PRUDENT(E), A LA PROCHAINE !',
+        'nom_user': nameUser,
+        'dateHeure': date,
+        'id_lavage': idlavage,
+      };
+
+      if (success) {
+        if((on_off == 'on' && int.parse(smsR) > 0 )) {
+          if(int.parse(smsR) == int.parse(alerte)){
+            _alertSMS();
+          }
+          var res = await CallApi().postAppData(data, 'create_transaction');
+
+          if (res.statusCode == 200) {
+            var resLog = await CallApi().postData(dataLog, 'create_log');
+            var resSolde = await CallApi().postData(dataSolde, 'create_solde');
+
+            if(contactClient != ""){
+              var resSms = await CallApi().postAppData(dataSms, 'sendSMS');
+            }
+
+            setState(() {
+              _mySelection = null;
+              _mySelection3 = null;
+              idmatricule = null;
+              searchTextField.textField.controller.text = "";
+              visible = false;
+              affiche = false;
+            });
+
+            if(contactClient != ""){
+              var res = await CallApi().postData(upDateDataSms, 'updateSmsEnvoyerEtRestant/$idlavage');
+              smsConfig();
+            }
+
+            _showMsg("Donnees enregistrees avec succes");
+          } else {
+           // var res = await CallApi().getData('updateSmsEnvoyerEtRestant/$idlavage');
+
+           //  smsConfig();
+          _showMsg("Erreur d'enregistrement des donnees");
+          }
+        }else{
+          var res = await CallApi().postAppData(data, 'create_transaction');
+
+          if (res.statusCode == 200) {
+            var resLog = await CallApi().postData(dataLog, 'create_log');
+            var resSolde = await CallApi().postData(dataSolde, 'create_solde');
+            //var resSms = await CallApi().postAppData(dataSms, 'sendSMS');
+
+            setState(() {
+              _mySelection = null;
+              _mySelection3 = null;
+              idmatricule = null;
+              searchTextField.textField.controller.text = "";
+              visible = false;
+              affiche = false;
+            });
+
+            _showMsg("Donnees enregistrees avec succes");
+          } else {
+            _showMsg("Erreur d'enregistrement des donnees");
+          }
+        }
+    }else{
+          var res = await CallApi().postAppData(data, 'create_transaction');
+
+          if (res.statusCode == 200) {
+            var resLog = await CallApi().postData(dataLog, 'create_log');
+            var resSolde = await CallApi().postData(dataSolde, 'create_solde');
+            //var resSms = await CallApi().postAppData(dataSms, 'sendSMS');
+
+            setState(() {
+              _mySelection = null;
+              _mySelection3 = null;
+              idmatricule = null;
+              searchTextField.textField.controller.text = "";
+              visible = false;
+              affiche = false;
+            });
+
+            _showMsg("Donnees enregistrees avec succes");
+          } else {
+            _showMsg("Erreur d'enregistrement des donnees");
+          }
 
 
-      if(res.statusCode == 200){
-        var resLog = await CallApi().postData(dataLog, 'create_log');
-        var resSolde = await CallApi().postData(dataSolde, 'create_solde');
-
-        setState(() {
-          _mySelection = null;
-          _mySelection3 = null;
-          idmatricule = null;
-          searchTextField.textField.controller.text = "";
-          visible = false ;
-          affiche = false ;
-        });
-
-        _showMsg("Donnees enregistrees avec succes");
-
-      }else{
-        _showMsg("Erreur d'enregistrement des donnees");
       }
 
     }
   }
+
+  var libpresta;
 
   void getTarification() async {
 
@@ -1053,6 +1172,7 @@ class _TransactionState extends State<Transaction> {
     setState(() {
       idTari = resBody['id'];
       data4 = resBody['montant'];
+      libpresta = resBody['libpresta'];
     });
 
     getCommission();
