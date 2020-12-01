@@ -1,73 +1,49 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-//import 'package:font_awesome_flutter/fa_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
-import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
+import 'package:lavage/authentification/Screen/Listes/listDepense.dart';
 import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/client.dart';
-import 'package:lavage/authentification/Screen/dashbord.dart';
 import 'package:lavage/authentification/Screen/register.dart';
+import 'package:lavage/authentification/Screen/tutoriel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
-import 'package:lavage/authentification/Models/Agent.dart';
-import 'package:http/http.dart' as http;
-
-import 'package:lavage/authentification/Screen/Listes/listagents.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../Transaction.dart';
-import '../historique.dart';
-import '../login_page.dart';
-import '../tutoriel.dart';
+import 'Listes/listprestations.dart';
+import 'Tabs/clientPage.dart';
+import 'Transaction.dart';
+import 'dashbord.dart';
+import 'historique.dart';
+import 'login_page.dart';
 
-//import 'Tabs/clientPage.dart';
-//import 'Transaction.dart';
-//import 'Listes/listagents.dart';
-
-//import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
-
-
-class EditAgent extends StatefulWidget {
-  var idagent ;
-  EditAgent({Key key, @required this.idagent}) : super(key: key);
+class Depense extends StatefulWidget {
   @override
-  _EditAgentState createState() => new _EditAgentState(idagent);
+  _DepenseState createState() => new _DepenseState();
 }
 
-class _EditAgentState extends State<EditAgent> {
-  var idagent ;
-  _EditAgentState(this.idagent);
-
+class _DepenseState extends State<Depense> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _nomAgent = TextEditingController();
-  final TextEditingController _contactAgent = TextEditingController();
-  final TextEditingController _domicilAgent = TextEditingController();
-  final TextEditingController _contactUrgence = TextEditingController();
-  final TextEditingController dateCtl = TextEditingController();
-  final TextEditingController _numeroCNI = TextEditingController();
-  final TextEditingController _salaire = TextEditingController();
+  final TextEditingController _libelle = TextEditingController();
+  final TextEditingController _prixUnit = TextEditingController();
+  final TextEditingController _quantite = TextEditingController();
+  final TextEditingController _totalPayer = TextEditingController();
 
-
-  String dateHeure = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
-
-  String nomAgent;
-  String contactAgent;
-  String domicilAgent;
-  String contactUrgence;
+  String nomPrestation;
+  String descripPrestation;
 
   bool _autoValidate = false;
   bool _loadingVisible = false;
+  String montant;
+  var idPresta = 0;
   bool loading = true;
   bool load = true;
+  bool aff = false;
+  var val;
 
-  var mydate1;
-
-  var fenetre = 'MODIFICATION AGENT';
-
-  // Listagents listagents = Listagents ()  ;
+  var fenetre = 'SORTIE CAISSE DEPENSE';
 
   Future <void> _changeLoadingVisible() async {
     setState(() {
@@ -76,106 +52,16 @@ class _EditAgentState extends State<EditAgent> {
   }
 
 
-  void UpdateAgent() async{
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    var id_user = localStorage.getInt('ID');
-
-      //try {
-      var data = {
-        'nom': _nomAgent.text.toUpperCase(),
-        'contact': _contactAgent.text,
-        'quartier': _domicilAgent.text.toUpperCase(),
-        'contactUrgence': _contactUrgence.text,
-        'dateEnreg': dateHeure,
-        'id_lavage': id,
-        'dateNaiss': mydate1,
-        'numero_cni': _numeroCNI.text,
-        'salaire': _salaire.text,
-      };
-
-    var dataLog = {
-      'fenetre': '$fenetre',
-      'tache': "Modification d'un Agent",
-      'execution': "Update",
-      'id_user': id_user,
-      'dateEnreg': dateHeure,
-      'id_lavage': id,
-      'type_user': statu,
-    };
-
-
-      var res = await CallApi().postDataEdit(data, 'update_agent/$idagent/$id');
-      var body = json.decode(res.body);
-     // print(body);
-
-      if (res.statusCode == 200) {
-        var res = await CallApi().postData(dataLog, 'create_log');
-
-        _nomAgent.text = '';
-        _contactAgent.text = '';
-        _domicilAgent.text = '';
-        _contactUrgence.text = '';
-
-        //_showMsg('Donnees mises a jour avec succes');
-
-        Navigator.push(
-          context,
-          new MaterialPageRoute(
-            builder: (BuildContext context) {
-              return ListAgent();
-            },
-          ),
-        );
-
-      }else{
-        _showMsg("Erreur d'enregistrement");
-      }
-
-  }
-
-  void getAgent() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var idlavage = localStorage.getString('id_lavage');
-    // this.param = _mySelection3;
-
-   // final String url = "http://192.168.43.217:8000/api/getAgent/$idagent/$idlavage"  ;
-
-    var res = await CallApi().getData('getAgent/$idagent/$idlavage');
-
-//    final res = await http.get(Uri.encodeFull(url), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
-
-    var resBody = json.decode(res.body)['data'];
-
-    setState(() {
-      _nomAgent.text = resBody['nom'];
-      _contactAgent.text = resBody['contact'];
-      _contactUrgence.text = resBody['contactUrgence'];
-      _domicilAgent.text = resBody['quartier'];
-      _numeroCNI.text = resBody['numero_cni'];
-      _salaire.text = resBody['salaire'];
-      dateCtl.text = resBody['dateNaiss'];
-      //dateEnreg = resBody['dateEnreg'];
-      //idTari = resBody['id'];
-    });
-
-
-
-    // print('identi est $idpresta');
-
-  }
-
-
   final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
-  _showMsg(msg){
+
+  String dateHeure = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
+
+  _showMsg(msg) {
     final snackBar = SnackBar(
         content: Text(msg),
-        action : SnackBarAction(
+        action: SnackBarAction(
           label: 'Fermer',
-          onPressed: (){
+          onPressed: () {
 
           },
         )
@@ -183,13 +69,39 @@ class _EditAgentState extends State<EditAgent> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
-  @override
 
+  void getIdPresta() async{
+
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+
+    var res = await CallApi().getData('getLastIdPrestation/$id');
+
+    //var urlClient = "http://192.168.43.217:8000/api/getClient/$id";
+    //final res = await http.get(Uri.encodeFull(urlClient), headers: {"Accept": "application/json","Content-type" : "application/json",});
+    var resBody = json.decode(res.body)['data'];
+
+    if(resBody == null){
+      setState(() {
+        idPresta = 0;
+      });
+    }else{
+      setState(() {
+        idPresta = resBody[0]['id'];
+      });
+    }
+    print('les donnees sont : $idPresta');
+
+  }
+
+  @override
   void initState(){
     super.initState();
-    this.getAgent();
     this.getUserName();
+    this.getIdPresta();
     this.getStatut();
+
+    _quantite.text = '1';
   }
   Widget build(BuildContext context){
     final logo = Hero(
@@ -212,7 +124,7 @@ class _EditAgentState extends State<EditAgent> {
       key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('MODIFICATION AGENT'),
+        title: Text('$fenetre'),
       ),
       body: load ? Form(
         key: _formKey,
@@ -225,9 +137,9 @@ class _EditAgentState extends State<EditAgent> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  logo,
+                 // LogoPrestations(),
                   SizedBox(height: 40.0),
-                  Text("MODIFIER l'AGENT",
+                  Text("SORTIE CAISSE",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16.0,
@@ -254,7 +166,7 @@ class _EditAgentState extends State<EditAgent> {
                         new Padding(
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                           child: Icon(
-                            Icons.perm_identity,
+                            Icons.edit,
                             color: Colors.red,
                           ),
                         ),
@@ -262,185 +174,13 @@ class _EditAgentState extends State<EditAgent> {
                           child: TextFormField(
                             textCapitalization: TextCapitalization.characters,
                             keyboardType: TextInputType.text,
-                            autofocus: false,
-                            controller: _nomAgent,
-                            validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
-                            onSaved: (value) => nomAgent = value,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Nom agent",
-                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    child: TextFormField(
-                      controller: dateCtl,
-                      decoration: InputDecoration(
-                        labelText: "Date de Naissance",
-                        hintText: "DATE",),
-                      onTap: () async{
-                        DateTime date = DateTime(1900);
-                        FocusScope.of(context).requestFocus(new FocusNode());
-
-                        date = await showDatePicker(
-                            context: context,
-                            initialDate:DateTime.now(),
-                            firstDate:DateTime(1900),
-                            lastDate: DateTime(2100));
-
-                        dateCtl.text = DateFormat('yyyy-MM-dd').format(date);
-                        mydate1 = DateFormat('dd-MM-yyyy').format(date);
-
-                      },
-                    ),
-                  ),
-
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.grey.withOpacity(0.5),
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    child: Row(
-                      children: <Widget>[
-                        new Expanded(
-                          child: TextFormField(
-                            textCapitalization: TextCapitalization.characters,
-                            keyboardType: TextInputType.text,
-                            autofocus: false,
-                            controller: _numeroCNI,
-                            validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
-                            //onSaved: (value) => nomAgent = value,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "N° CNI OU ATTESTATION D'IDENTITE",
-                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.grey.withOpacity(0.5),
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    child: Row(
-                      children: <Widget>[
-                        new Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-                          child: Icon(
-                            Icons.phone,
-                            color: Colors.red,
-                          ),
-                        ),
-                        new Expanded(
-                          child: TextFormField(
-                            keyboardType: TextInputType.phone,
                             //autofocus: false,
-                            controller: _contactAgent,
+                            controller: _libelle,
                             validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
-                            onSaved: (value) => contactAgent = value,
+                            onSaved: (value) => nomPrestation = value,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Contact",
-                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  ////////////////////////////////////////////////////////////////////////////
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40.0),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.grey.withOpacity(0.5),
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    child: Row(
-                      children: <Widget>[
-                        new Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal:20.0),
-                          child: Icon(
-                            Icons.home,
-                            color: Colors.red,
-                          ),
-                        ),
-                        new Expanded(
-                          child: TextFormField(
-                            textCapitalization: TextCapitalization.characters,
-                            keyboardType: TextInputType.text,
-                            //obscureText: true,
-                            autofocus: false,
-                            controller: _domicilAgent,
-                            validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
-                            onSaved: (value) => domicilAgent = value,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Domicile",
-                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  ////////////////////////////////////////////////////////////////
-
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.grey.withOpacity(0.5),
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    child: Row(
-                      children: <Widget>[
-                        new Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-                          child: Icon(
-                            Icons.phone,
-                            color: Colors.red,
-                          ),
-                        ),
-                        new Expanded(
-                          child: TextFormField(
-                            keyboardType: TextInputType.phone,
-                            //autofocus: false,
-                            controller: _contactUrgence,
-                            validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
-                            onSaved: (value) => contactUrgence = value,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Contact d'urgence",
+                              hintText: "Libellé Dépense",
                               hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
@@ -470,14 +210,15 @@ class _EditAgentState extends State<EditAgent> {
                         ),
                         new Expanded(
                           child: TextFormField(
+                            textCapitalization: TextCapitalization.characters,
                             keyboardType: TextInputType.number,
                             //autofocus: false,
-                            controller: _salaire,
+                            controller: _quantite,
                             validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
-                            //onSaved: (value) => contactUrgence = value,
+                            //onSaved: (value) => descripPrestation = value,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Salaire",
+                              hintText: "Quantité",
                               hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                             ),
                           ),
@@ -485,11 +226,110 @@ class _EditAgentState extends State<EditAgent> {
                       ],
                     ),
                   ),
+                  ////////////////////////////////////////////////////////////////////////////
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40.0),
+                  ),
 
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.5),
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 20.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.0,
+                              horizontal: 15.0),
+                          child: Icon(
+                            Icons.monetization_on,
+                            color: Colors.red,
+                          ),
+                        ),
+                        new Expanded(
+                          child: TextFormField(
+                            textCapitalization: TextCapitalization.characters,
+                            keyboardType: TextInputType.number,
+                            //autofocus: false,
+                            controller: _prixUnit,
+                            validator: (value) =>
+                            value.isEmpty
+                                ? 'Ce champ est requis'
+                                : null,
+                            //onSaved: (value) => montant = value,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Prix Unitaire",
+                              hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
+                            ),
+                          ),
+                        ),
+
+                        //Container(width: 20.0,),
+                        // Expanded(child: Text("Fcfa"),)
+                      ],
+                    ),
+                  ),
+
+                  Container(
+                    //margin: const EdgeInsets.only(top: 20.0),
+                    margin: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                    //padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Expanded(
+                          child:  FlatButton(
+                            shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0)
+                            ),
+                            color: Color(0xff003372),
+                            onPressed: ()async{
+                              setState(() {
+                                val = int.parse(_quantite.text) * int.parse(_prixUnit.text) ;
+                                aff = true ;
+                              });
+
+                            },
+                            child: new Container(
+                              child: new Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text(
+                                      "Voir le Total",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        //fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+
+                   aff ? Container(
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 30.0, horizontal: 20.0),
+                    child: Text('Prix Total : $val FCFA', style: TextStyle(fontSize: 25.0),),
+                  ) : Text(''),
+
+                  ////////////////////////////////////////////////////////////////
 
                   Row(
                     children : <Widget>[
-                      Expanded(child :Container(
+                      aff ? Expanded(child :Container(
                         margin: const EdgeInsets.only(top: 20.0),
                         //padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                         child: Row(
@@ -503,8 +343,9 @@ class _EditAgentState extends State<EditAgent> {
                                 onPressed: ()async{
                                   setState(() {
                                     loading = false;
+                                   // aff = false ;
                                   });
-                                  await UpdateAgent();
+                                  await _sendDataDepense();
 
                                   setState(() {
                                     loading = true;
@@ -531,18 +372,64 @@ class _EditAgentState extends State<EditAgent> {
                             )
                           ],
                         ),
-                      )),
+                      )) : Text(''),
 
                       //////////////////////////////////////////////////////////
-
-                    ],
-                  ),
+                      Container(
+                        width: 15.0,
+                      ),
+                      Expanded(child : Container(
+                        margin: const EdgeInsets.only(top: 20.0),
+                        //padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                        child: Row(
+                          children: <Widget>[
+                            new Expanded(
+                              child: FlatButton(
+                                shape: new RoundedRectangleBorder(
+                                    borderRadius: new BorderRadius.circular(30.0)
+                                ),
+                                color: Color(0xff003372),
+                                child: new Container(
+                                  //padding: const EdgeInsets.only(left: 20.0),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "AFFICHER",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      color: Colors.white,
+                                      //fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () async{
+                                  setState(() {
+                                    load = false;
+                                  });
+                                  await Navigator.push(
+                                    context,
+                                    new MaterialPageRoute(
+                                      builder: (BuildContext context) {
+                                        return ListDepense();
+                                      },
+                                    ),
+                                  );
+                                  setState(() {
+                                    load = true;
+                                  });
+                                },
+                              ),
+                            )
+                          ],
+                        ),
+                      ),)],),
 
                   //////////////////////////////////////////////////////////
 
                 ],
               ),
             ),
+
           ),
         ),
       ) : Center(child: CircularProgressIndicator(),),
@@ -800,7 +687,7 @@ class _EditAgentState extends State<EditAgent> {
                     icon: FaIcon(FontAwesomeIcons.chrome),
                     onPressed: ()async{
 
-                      await _launchMaxomURL();
+                      _launchMaxomURL();
                     },
                   ),
                 ],
@@ -839,34 +726,57 @@ class _EditAgentState extends State<EditAgent> {
     }
     return false;
   }
-  void _sendDataAgent () async{
-
+  void _sendDataDepense()async{
     if(validateAndSave()) {
+
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       var id = localStorage.getString('id_lavage');
+      var id_user = localStorage.getInt('ID');
+      //try {
       var data = {
-        'nom': _nomAgent.text.toUpperCase(),
-        'contact': _contactAgent.text,
-        'quartier': _domicilAgent.text.toUpperCase(),
-        'contactUrgence': _contactUrgence.text,
+        'libelle_depense': _libelle.text,
+        'quantite': _quantite.text,
+        'id_user': id_user,
         'dateEnreg': dateHeure,
         'id_lavage': id,
+        'prixUnitaire': _prixUnit.text,
+        'prixTotal': int.parse(_quantite.text) * int.parse(_prixUnit.text),
       };
 
-      var res = await CallApi().postDataAgent(data, 'create_agent');
+      var dataLog = {
+        'fenetre': '$fenetre',
+        'tache': "Enregistrement sortie caisse depense",
+        'execution': "Enregistrer",
+        'id_user': id_user,
+        'dateEnreg': dateHeure,
+        'id_lavage': id,
+        'type_user': statu,
+      };
+
+      var res = await CallApi().postDataPrestation(data, 'create_depense');
+      var resLog = await CallApi().postData(dataLog, 'create_log');
       var body = json.decode(res.body)['data'];
-      print('les donnees de l\'Agent: ${body}');
+      // print('les donnees de prestation: ${body}');
 
-      if(body[0]['success']) {
-        _nomAgent.text = '';
-        _contactAgent.text = '';
-        _domicilAgent.text = '';
-        _contactUrgence.text = '';
+      if(res.statusCode == 200){
 
-        _showMsg(body[0]['message']);
+        setState(() {
+           aff = false;
+           _libelle.text = "";
+           _quantite.text = "";
+           _prixUnit.text = "";
+          //idPresta = body[0]['id'];
+        });
 
+        _showMsg("Données enregistrées avec succès");
+      }else{
+        _showMsg("Erreur d'enregistrement des données");
       }
+
     }
+
+    //print(' le type ${idPresta.runtimeType}');
+    // print(' le type val ${idPresta}');
   }
 
   void _logout() async{
@@ -886,7 +796,10 @@ class _EditAgentState extends State<EditAgent> {
               }
           ));
     }
+
   }
+
+
 
   var nameUser;
 
@@ -901,6 +814,8 @@ class _EditAgentState extends State<EditAgent> {
     //print('la valeur de admin est : $admin');
 
   }
+
+
 
   Future<bool> _alertDeconnexion(){
 
@@ -956,7 +871,6 @@ class _EditAgentState extends State<EditAgent> {
         });
       }
     }
-
   }
 
   _launchFacebookURL() async {
@@ -976,7 +890,23 @@ class _EditAgentState extends State<EditAgent> {
       throw 'Could not launch $url';
     }
   }
+
 }
+
+
+class LogoPrestations extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage('assets/images/Prestations.jpg');
+    Image image = Image(image: assetImage, width: 250.0,);
+
+    return Container(child: image,);
+  }
+
+}
+
 
 
 

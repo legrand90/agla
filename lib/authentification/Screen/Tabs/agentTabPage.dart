@@ -437,7 +437,21 @@ class _AgentTabPageState extends State<AgentTabPage> {
                   children: <Widget>[
                     Text('COMMISSIONS: '),
                    // SizedBox(width: 20.0,),
-                    Text('  $commi Fcfa'),
+                    Text('  $commi FCFA'),
+                  ],
+                ),
+
+              ): Text(''),
+              SizedBox(height: 20.0,),
+              visible?
+              Container(
+                margin: EdgeInsets.only(left: 15.0),
+                child :
+                Row(
+                  children: <Widget>[
+                    Text('SALAIRE: '),
+                    // SizedBox(width: 20.0,),
+                    Expanded(child: Text('  ${serchValue.data.salaire} FCFA'),)
                   ],
                 ),
 
@@ -483,7 +497,7 @@ class _AgentTabPageState extends State<AgentTabPage> {
                           children: <Widget>[
                             Text('PLAQUE D\'IMMATRICULATION'),
                             SizedBox(width: 20.0,),
-                            Text('${serchValue2.data [index] .idMatricule}'),
+                            Expanded(child: Text('${serchValue2.data [index] .idMatricule}')),
                           ],
                         ),
                         SizedBox(height: 20.0,),

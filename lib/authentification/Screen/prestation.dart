@@ -208,8 +208,8 @@ class _PrestationState extends State<Prestation> {
                             keyboardType: TextInputType.text,
                             //autofocus: false,
                             controller: _descripPrestation,
-                            validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
-                            onSaved: (value) => descripPrestation = value,
+                            //validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
+                            //onSaved: (value) => descripPrestation = value,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Description",

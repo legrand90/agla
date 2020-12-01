@@ -174,7 +174,7 @@ class _TransactionState extends State<Transaction> {
       param = _mySelection3 ;
     });
 
-    print(param);
+    //print(param);
     return "Success";
   }
 
@@ -220,7 +220,7 @@ class _TransactionState extends State<Transaction> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(ag.matricule, style: TextStyle(fontSize: 18.0),)
+        Text(ag.matricule, style: TextStyle(fontSize: 30.0),)
       ],
     );
   }
@@ -589,29 +589,29 @@ class _TransactionState extends State<Transaction> {
 
                   )),
 
-                  visible ?
+
                     Padding(
                         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                         child: Row(
                           children: <Widget>[
                               Text('Coût Prestation (FCFA) :', style: TextStyle(fontSize: 18.0)),
-                            Expanded(
+                            visible ?  Expanded(
                               child: Text('  $data4', style: TextStyle(fontSize: 18.0)),
-                            ),
+                            ): Text(''),
                           ],
-                        )) : Text(''),
+                        )) ,
 
-                    visible ?
+
                     Padding(
                         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                         child: Row(
                           children: <Widget>[
                             Text('Commission Agent (FCFA) :', style: TextStyle(fontSize: 18.0)),
-                            Expanded(
+                            visible ? Expanded(
                               child: Text('  $commission', style: TextStyle(fontSize: 18.0)),
-                            ),
+                            ): Text(''),
                           ],
-                        )) : Text(''),
+                        )) ,
 
                   ////////////////////////////////////////////////////////////////////////////
                   Padding(
@@ -1165,7 +1165,7 @@ class _TransactionState extends State<Transaction> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
 
-    var res = await CallApi().getData('getTarification/$_mySelection3/$id');
+    var res = await CallApi().getData('getTarificationTransaction/$_mySelection3/$id');
 
     var resBody = json.decode(res.body)['data'];
 
@@ -1185,22 +1185,20 @@ class _TransactionState extends State<Transaction> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
 
-    var res = await CallApi().getData('getCommission/$idTari/$_mySelection/$id');
+    var res = await CallApi().getData('getCommissionTransaction/$idTari/$_mySelection/$id');
 
    // final String urlCommission = "http://192.168.43.217:8000/api/getCommission/$idTari/$_mySelection/$id";
    // final res = await http.get(Uri.encodeFull(urlCommission), headers: {"Accept": "application/json","Content-type" : "application/json",});
 
-    if(res.statusCode == 200){
-      var resBody = json.decode(res.body)['data'];
+      var resBody = json.decode(res.body);
         if(resBody['success']){
         setState(() {
           commission = resBody['gain_agent'];
           id_commission = resBody['id'];
           visible = true;
         });
-      }
-    }else{
-
+      }else{
+          _showMsg("L' Agent que vous avez selectionner n'a pas de commission pour cette prestation");
       setState((){
         visible = false;
         _mySelection3 = null;
@@ -1208,7 +1206,7 @@ class _TransactionState extends State<Transaction> {
         data4 = '' ;
       });
 
-      _showMsg("L' Agent que vous avez selectionner n'a pas de commission pour cette prestation");
+
     }
 
 

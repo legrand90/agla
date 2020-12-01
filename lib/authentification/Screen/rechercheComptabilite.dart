@@ -60,6 +60,7 @@ class _RechercheComptaState extends State<RechercheCompta> {
 
   bool loading = true;
   bool loader = true;
+  bool load = true ;
 
   Listagentfromsearch serchValue = Listagentfromsearch();
   ListagentTransaction serchValue2 = ListagentTransaction();
@@ -70,7 +71,9 @@ class _RechercheComptaState extends State<RechercheCompta> {
   var recette ;
   var commissions ;
   var tarifications ;
-  bool load = true;
+  var totalSalaire ;
+  var totalDepense ;
+  var chiffreAffaire;
 
   void getComptabilite() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -85,13 +88,15 @@ class _RechercheComptaState extends State<RechercheCompta> {
         recette = resBody['recette'];
         commissions = resBody['commissions'];
         tarifications = resBody['tarifications'];
+        totalDepense = resBody['TotalDepense'];
+        totalSalaire = resBody['TotalSalaire'];
+        chiffreAffaire = resBody['ChiffreAffaire'];
         visible = true;
       });
 
     }else{
       _showMsg('Desole ! Pas de transactions effectuees au-cours de cette periode');
     }
-
 
   }
 
@@ -286,7 +291,7 @@ class _RechercheComptaState extends State<RechercheCompta> {
 
 
               visible ? Container(
-                height: 150.0,
+                height: 300.0,
                 child:
 
                 Container(
@@ -294,6 +299,14 @@ class _RechercheComptaState extends State<RechercheCompta> {
                         title: Column(
                           children: <Widget>[
                             SizedBox(height: 10.0,),
+                            Row(
+                              children: <Widget>[
+                                Text('CHIFFRE D\'AFFAIRES : '),
+                                SizedBox(width: 20.0,),
+                                Expanded(child: Text('$chiffreAffaire FCFA')),
+                              ],
+                            ),
+                            SizedBox(height: 20.0,),
                             Row(
                               children: <Widget>[
                                 Text('TOTAL PRESTATIONS : '),
@@ -307,6 +320,22 @@ class _RechercheComptaState extends State<RechercheCompta> {
                                 Text('TOTAL COMMISSIONS : '),
                                 SizedBox(width: 20.0,),
                                 Expanded(child: Text('$commissions FCFA'),),
+                              ],
+                            ),
+                            SizedBox(height: 20.0,),
+                            Row(
+                              children: <Widget>[
+                                Text('TOTAL SALAIRE : '),
+                                SizedBox(width: 20.0,),
+                                Expanded(child: Text('$totalSalaire FCFA')),
+                              ],
+                            ),
+                            SizedBox(height: 20.0,),
+                            Row(
+                              children: <Widget>[
+                                Text('TOTAL DEPENSE : '),
+                                SizedBox(width: 20.0,),
+                                Expanded(child: Text('$totalDepense FCFA')),
                               ],
                             ),
                             SizedBox(height: 20.0,),

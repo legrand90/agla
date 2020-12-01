@@ -133,7 +133,7 @@ class _ListSoldeState extends State<ListSolde> {
                 SizedBox(height: 40.0,),
 
                 chargement ? Container(
-                    height: 800.0,
+                    height: 360.0,
                     child:
 
                     ListView.builder(

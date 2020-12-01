@@ -3,6 +3,7 @@ import 'dart:convert';
 //import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
@@ -48,7 +49,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
     return showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text("Vous voulez vraiment quitter cette page ?"),
+          title: Text("Vous voulez vraiment fermer l'application ?"),
           actions: <Widget>[
             FlatButton(
               child: Text("Non"),
@@ -56,7 +57,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
             ),
             FlatButton(
               child: Text("Oui"),
-              onPressed: () => _logout(),
+              onPressed: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
             )
           ]
         )
@@ -85,21 +86,23 @@ class _DashbordScreenState extends State<DashbordScreen> {
 
   String date = DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
 
-  var recette, commissions, totalTarif, nbOpera;
+  var depense, commissions, totalTarif, nbOpera, recette;
 
   void getRecette() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var id = localStorage.getString('id_lavage');
     // String url = "http://192.168.43.217:8000/api/getCommissionsAndRecette/$date/$id";
     var res = await CallApi().getData('getCommissionsAndRecette/$date/$id');
+  var resDep = await CallApi().getData('getTotalDepenseJour/$date/$id');
     //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
     var resBody = json.decode(res.body);
+    var resBodyDep = json.decode(resDep.body);
     // final response = await http.get('$url');
 
     setState(() {
-      recette = (resBody['recette'] == null) ? 0 : resBody['recette'] ;
+      depense = resBodyDep['TotalDepense'] ;
       commissions = (resBody['commissions'] == null) ? 0 : resBody['commissions'] ;
-      totalTarif = recette + commissions;
+      totalTarif = (resBody['totalPrestaion'] == null) ? 0 : resBody['totalPrestaion'];
       nbOpera = (resBody['nbOpera'] == null) ? 0 : resBody['nbOpera'] ;
     });
 
@@ -140,10 +143,10 @@ class _DashbordScreenState extends State<DashbordScreen> {
                     affichDateFinAbonn ? Container(
                       // padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                       child: Center(
-                        child: Text("Votre souscription prendra fin le $dateFinAbon",
+                        child: Text("VALIDITE : $dateFinAbon",
                           style: TextStyle(
                             color: Colors.red,
-                            fontSize: 14.0,
+                            fontSize: 18.0,
                           ),),),
 
                     ) : Text(""),
@@ -151,10 +154,10 @@ class _DashbordScreenState extends State<DashbordScreen> {
                     affichJourR ? Container(
                       // padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                       child: Center(
-                        child: Text("Votre souscription prendra fin dans $jourR jours",
+                        child: Text("JOUR RESTANT : $jourR jour(s)",
                           style: TextStyle(
                             color: Colors.red,
-                            fontSize: 14.0,
+                            fontSize: 18.0,
                           ),),),
 
                     ) : Text(""),
@@ -174,7 +177,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                                       color: Color(0xff003372),
                                       onPressed: ()async{
                                       },
-                                      child: Text('Chiffres d\'affaires journaliers :  \n\n $totalTarif FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
+                                      child: Text('Total Prestations Journalier :  \n\n $totalTarif FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
                                     ),
                               //   onTap{("")}
                             ),
@@ -233,7 +236,7 @@ class _DashbordScreenState extends State<DashbordScreen> {
                                       color: Color(0xff003372),
                                       onPressed: () async{
                                       },
-                                      child: Text('Recette :  \n\n $recette FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+                                      child: Text('Dépenses journalières :  \n\n $depense FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
                                     ),
                               //   onTap{("")}
                             ),
@@ -808,25 +811,12 @@ class _DashbordScreenState extends State<DashbordScreen> {
     }
 
     void _logout() async{
-    var res = await CallApi().getData('logout');
-    var body = json.decode(res.body);
-    if(body['success']){
-     // print('deconn $body');
-      SharedPreferences localStorage = await SharedPreferences.getInstance();
-      var token = localStorage.getString('token');
-      localStorage.remove(token);
-      localStorage.remove('user');
-      localStorage.remove('id_lavage');
-      localStorage.remove('Admin');
-      localStorage.remove('dateFinAbonn');
       await Navigator.push(context,
           new MaterialPageRoute(
               builder: (BuildContext context){
                 return new LoginPage();
               }
           ));
-    }
-
     }
 
     var nameUser;
@@ -874,6 +864,10 @@ class _DashbordScreenState extends State<DashbordScreen> {
           //dateFinAbon = resBodyAbon['date'];
           statu = resBody['status'];
           libLavage = resBody['nomLavage'];
+          jourR = resBodyJR['nbjour'];
+          dateFinAbon = resBodyAbon['date'];
+          affichJourR = true;
+          affichDateFinAbonn = true;
          // affichDateFinAbonn = true;
         });
       }
@@ -894,12 +888,6 @@ class _DashbordScreenState extends State<DashbordScreen> {
         jourR = resBodyJR['nbjour'];
         affichJourR = true;
         affichDateFinAbonn = false;
-      });
-    }else{
-      setState((){
-        dateFinAbon = resBodyAbon['date'];
-        affichDateFinAbonn = true;
-        affichJourR = false;
       });
     }
 

@@ -14,6 +14,7 @@ import 'package:lavage/authentification/Screen/Tabs/clientTabPage.dart';
 import 'package:lavage/authentification/Screen/Tabs/comptabiliteTabPage.dart';
 import 'package:lavage/authentification/Screen/Tabs/prestationTabPage.dart';
 import 'package:lavage/authentification/Screen/TabsTransactionPaiement/paimentAgent.dart';
+import 'package:lavage/authentification/Screen/TabsTransactionPaiement/salaire.dart';
 import 'package:lavage/authentification/Screen/TabsTransactionPaiement/searchPaiement.dart';
 import 'package:lavage/authentification/Screen/apropos.dart';
 import 'package:lavage/authentification/Screen/client.dart';
@@ -71,14 +72,14 @@ class _PaimentTabState extends State<PaimentTab> with SingleTickerProviderStateM
     this.getUserName();
     this.getStatut();
     super.initState();
-    _tabController = new TabController(vsync: this, length: 2);
+    _tabController = new TabController(vsync: this, length: 3);
   }
 
   @override
 
   Widget build(BuildContext context){
     return  DefaultTabController(
-        length: 2,
+        length: 3,
         child: Scaffold(
             key: _scaffoldKey,
             backgroundColor: Color(0xFFDADADA),
@@ -113,6 +114,10 @@ class _PaimentTabState extends State<PaimentTab> with SingleTickerProviderStateM
                               boxDeco = Color(0xff0200F4);
                               break;
                             case 1:
+                            PrimaryColor = Color(0xff0200F4);
+                            boxDeco = Color(0xff0200F4);
+                            break;
+                            case 2:
                               PrimaryColor = Color(0xff0200F4);
                               boxDeco = Color(0xff0200F4);
                               break;
@@ -126,7 +131,7 @@ class _PaimentTabState extends State<PaimentTab> with SingleTickerProviderStateM
                         Tab(
                           child: Container(
                               child: Text(
-                                'PAIEMENT',
+                                'COMMISSIONS',
                                 style: TextStyle(color: Colors.white, fontSize: 18.0),
                               )
                           ) ,
@@ -136,6 +141,15 @@ class _PaimentTabState extends State<PaimentTab> with SingleTickerProviderStateM
                           child: Container(
                               child: Text(
                                 'CREDIT',
+                                style: TextStyle(color: Colors.white, fontSize: 18.0),
+                              )
+                          ) ,
+                        ),
+
+                        Tab(
+                          child: Container(
+                              child: Text(
+                                'SALAIRE',
                                 style: TextStyle(color: Colors.white, fontSize: 18.0),
                               )
                           ) ,
@@ -153,6 +167,7 @@ class _PaimentTabState extends State<PaimentTab> with SingleTickerProviderStateM
                 children: <Widget>[
                   PaimentAgent(),
                   CreditAgent(),
+                  SalaireAgent(),
                 ],
               ),
 

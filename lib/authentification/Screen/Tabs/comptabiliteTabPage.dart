@@ -59,29 +59,34 @@ class _ComptabiliteTabPageTabPageState extends State<ComptabiliteTabPage> {
   List data2 = List() ;
 
   var recette ;
-  var commissions ;
-  var tarifications ;
+    var commissions ;
+    var tarifications ;
+    var totalSalaire ;
+    var totalDepense ;
+    var chiffreAffaire;
 
-  void getComptabilite() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var id = localStorage.getString('id_lavage');
-    var res = await CallApi().getData('comptabiliser/$id/$datEnreg1/$datEnreg2');
+    void getComptabilite() async {
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+      var id = localStorage.getString('id_lavage');
+      var res = await CallApi().getData('comptabiliser/$id/$datEnreg1/$datEnreg2');
 
-    var resBody = json.decode(res.body);
+      var resBody = json.decode(res.body);
 
-    if(resBody['recette'] != 0) {
+      if(resBody['recette'] != 0) {
 
-      setState(() {
-        recette = resBody['recette'];
-        commissions = resBody['commissions'];
-        tarifications = resBody['tarifications'];
-        visible = true;
-      });
+        setState(() {
+          recette = resBody['recette'];
+          commissions = resBody['commissions'];
+          tarifications = resBody['tarifications'];
+          totalDepense = resBody['TotalDepense'];
+          totalSalaire = resBody['TotalSalaire'];
+          chiffreAffaire = resBody['ChiffreAffaire'];
+          visible = true;
+        });
 
-    }else{
-      _showMsg('Desole ! Pas de transactions effectuees au-cours de cette periode');
-    }
-
+      }else{
+        _showMsg('Desole ! Pas de transactions effectuees au-cours de cette periode');
+      }
 
   }
 
@@ -221,19 +226,19 @@ class _ComptabiliteTabPageTabPageState extends State<ComptabiliteTabPage> {
                 child: Row(
                   children: <Widget>[
                     new Expanded(
-                      child: loader ? FlatButton(
+                      child: loading ? FlatButton(
                         shape: new RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(30.0)
                         ),
                         color: Color(0xff003372),
                         onPressed: ()async{
                           setState(() {
-                            loader = false;
+                            loading = false;
                             visible = false;
                           });
                           await checkDate();
                           setState(() {
-                            loader = true;
+                            loading = true;
                           });
                         },
                         child: new Container(
@@ -274,7 +279,7 @@ class _ComptabiliteTabPageTabPageState extends State<ComptabiliteTabPage> {
 
 
               visible ? Container(
-                  height: 150.0,
+                  height: 300.0,
                   child:
 
                   Container(
@@ -282,6 +287,14 @@ class _ComptabiliteTabPageTabPageState extends State<ComptabiliteTabPage> {
                             title: Column(
                               children: <Widget>[
                                 SizedBox(height: 10.0,),
+                                Row(
+                                  children: <Widget>[
+                                    Text('CHIFFRE D\'AFFAIRES : '),
+                                    SizedBox(width: 20.0,),
+                                    Expanded(child: Text('$chiffreAffaire FCFA')),
+                                  ],
+                                ),
+                                SizedBox(height: 20.0,),
                                 Row(
                                   children: <Widget>[
                                     Text('TOTAL PRESTATIONS : '),
@@ -295,6 +308,22 @@ class _ComptabiliteTabPageTabPageState extends State<ComptabiliteTabPage> {
                                     Text('TOTAL COMMISSIONS : '),
                                     SizedBox(width: 20.0,),
                                     Expanded(child: Text('$commissions FCFA'),),
+                                  ],
+                                ),
+                                SizedBox(height: 20.0,),
+                                Row(
+                                  children: <Widget>[
+                                    Text('TOTAL SALAIRE : '),
+                                    SizedBox(width: 20.0,),
+                                    Expanded(child: Text('$totalSalaire FCFA')),
+                                  ],
+                                ),
+                                SizedBox(height: 20.0,),
+                                Row(
+                                  children: <Widget>[
+                                    Text('TOTAL DEPENSE : '),
+                                    SizedBox(width: 20.0,),
+                                    Expanded(child: Text('$totalDepense FCFA')),
                                   ],
                                 ),
                                 SizedBox(height: 20.0,),
@@ -350,7 +379,7 @@ class _ComptabiliteTabPageTabPageState extends State<ComptabiliteTabPage> {
 
   }
 
-  void checkDate(){
+  void checkDate()async {
     DateTime d1;
     DateTime d2;
     int differ;

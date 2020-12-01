@@ -34,6 +34,7 @@ class Data {
   String idLavage;
   bool success;
   String message;
+  String salaire;
 
 
   Data({
@@ -46,6 +47,7 @@ class Data {
     this.idLavage,
     this.success,
     this.message,
+    this.salaire,
 
   });
 
@@ -59,6 +61,7 @@ class Data {
     idLavage: json["id_lavage"],
     success: json["success"],
     message: json["message"],
+    salaire: json["salaire"],
 
   );
 
@@ -72,6 +75,7 @@ class Data {
     "id_lavage": idLavage,
     "success": success,
     "message": message,
+    "salaire": salaire,
 
   };
 }

@@ -59,7 +59,7 @@ class _FinancesState extends State<Finances> {
     setState(() {
       recette = (resBody['recette'] == null) ? 0 : resBody['recette'] ;
       commissions = (resBody['commissions'] == null) ? 0 : resBody['commissions'] ;
-      totalTarif = recette + commissions;
+      totalTarif = (resBody['totalPrestaion'] == null) ? 0 : resBody['totalPrestaion'];
       joursR = resBodyJR['nbjour'] ;
     });
 
@@ -175,7 +175,7 @@ class _FinancesState extends State<Finances> {
                                     load = true;
                                   });
                                 },
-                                child: Text('Chiffres d\'affaires journaliers :  \n\n $totalTarif FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
+                                child: Text('Total Prestations Journalier :  \n\n $totalTarif FCFA', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
                               )),
                         ),
                         /*

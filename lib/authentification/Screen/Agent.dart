@@ -44,7 +44,7 @@ class _AgentState extends State<Agent> {
   final TextEditingController _domicilAgent = TextEditingController();
   final TextEditingController _contactUrgence = TextEditingController();
   final TextEditingController _numeroCNI = TextEditingController();
-  final TextEditingController _photo = TextEditingController();
+  final TextEditingController _salaire = TextEditingController();
   final TextEditingController dateCtl = TextEditingController();
 
 
@@ -422,6 +422,45 @@ class _AgentState extends State<Agent> {
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Contact d'urgence",
+                                  hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+
+                      //////////////////////////////////////////////////////////////////////////////////////////////////
+
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.5),
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        child: Row(
+                          children: <Widget>[
+                            new Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                              child: Icon(
+                                Icons.monetization_on,
+                                color: Colors.red,
+                              ),
+                            ),
+                            new Expanded(
+                              child: TextFormField(
+                                keyboardType: TextInputType.number,
+                                //autofocus: false,
+                                controller: _salaire,
+                                validator: (value) => value.isEmpty ? 'Ce champ est requis' : null,
+                                //onSaved: (value) => contactUrgence = value,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "Salaire",
                                   hintStyle: TextStyle(color: Colors.black, fontSize: 18.0),
                                 ),
                               ),
@@ -856,7 +895,7 @@ class _AgentState extends State<Agent> {
         'dateEnreg': dateHeure,
         'id_lavage': id,
         'numero_cni': _numeroCNI.text,
-        'photo': urlPhoto,
+        'salaire': _salaire.text,
         'dateNaiss': mydate1,
       };
 
@@ -884,6 +923,7 @@ class _AgentState extends State<Agent> {
           _imageFile = null;
           dateCtl.text = '';
           _numeroCNI.text = '';
+          _salaire.text = '';
         });
 
         _showMsg("Donnees enregistrees avec succes");

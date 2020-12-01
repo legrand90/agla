@@ -11,6 +11,7 @@ import 'package:lavage/authentification/Screen/Listes/listlog.dart';
 import 'package:lavage/authentification/Screen/Listes/listusers_pw.dart';
 import 'package:lavage/authentification/Screen/Marque.dart';
 import 'package:lavage/authentification/Screen/apropos.dart';
+import 'package:lavage/authentification/Screen/depense.dart';
 import 'package:lavage/authentification/Screen/finances.dart';
 import 'package:lavage/authentification/Screen/gestionClient.dart';
 import 'package:lavage/authentification/Screen/gestionAgent.dart';
@@ -355,7 +356,56 @@ class _RegisterState extends State<Register> {
                                 children: <Widget>[
                                   new Expanded(
                                     child: Text(
-                                      "Menu SMS",
+                                      "SMS",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20.0
+                                        //fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ) : Text(''),
+
+                  (admin == '0' || admin == '1') ? Container(
+                    margin: const EdgeInsets.only(top: 20.0),
+                    padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                    child: Row(
+                      children: <Widget>[
+                        new Expanded(
+                          child: FlatButton(
+                            shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0)
+                            ),
+                            color: Color(0xff003372),
+                            onPressed: (){
+                              Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                                    return Depense();
+                                  },
+                                ),
+                              );
+                            },
+                            child: new Container(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 10.0,
+                                horizontal: 10.0,
+                              ),
+                              child: new Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text(
+                                      "Sortie Caisse",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           color: Colors.white,

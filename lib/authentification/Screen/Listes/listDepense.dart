@@ -2,15 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:font_awesome_flutter/fa_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lavage/api/api.dart';
 import 'package:lavage/authentification/Models/Agent.dart';
-import 'package:lavage/authentification/Models/Prestations.dart';
+import 'package:lavage/authentification/Models/Users.dart';
+import 'package:lavage/authentification/Models/listdepense.dart';
+import 'package:lavage/authentification/Screen/DetailSreen/detailsUsers.dart';
+import 'package:lavage/authentification/Screen/DetailSreen/detailsagent.dart';
+import 'package:lavage/authentification/Screen/Edit/editagent.dart';
+import 'package:lavage/authentification/Screen/Edit/editdepense.dart';
+import 'package:lavage/authentification/Screen/Edit/edituser.dart';
 import 'package:lavage/authentification/Screen/Tabs/clientPage.dart';
-import 'package:lavage/authentification/Screen/apropos.dart';
+import 'package:lavage/authentification/Screen/TabsSuperAdmin/superAdmin.dart';
 import 'package:lavage/authentification/Screen/client.dart';
+import 'package:lavage/authentification/Screen/create_superAdmin.dart';
 import 'package:lavage/authentification/Screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,128 +26,177 @@ import '../historique.dart';
 import '../login_page.dart';
 import 'package:http/http.dart' as http;
 
-import '../tutoriel.dart';
+class ListDepense extends StatefulWidget {
 
-
-class DetailsAgent extends StatefulWidget {
-
-  int idagent ;
-
-  DetailsAgent({Key key, @required this.idagent}) : super(key: key);
+  Listdepense listdepenses = Listdepense () ;
 
   @override
-  _DetailsAgentState createState() => _DetailsAgentState(idagent);
+  _ListDepenseState createState() => _ListDepenseState();
 }
 
-class _DetailsAgentState extends State<DetailsAgent> {
+class _ListDepenseState extends State<ListDepense> {
 
-  int idagent ;
+  Listdepense listdepenses = Listdepense () ;
 
-  var nom ;
-  var contact ;
-  var contactUrgence ;
-  var quartier ;
-  var dateEnreg ;
+  var admin ;
+  var iduser ;
+  bool load = true;
+  bool chargement = false;
 
-  _DetailsAgentState(this.idagent);
 
-  bool load = true ;
+  Future<dynamic> getDepenses() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+
+    var res = await CallApi().getData('SortieCaisseDepenses/$id');
+    //String url = "http://192.168.43.217:8000/api/agent/$id";
+    //final res = await http.get(Uri.encodeFull(url), headers: {"Accept": "application/json","Content-type" : "application/json",});
+    // var resBody = json.decode(res.body)['data'];
+    // final response = await http.get('$url');
+
+    setState(() {
+      listdepenses =  listdepenseFromJson(res.body);
+      chargement = true;
+    });
+    return listdepenses;
+  }
+
+  final GlobalKey <ScaffoldState> _scaffoldKey = GlobalKey <ScaffoldState>();
+
+  _showMsg(msg) {
+    final snackBar = SnackBar(
+        content: Text(msg),
+        action: SnackBarAction(
+          label: 'Fermer',
+          onPressed: () {
+
+          },
+        )
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+
+  void getAdmin() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var isadmin = localStorage.getString('Admin');
+
+    setState(() {
+      admin = isadmin;
+    });
+
+    print('la valeur de admin est : $admin');
+
+  }
+
+
+
+
 
   @override
 
   void initState(){
     super.initState();
-    this.getAgent();
+    this.getDepenses();
     this.getUserName();
+    this.getAdmin();
     this.getStatut();
-
   }
 
   Widget build(BuildContext context){
     return  WillPopScope(
       // onWillPop: _onBackPressed,
       child:Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
-          title: Text('DETAILS AGENT'),
+          title: Text('HISTORIQUE DES DEPENSES'),
         ),
-        body: load ? ListView(
-          children: <Widget>[
-            SizedBox(
-              height: 40.0,
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 25.0),
-              child: Text("NOM ===> $nom"),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 40.0),
+
+        body: chargement ? ListView.separated(
+          separatorBuilder: (BuildContext context, int index) {
+
+            //indexItem = index;
+
+            return Divider();
+          },
+          itemCount: (listdepenses == null || listdepenses.data == null || listdepenses.data.length == 0 )? 0 : listdepenses.data.length,
+          itemBuilder: (_,int index)=>ListTile(
+            title: Column(
+              children: <Widget>[
+
+                Row(
+                  children: <Widget>[
+                    Expanded(child: Text('DATE : ${listdepenses.data [index] .dateEnreg}'),),
+                    //SizedBox(width: 170,),
+
+                    IconButton(
+                      icon: Icon(
+                          Icons.edit),
+                      onPressed: ()async{
+                        setState(() {
+                          load = false;
+                        });
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditDepense(iddepense: listdepenses.data [index] .id,),
+                            ));
+                        setState(() {
+                          load = true;
+                        });
+                      },
+                    ),
+
+                    SizedBox(width: 30,),
+
+                  ],
+                ),
+
+                Row(
+                  children: <Widget>[
+                    Expanded(child: Text('LIBELLE : ${listdepenses.data[index].libelleDepense}',),),
+
+                    //SizedBox(width: 80.0,),
+                    //Text('${listusers.data[index].admin}',),
+                  ],
+                ),
+
+                SizedBox(height: 10.0,),
+
+                Row(
+                  children: <Widget>[
+                    Expanded(child: Text('QUANTITE : ${listdepenses.data[index].quantite}',),),
+
+                    //SizedBox(width: 80.0,),
+                    //Text('${listusers.data[index].admin}',),
+                  ],
+                ),
+
+                SizedBox(height: 10.0,),
+
+                Row(
+                  children: <Widget>[
+                    Expanded(child: Text('PRIX UNITAIRE : ${listdepenses.data[index].prixUnitaire}',),),
+                    //SizedBox(width: 80.0,),
+
+                  ],
+                ),
+
+                SizedBox(height: 10.0,),
+
+                Row(
+                  children: <Widget>[
+                    Expanded(child: Text('PRIX TOTAL : ${listdepenses.data[index].prixTotal}',),),
+                    //SizedBox(width: 80.0,),
+
+                  ],
+                )
+              ],
             ),
 
-            Container(
-              margin: EdgeInsets.only(left: 25.0),
-              child: Text("CONTACT ===> $contact"),
-            ),
 
-            Padding(
-              padding: const EdgeInsets.only(top: 40.0),
-            ),
-
-            Container(
-              margin: EdgeInsets.only(left: 25.0),
-              child: Text("CONTACT D'URGENCE ===> $contactUrgence"),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 40.0),
-            ),
-
-            Container(
-              margin: EdgeInsets.only(left: 25.0),
-              child: Text("QUARTIER ===> $quartier"),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 40.0),
-            ),
-
-            Container(
-              margin: EdgeInsets.only(left: 25.0),
-              child: Text("DATE ===> $dateEnreg"),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 40.0),
-            ),
-
-            Container(
-              margin: EdgeInsets.only(left: 25.0),
-              child: Text("N° CNI ===> $numCni"),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 40.0),
-            ),
-
-            Container(
-              margin: EdgeInsets.only(left: 25.0),
-              child: Text("DATE DE NAISSANCE ===> $dateNaiss"),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 40.0),
-            ),
-
-            Container(
-              margin: EdgeInsets.only(left: 25.0),
-              child: Text("SALAIRE ===> $salaire FCFA"),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 40.0),
-            ),
-
-          ],
+          ),
         ) : Center(child: CircularProgressIndicator(),),
 
         bottomNavigationBar: (adm == '0' || adm == '1') ? BottomNavigationBar(
@@ -203,11 +258,20 @@ class _DetailsAgentState extends State<DetailsAgent> {
           ],
         ) : Text(''),
 
+
+//        ListView.builder(
+//          itemCount: (listagents == null || listagents.data == null || listagents.data.length == 0 )? 0 : listagents.data.length,
+//          itemBuilder: (_,int index)=>ListTile(
+//            title: Text(listagents.data [index] .nom),
+//
+//          ),
+//        ),
+
         drawer: load ? Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
-          child: ListView(
+          child: (admin == '0' || admin == '1') ? ListView(
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: <Widget>[
@@ -242,7 +306,7 @@ class _DetailsAgentState extends State<DetailsAgent> {
                 },
               ),
               ListTile(
-                title: Text('Nouvelle Entrée'),
+                title: Text('Nouvelle Entree'),
                 onTap: () async{
                   setState(() {
                     load = false;
@@ -281,7 +345,7 @@ class _DetailsAgentState extends State<DetailsAgent> {
                 },
               ),
               ListTile(
-                title: Text('Transactions'),
+                title: Text('Historique'),
                 onTap: () async{
                   setState(() {
                     load = false;
@@ -299,6 +363,75 @@ class _DetailsAgentState extends State<DetailsAgent> {
                   });
                 },
               ),
+              ListTile(
+                title: Text('Parametre'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return Register();
+                      },
+                    ),
+                  );
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+              ListTile(
+                title: Text('Deconnexion'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  await _alertDeconnexion();
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+
+            ],
+          ) : ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text('$nameUser'),
+                accountEmail: (adm == '0' || adm == '1') ? Text('Lavage: $libLavage \nVous êtes $statu') : Text('Vous êtes $statu'),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.white,
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xff003372),
+                ),
+              ),
+              ListTile(
+                title: Text('Accueil'),
+                onTap: () async{
+                  setState(() {
+                    load = false;
+                  });
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return DashbordScreen();
+                      },
+                    ),
+                  );
+
+                  setState(() {
+                    load = true;
+                  });
+                },
+              ),
+
               ListTile(
                 title: Text('Paramètres'),
                 onTap: () async{
@@ -325,14 +458,14 @@ class _DetailsAgentState extends State<DetailsAgent> {
                   setState(() {
                     load = false;
                   });
-                  await Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return Tutoriel();
-                      },
-                    ),
-                  );
+                  // await Navigator.push(
+                  //  context,
+                  // new MaterialPageRoute(
+                  //   builder: (BuildContext context) {
+                  //    return Register();
+                  //  },
+                  // ),
+                  // );
                   setState(() {
                     load = true;
                   });
@@ -344,14 +477,7 @@ class _DetailsAgentState extends State<DetailsAgent> {
                   setState(() {
                     load = false;
                   });
-                  await Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return Apropos();
-                      },
-                    ),
-                  );
+                  //await _alertDeconnexion();
 
                   setState(() {
                     load = true;
@@ -366,14 +492,14 @@ class _DetailsAgentState extends State<DetailsAgent> {
                   });
                   await _alertDeconnexion();
 
-                  setState((){
+                  setState(() {
                     load = true;
                   });
                 },
               ),
 
               Container(
-                margin: const EdgeInsets.only(top: 55.0,),
+                margin: const EdgeInsets.only(top: 210.0,),
                 padding: EdgeInsets.symmetric(horizontal:20.0),
                 child: Row(
                   children: <Widget>[
@@ -396,7 +522,6 @@ class _DetailsAgentState extends State<DetailsAgent> {
                       color: Colors.red,
                       icon: FaIcon(FontAwesomeIcons.chrome),
                       onPressed: ()async{
-
                         await _launchMaxomURL();
                       },
                     ),
@@ -406,57 +531,11 @@ class _DetailsAgentState extends State<DetailsAgent> {
 
             ],
           ),
-        ) : Center(child: CircularProgressIndicator(),),));
-  }
-
-  var dateNaiss;
-  var numCni;
-  var urlPhoto;
-
-  Future<Map<String, dynamic>> getImage() async{
-    var res = await CallApi().getData('getPhoto/$urlPhoto');
-
-    return json.decode(res.body);
+        ) : Center(child: CircularProgressIndicator(),),
 
 
-    //print('la valeur de admin est : $admin');
-
-  }
-
-  var salaire;
-
-  void getAgent() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var idlavage = localStorage.getString('id_lavage');
-    // this.param = _mySelection3;
-
-    //final String url = "http://192.168.43.217:8000/api/getAgent/$idagent/$idlavage"  ;
-
-    var res = await CallApi().getData('getAgent/$idagent/$idlavage');
-
-//    final res = await http.get(Uri.encodeFull(url), headers: {
-//      "Accept": "application/json",
-//      "Content-type": "application/json",
-//    });
-
-    var resBody = json.decode(res.body)['data'];
-
-    setState(() {
-      nom = resBody['nom'];
-      contact = resBody['contact'];
-      contactUrgence = resBody['contactUrgence'];
-      quartier = resBody['quartier'];
-      dateEnreg = resBody['dateEnreg'];
-      dateNaiss = resBody['dateNaiss'];
-      numCni = resBody['numero_cni'];
-      salaire = resBody['salaire'];
-      //idTari = resBody['id'];
-    });
-
-
-
-    // print('identi est $idpresta');
-
+      ),
+    );
   }
 
   void _logout() async{
@@ -476,6 +555,7 @@ class _DetailsAgentState extends State<DetailsAgent> {
               }
           ));
     }
+
   }
 
   var nameUser;
@@ -487,6 +567,14 @@ class _DetailsAgentState extends State<DetailsAgent> {
     setState(() {
       nameUser = userName;
     });
+
+    //print('la valeur de admin est : $admin');
+
+  }
+
+  void route() async{
+
+
 
     //print('la valeur de admin est : $admin');
 

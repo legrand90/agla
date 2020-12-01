@@ -688,11 +688,13 @@ class _CommissionState extends State<Commission> {
         'type_user': statu,
       };
 
-      var resTarif = await CallApi().getData('getTarification/$_mySelection2/$idlavage');
+      var res = await CallApi().getData('getTarification/$_mySelection2/$idlavage');
 
-      var resBodyTarif = json.decode(resTarif.body)['data'];
+      var resBody = json.decode(res.body)['data'];
 
-      if (int.parse(resBodyTarif['montant']) > int.parse(_gainAgent.text)){
+     // print("montant : ${resBody['montant']}");
+
+      if (int.parse(resBody['montant']) > int.parse(_gainAgent.text)){
         var res = await CallApi().postAppData(data, 'create_commission');
 
       // print('les donnees de commission: $body');
@@ -843,9 +845,7 @@ class _CommissionState extends State<Commission> {
       // print('donnee 1 $matriculebody');
       //print('donnee 2 $contactbody');
       _showMsg("Cet agent dispose déja une commission pour cette tarification !!!");
-    }
-
-    else{
+    } else{
       //_showMsg("existe pas!!!");
       _sendDataCommission();
 

@@ -623,7 +623,7 @@ class _ClientTabPageState extends State<ClientTabPage> {
                       children: <Widget>[
                         Text('PLAQUE D\'IMMATRICULATION'),
                         SizedBox(width: 20.0,),
-                        Text('${serchValue2.data [index] .idMatricule}'),
+                        Expanded(child: Text('${serchValue2.data [index] .idMatricule}')),
                       ],
                     ),
                     SizedBox(height: 20.0,),

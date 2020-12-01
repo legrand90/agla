@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -60,12 +61,36 @@ class _MenusmsState extends State<Menusms> {
 
   bool load = true;
 
+  Timer timer;
+
+  var nbSmsEnvoyer, nbSmsRestant;
+
+  void getSmsEnvoyerRestant() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var id = localStorage.getString('id_lavage');
+
+    var res = await CallApi().getData('getLastSmsEnvoyerEtRestant/$id');
+    var body = json.decode(res.body);
+
+
+    setState(() {
+      nbSmsEnvoyer = body['nbSmsEnvoyer'];
+      nbSmsRestant = body['nbSmsRestant'];
+    });
+
+    //print('la valeur de admin est : $admin');
+
+  }
+
 
   @override
   void initState(){
     super.initState();
     this.getUserName();
     this.getStatut();
+    this.getSmsEnvoyerRestant();
+
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) => getSmsEnvoyerRestant());
   }
 
   Widget build(BuildContext context){
@@ -77,11 +102,98 @@ class _MenusmsState extends State<Menusms> {
       body: load ? Center(
         child: new Container(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          margin: EdgeInsets.only(top: 110.0),
+          margin: EdgeInsets.only(top: 20.0),
           child: new ListView(
             // mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               //CARD1
+              (admin == '0' || admin == '1') ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+
+                  SizedBox(
+                    width: 150.0,
+                    height: 140.0,
+                    child: new Card(
+                      child: Container(
+                        child: Center(
+                          child: Container(
+                              width: 150.0,
+                              height: 140.0,
+                              child : FlatButton(
+                                color: Color(0xff003372),
+                                onPressed: ()async{
+                                  setState(() {
+                                    load = false;
+                                  });
+
+                                  setState(() {
+                                    load =true;
+                                  });
+                                },
+                                child: Text('Nombre SMS Envoyé :  \n\n $nbSmsEnvoyer', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
+                              )),
+                        ),
+                        /*
+                        new Stack(
+                          children: <Widget>[
+                            new Image.asset(
+                              'assets/mobile1.png',
+                              width: 200.0,
+                              height: 120.0,
+                            ),
+                          ],
+                        ),
+                        */
+                        //   onTap{("")}
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(
+                    width: 150.0,
+                    height: 140.0,
+                    child: new Card(
+                      child: Container(
+                        child: Center(
+                          child: Container(
+                              width: 150.0,
+                              height: 140.0,
+                              child : FlatButton(
+                                color: Color(0xff003372),
+                                onPressed: () async{
+                                  setState(() {
+                                    load = false;
+                                  });
+
+
+                                  setState(() {
+                                    load = true;
+                                  });
+                                },
+                                child: Text('Nombre SMS Restant :  \n\n $nbSmsRestant', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
+                              )),
+                        ),
+                        /*
+                        new Stack(
+                          children: <Widget>[
+                            new Image.asset(
+                              'assets/mobile1.png',
+                              width: 200.0,
+                              height: 120.0,
+                            ),
+                          ],
+                        ),
+                        */
+                        //   onTap{("")}
+                      ),
+                    ),
+                  ),
+
+
+                ],
+              ) : Text(''),
+
               (admin == '0' || admin == '1') ? Container(
                 margin: const EdgeInsets.only(top: 20.0),
                 padding: const EdgeInsets.only(left: 30.0, right: 30.0),
